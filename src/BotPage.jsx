@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
 
 // ════════════════════════════════════════════════════════════════════════════
 //  ALLY — bot page
@@ -370,7 +369,6 @@ export default function BotPage() {
           <button className="lb" onClick={()=>start("en")}>English</button>
           <button className="lb" onClick={()=>start("es")}>Español</button>
         </div>
-        <Link to="/dashboard" style={{color:"rgba(242,237,230,.2)",fontSize:12,fontFamily:"'Barlow',sans-serif",textDecoration:"underline"}}>View responses →</Link>
       </div>
     </div>
   );
