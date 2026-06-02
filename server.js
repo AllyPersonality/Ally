@@ -108,7 +108,9 @@ app.get("/api/responses", async (req, res) => {
 // ── Serve Vite build in production ────────────────────────────────────────────
 if (isProd) {
   const distPath = join(__dirname, "dist");
-  app.use(express.static(distPath));
+  // Serve static assets (JS, CSS, images)
+  app.use("/assets", express.static(join(distPath, "assets")));
+  // All page routes — explicitly send index.html
   app.get("*", (_req, _res) => {
     _res.sendFile(join(distPath, "index.html"));
   });
