@@ -24,7 +24,7 @@ const ago = ts => { const m=Math.floor((Date.now()-new Date(ts))/60000); return 
 const pct = (n,t) => t ? Math.round((n/(t||1))*100)+"%" : "—";
 const ageRange = age => { const a=parseInt(age); if(!a||isNaN(a))return ""; if(a<20)return "under 20"; const lo=Math.floor(a/10)*10; return lo+"-"+(lo+10); };
 
-const CSS = `
+const CSS_DASH = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Barlow+Condensed:wght@300;400;500;600&family=Barlow:wght@300;400&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html,body,#root{height:100%;min-height:100%}
@@ -41,6 +41,9 @@ const CSS = `
   ::-webkit-scrollbar-thumb{background:rgba(242,237,230,.1);border-radius:2px}
   input[type=text],select{background:rgba(242,237,230,.05);border:1px solid rgba(242,237,230,.12);border-radius:8px;padding:8px 12px;color:#F2EDE6;font-family:'Barlow',sans-serif;font-size:13px;outline:none}
   select option{background:#1a1a1a}
+  .del-btn{opacity:0;transition:opacity .15s,color .15s;background:none;border:none;color:rgba(242,237,230,.3);cursor:pointer;padding:2px 4px;font-size:13px;line-height:1;border-radius:4px;flex-shrink:0}
+  .del-btn:hover{opacity:1!important;color:#E8714A}
+  .resp-card:hover .del-btn{opacity:.45}
 `;
 
 export default function DashboardPage() {
@@ -63,6 +66,16 @@ export default function DashboardPage() {
       }
     } catch {}
     setLoading(false);
+  }
+
+  async function deleteResp(id, e) {
+    e.stopPropagation();
+    if (!window.confirm("Delete this response permanently? This cannot be undone.")) return;
+    try {
+      await fetch(`/api/responses/${encodeURIComponent(id)}`, { method: "DELETE" });
+      setResps(prev => prev.filter(r => r.id !== id));
+      if (sel?.id === id) setSel(null);
+    } catch {}
   }
 
   function exportCSV() {
@@ -128,13 +141,13 @@ export default function DashboardPage() {
 
   if (loading) return (
     <div style={{height:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#090705",fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontStyle:"italic",color:"rgba(242,237,230,.3)"}}>
-      <style>{CSS}</style>Loading responses...
+      <style>{CSS_DASH}</style>Loading responses...
     </div>
   );
 
   return (
     <div style={{background:"#090705",minHeight:"100vh",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6"}}>
-      <style>{CSS}</style>
+      <style>{CSS_DASH}</style>
 
       {/* Header */}
       <div style={{padding:"16px 24px",borderBottom:"1px solid rgba(242,237,230,.08)",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12,position:"sticky",top:0,background:"rgba(9,7,5,.97)",zIndex:20}}>
@@ -273,11 +286,14 @@ export default function DashboardPage() {
             <div style={{display:"flex",gap:16,minHeight:400}}>
               <div style={{width:sel?280:"100%",flexShrink:0,overflowY:"auto",maxHeight:"70vh"}}>
                 {filtered.map(r=>(
-                  <div key={r.id} onClick={()=>setSel(sel?.id===r.id?null:r)}
-                    style={{padding:"11px 13px",marginBottom:7,background:sel?.id===r.id?"rgba(191,160,98,.08)":"rgba(242,237,230,.03)",border:"1px solid "+(sel?.id===r.id?"rgba(191,160,98,.4)":"rgba(242,237,230,.08)"),borderRadius:11,cursor:"pointer",transition:"all .15s",opacity:r.status==="abandoned"?.75:1}}>
+                  <div key={r.id} className="resp-card" onClick={()=>setSel(sel?.id===r.id?null:r)}
+                    style={{padding:"11px 13px",marginBottom:7,background:sel?.id===r.id?"rgba(191,160,98,.08)":"rgba(242,237,230,.03)",border:"1px solid "+(sel?.id===r.id?"rgba(191,160,98,.4)":"rgba(242,237,230,.08)"),borderRadius:11,cursor:"pointer",transition:"all .15s",opacity:r.status==="abandoned"?.75:1,position:"relative"}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:3}}>
                       <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:500,color:"#F2EDE6"}}>{r.name||"Anonymous"}</div>
-                      <div style={{fontSize:10,color:"rgba(242,237,230,.3)",flexShrink:0,marginLeft:8}}>{ago(r.ts)}</div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0,marginLeft:8}}>
+                        <div style={{fontSize:10,color:"rgba(242,237,230,.3)"}}>{ago(r.ts)}</div>
+                        <button className="del-btn" title="Delete" onClick={e=>deleteResp(r.id,e)}>🗑</button>
+                      </div>
                     </div>
                     {(r.age||r.gender)&&<div style={{fontSize:12,color:"rgba(191,160,98,.7)",marginBottom:3,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.3}}>{[r.age,r.age?ageRange(r.age):null,r.gender].filter(Boolean).join(" · ")}</div>}
                     <div style={{fontSize:12,color:"rgba(242,237,230,.4)",marginBottom:7,lineHeight:1.4}}>{[r.city,r.occ].filter(Boolean).join(" · ")||"—"}</div>
@@ -304,7 +320,10 @@ export default function DashboardPage() {
                       {(sel.age||sel.gender)&&<div style={{fontSize:13,color:"rgba(191,160,98,.8)",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.5,marginBottom:3}}>{[sel.age,sel.age?ageRange(sel.age):null,sel.gender].filter(Boolean).join(" · ")}</div>}
                       <div style={{fontSize:11,color:"rgba(242,237,230,.3)"}}>{new Date(sel.ts).toLocaleString()} · {sel.lang==="es"?"Spanish":"English"}{sel.lp?" · LP "+sel.lp:""}{sel.arc?" · "+ARC_LABELS[sel.arc]:""} · <span style={{color:sel.status==="completed"?"rgba(141,196,122,.7)":"rgba(242,237,230,.3)"}}>{sel.status||"abandoned"}</span></div>
                     </div>
-                    <button onClick={()=>setSel(null)} style={{background:"none",border:"none",color:"rgba(242,237,230,.3)",fontSize:18,cursor:"pointer"}}>✕</button>
+                    <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                      <button onClick={e=>deleteResp(sel.id,e)} style={{background:"none",border:"1px solid rgba(232,113,74,.25)",borderRadius:6,color:"rgba(232,113,74,.6)",fontSize:12,cursor:"pointer",padding:"4px 10px",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.5,transition:"all .15s"}} onMouseOver={e=>{e.target.style.borderColor="rgba(232,113,74,.7)";e.target.style.color="#E8714A";}} onMouseOut={e=>{e.target.style.borderColor="rgba(232,113,74,.25)";e.target.style.color="rgba(232,113,74,.6)";}}>DELETE</button>
+                      <button onClick={()=>setSel(null)} style={{background:"none",border:"none",color:"rgba(242,237,230,.3)",fontSize:18,cursor:"pointer"}}>✕</button>
+                    </div>
                   </div>
                   <div style={{background:"rgba(242,237,230,.03)",border:"1px solid rgba(242,237,230,.08)",borderRadius:12,overflow:"hidden",marginBottom:14}}>
                     {[

@@ -105,6 +105,23 @@ app.get("/api/responses", async (req, res) => {
   }
 });
 
+// ── API: Delete a response ────────────────────────────────────────────────────
+app.delete("/api/responses/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Missing id" });
+    const { error } = await supabase.from("responses").delete().eq("id", id);
+    if (error) {
+      console.error("Supabase delete error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Delete response error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // ── Serve Vite build in production ────────────────────────────────────────────
 if (isProd) {
   const distPath = join(__dirname, "dist");
