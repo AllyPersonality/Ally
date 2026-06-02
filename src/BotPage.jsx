@@ -2,19 +2,19 @@ import { useState, useRef, useEffect } from "react";
 
 const ARC = {
   weaver:  { e:"🕸️", c:"#C9A84C", bg:"linear-gradient(135deg,#1a1200,#2d1f00,#1a1200)", br:"rgba(201,168,76,.5)",
-    gif:"https://media.giphy.com/media/l0Exdm9UgTNmqVWLK/giphy.gif",
+    gifId:"l2JhpjWPccQhsAMfu",
     en:{n:"THE WEAVER",  s:"The Connector",  t:"Everyone's calling you. You're not always picking up.",  gc:"Your phone has been ringing. All of them."},
     es:{n:"EL TEJEDOR",  s:"El Conector",    t:"Todo el mundo te llama. No siempre atendes.",            gc:"Tu teléfono no para. Todos."} },
   catalyst:{ e:"🔥", c:"#E8714A", bg:"linear-gradient(135deg,#1a0800,#2d1200,#1a0800)", br:"rgba(232,113,74,.5)",
-    gif:"https://media.giphy.com/media/QBd2kLB74zFUl2MR1g/giphy.gif",
+    gifId:"l3q2K5jinAlChoCLS",
     en:{n:"THE CATALYST",s:"The Mover",      t:"Always in motion. Occasionally lost. Usually fine.",     gc:"Chaotic. Effective. Somehow fine."},
     es:{n:"EL CATALIZADOR",s:"El Motor",     t:"Siempre en movimiento. Generalmente bien.",               gc:"Caótico. Efectivo. Misteriosamente bien."} },
   anchor:  { e:"⚓", c:"#7BAFC4", bg:"linear-gradient(135deg,#001018,#001a28,#001018)", br:"rgba(123,175,196,.5)",
-    gif:"https://media.giphy.com/media/3oEjI9DSFxHB5aJzha/giphy.gif",
+    gifId:"26ufdipQqU2lhNA4g",
     en:{n:"THE ANCHOR",  s:"The Foundation", t:"You don't rush. Things come to you.",                    gc:"They'll figure it out. You already have."},
     es:{n:"EL ANCLA",    s:"La Base",        t:"No te apuras. Las cosas llegan a vos.",                  gc:"Ellos lo van a entender. Vos ya lo sabés."} },
   spark:   { e:"⚡", c:"#8DC47A", bg:"linear-gradient(135deg,#091400,#122400,#091400)", br:"rgba(141,196,122,.5)",
-    gif:"https://media.giphy.com/media/xT5LMHxhOfscxv7CeQ/giphy.gif",
+    gifId:"3ohzdIuqJoo8QdKlnW",
     en:{n:"THE SPARK",   s:"The Builder",    t:"Earlier than most. More intentional than all of them.",  gc:"You saw this coming. Most people didn't."},
     es:{n:"LA CHISPA",   s:"La Constructora",t:"Mas temprano que la mayoria. Mas intencional que todos.",gc:"Vos lo veías venir. La mayoría no."} },
 };
@@ -550,11 +550,15 @@ export default function BotPage() {
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
                     <div style={{background:arc.c+"15",border:"1px solid "+arc.c+"40",borderRadius:12,padding:"13px 18px",fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontStyle:"italic",color:"rgba(242,237,230,.9)",lineHeight:1.5}}>"{AL.t}"</div>
 
-                    {/* GIF */}
-                    {arc.gif && (
-                      <div style={{marginTop:16,borderRadius:14,overflow:"hidden",border:"1px solid "+arc.c+"30",position:"relative"}}>
-                        <img src={arc.gif} alt="" style={{width:"100%",maxHeight:220,objectFit:"cover",display:"block"}} onError={e=>{e.target.parentElement.style.display="none";}}/>
-                        <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"10px 14px",background:"linear-gradient(transparent,rgba(0,0,0,.75))",fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontStyle:"italic",color:"rgba(242,237,230,.9)",textAlign:"left"}}>{AL.gc}</div>
+                    {/* Animated GIF (served as MP4 for reliability) */}
+                    {arc.gifId && (
+                      <div style={{marginTop:16,borderRadius:14,overflow:"hidden",border:"1px solid "+arc.c+"30",position:"relative"}} ref={el=>{if(el&&!el.dataset.tried){el.dataset.tried="1";}}}>
+                        <video autoPlay muted loop playsInline
+                          style={{width:"100%",maxHeight:220,objectFit:"cover",display:"block"}}
+                          onError={e=>{e.target.parentElement.style.display="none";}}>
+                          <source src={"https://media.giphy.com/media/"+arc.gifId+"/giphy.mp4"} type="video/mp4"/>
+                        </video>
+                        <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"10px 14px",background:"linear-gradient(transparent,rgba(0,0,0,.82))",fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontStyle:"italic",color:"rgba(242,237,230,.92)",textAlign:"left"}}>{AL.gc}</div>
                       </div>
                     )}
 
