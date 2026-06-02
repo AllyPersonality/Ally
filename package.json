@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"node --env-file=.env server.js\" \"vite\"",
     "build": "vite build",
-    "start": "NODE_ENV=production node --env-file=.env server.js",
+    "start": "NODE_ENV=production node server.js",
     "preview": "vite preview"
   },
   "dependencies": {
