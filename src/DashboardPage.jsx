@@ -11,8 +11,14 @@ const isNo    = s => /^no\b|nunca|never|not really|nope|para nada/.test((s||"").
 const isYes   = s => /si\b|yes|claro|definitely|absolutely|of course|por supuesto|obvio/.test((s||"").toLowerCase());
 const isMaybe = s => /maybe|quiza|tal vez|depends|depende|might/.test((s||"").toLowerCase());
 
-const ARC_LABELS = { weaver:"🕸️ Weaver", catalyst:"🔥 Catalyst", anchor:"⚓ Anchor", spark:"⚡ Spark" };
-const ARC_COLORS = { weaver:"#C9A84C", catalyst:"#E8714A", anchor:"#7BAFC4", spark:"#8DC47A" };
+const ARC_LABELS = {
+  weaver:"🕸️ Weaver", catalyst:"🔥 Catalyst", anchor:"⚓ Anchor",   spark:"⚡ Spark",
+  tide:"🌊 Tide",      scout:"🦅 Scout",       oracle:"🌙 Oracle",  mirror:"🎭 Mirror", seed:"🌱 Seed",
+};
+const ARC_COLORS = {
+  weaver:"#C9A84C", catalyst:"#E8714A", anchor:"#7BAFC4", spark:"#8DC47A",
+  tide:"#4ECDC4",   scout:"#C0392B",    oracle:"#8E44AD", mirror:"#95A5A6", seed:"#27AE60",
+};
 
 const ago = ts => { const m=Math.floor((Date.now()-new Date(ts))/60000); return m<1?"just now":m<60?m+"m ago":m<1440?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago"; };
 const pct = (n,t) => t ? Math.round((n/(t||1))*100)+"%" : "—";

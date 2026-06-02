@@ -3,20 +3,40 @@ import { useState, useRef, useEffect } from "react";
 const ARC = {
   weaver:  { e:"🕸️", c:"#C9A84C", bg:"linear-gradient(135deg,#1a1200,#2d1f00,#1a1200)", br:"rgba(201,168,76,.5)",
     gifId:"l2JhpjWPccQhsAMfu",
-    en:{n:"THE WEAVER",  s:"The Connector",  t:"Everyone's calling you. You're not always picking up.",  gc:"Your phone has been ringing. All of them."},
-    es:{n:"EL TEJEDOR",  s:"El Conector",    t:"Todo el mundo te llama. No siempre atendes.",            gc:"Tu teléfono no para. Todos."} },
+    en:{n:"THE WEAVER",  s:"The Connector",       t:"Everyone's calling you. You're not always picking up.",           gc:"Your phone has been ringing. All of them."},
+    es:{n:"EL TEJEDOR",  s:"El Conector",          t:"Todo el mundo te llama. No siempre atendes.",                    gc:"Tu teléfono no para. Todos."} },
   catalyst:{ e:"🔥", c:"#E8714A", bg:"linear-gradient(135deg,#1a0800,#2d1200,#1a0800)", br:"rgba(232,113,74,.5)",
     gifId:"l3q2K5jinAlChoCLS",
-    en:{n:"THE CATALYST",s:"The Mover",      t:"Always in motion. Occasionally lost. Usually fine.",     gc:"Chaotic. Effective. Somehow fine."},
-    es:{n:"EL CATALIZADOR",s:"El Motor",     t:"Siempre en movimiento. Generalmente bien.",               gc:"Caótico. Efectivo. Misteriosamente bien."} },
+    en:{n:"THE CATALYST",s:"The Mover",            t:"Always in motion. Occasionally lost. Usually fine.",              gc:"Chaotic. Effective. Somehow fine."},
+    es:{n:"EL CATALIZADOR",s:"El Motor",           t:"Siempre en movimiento. Generalmente bien.",                      gc:"Caótico. Efectivo. Misteriosamente bien."} },
   anchor:  { e:"⚓", c:"#7BAFC4", bg:"linear-gradient(135deg,#001018,#001a28,#001018)", br:"rgba(123,175,196,.5)",
     gifId:"26ufdipQqU2lhNA4g",
-    en:{n:"THE ANCHOR",  s:"The Foundation", t:"You don't rush. Things come to you.",                    gc:"They'll figure it out. You already have."},
-    es:{n:"EL ANCLA",    s:"La Base",        t:"No te apuras. Las cosas llegan a vos.",                  gc:"Ellos lo van a entender. Vos ya lo sabés."} },
+    en:{n:"THE ANCHOR",  s:"The Foundation",       t:"You don't rush. Things come to you.",                             gc:"They'll figure it out. You already have."},
+    es:{n:"EL ANCLA",    s:"La Base",              t:"No te apurás. Las cosas llegan a vos.",                          gc:"Ellos lo van a entender. Vos ya lo sabés."} },
   spark:   { e:"⚡", c:"#8DC47A", bg:"linear-gradient(135deg,#091400,#122400,#091400)", br:"rgba(141,196,122,.5)",
     gifId:"3ohzdIuqJoo8QdKlnW",
-    en:{n:"THE SPARK",   s:"The Builder",    t:"Earlier than most. More intentional than all of them.",  gc:"You saw this coming. Most people didn't."},
-    es:{n:"LA CHISPA",   s:"La Constructora",t:"Mas temprano que la mayoria. Mas intencional que todos.",gc:"Vos lo veías venir. La mayoría no."} },
+    en:{n:"THE SPARK",   s:"The Builder",          t:"Earlier than most. More intentional than all of them.",           gc:"You saw this coming. Most people didn't."},
+    es:{n:"LA CHISPA",   s:"La Constructora",      t:"Más temprano que la mayoría. Más intencional que todos.",         gc:"Vos lo veías venir. La mayoría no."} },
+  tide:    { e:"🌊", c:"#4ECDC4", bg:"linear-gradient(135deg,#001a18,#002e2c,#001a18)", br:"rgba(78,205,196,.5)",
+    gifId:"l0MYEqEzwMWFCg8rm",
+    en:{n:"THE TIDE",    s:"The Understated One",  t:"You know more people than you think. None of them know each other.", gc:"Your network is a secret weapon you forgot you had."},
+    es:{n:"LA MAREA",    s:"El Subestimado",       t:"Conocés a más gente de lo que pensás. Ninguno se conoce entre sí.", gc:"Tu red es un arma secreta que te olvidaste de tener."} },
+  scout:   { e:"🦅", c:"#C0392B", bg:"linear-gradient(135deg,#1a0400,#2d0800,#1a0400)", br:"rgba(192,57,43,.5)",
+    gifId:"26BRBKqUiq586bRVm",
+    en:{n:"THE SCOUT",   s:"The Pioneer",          t:"First in, last remembered. That's about to change.",              gc:"You find the room before anyone else knows it exists."},
+    es:{n:"EL EXPLORADOR",s:"El Pionero",          t:"El primero en entrar, el último en ser recordado. Eso está por cambiar.", gc:"Encontrás la sala antes de que alguien más sepa que existe."} },
+  oracle:  { e:"🌙", c:"#8E44AD", bg:"linear-gradient(135deg,#0d0018,#1a0030,#0d0018)", br:"rgba(142,68,173,.5)",
+    gifId:"3ohhwytHcusSCXXOUg",
+    en:{n:"THE ORACLE",  s:"The Quiet Influence",  t:"People remember conversations with you for years. You forgot them the next day.", gc:"You give advice that changes lives and then wonder why they keep calling."},
+    es:{n:"EL ORÁCULO",  s:"La Influencia Silenciosa", t:"La gente recuerda conversaciones con vos por años. Vos las olvidaste al día siguiente.", gc:"Dás consejos que cambian vidas y después te preguntás por qué siguen llamando."} },
+  mirror:  { e:"🎭", c:"#95A5A6", bg:"linear-gradient(135deg,#0a0c0d,#141819,#0a0c0d)", br:"rgba(149,165,166,.5)",
+    gifId:"l2JhpjWPccQhsAMfu",
+    en:{n:"THE MIRROR",  s:"The Adapter",          t:"You become what the room needs. Exhausting but effective.",        gc:"Somehow always the most interesting person to whoever you're talking to."},
+    es:{n:"EL ESPEJO",   s:"El Adaptador",         t:"Te convertís en lo que la sala necesita. Agotador pero efectivo.", gc:"De alguna manera siempre sos la persona más interesante para quien tengas enfrente."} },
+  seed:    { e:"🌱", c:"#27AE60", bg:"linear-gradient(135deg,#020e06,#041a0b,#020e06)", br:"rgba(39,174,96,.5)",
+    gifId:"26ufdipQqU2lhNA4g",
+    en:{n:"THE SEED",    s:"The Long Game Player", t:"Slow to trust. Worth the wait.",                                   gc:"Your network is small, intentional, and quietly terrifying."},
+    es:{n:"LA SEMILLA",  s:"El Jugador a Largo Plazo", t:"Lento para confiar. Vale la pena esperar.",                  gc:"Tu red es chica, intencional, y silenciosamente aterradora."} },
 };
 
 const LPen={1:"The Leader",2:"The Mediator",3:"The Communicator",4:"The Builder",5:"The Explorer",6:"The Nurturer",7:"The Seeker",8:"The Achiever",9:"The Humanitarian",11:"The Visionary",22:"The Master Builder"};
@@ -102,12 +122,59 @@ function saturnReturn(age) {
   return null;
 }
 
-function detectArc(d){const s={w:0,c:0,a:0,sp:0},g=k=>(d[k]||"").toLowerCase();
-  if(/student|estudi/.test(g("occ")))s.sp+=3;if(/founder|startup|emprend/.test(g("occ")))s.c+=2;if(/retir|jubil/.test(g("occ")))s.a+=3;
-  if(/mov|mud|new job|nuevo trabajo/.test(g("chg")))s.c+=2;if(/nothing|stable|nada|tranqui/.test(g("chg")))s.a+=2;
-  if(/always|siempre|all the time/.test(g("conn")))s.w+=4;if(/often|seguido/.test(g("conn")))s.w+=2;
-  const yr=(d.dob||"").match(/\b(19|20)\d{2}\b/);if(yr){const a=new Date().getFullYear()-parseInt(yr[0]);if(a<28)s.sp+=2;if(a>55)s.a+=2;}
-  return[["weaver",s.w],["catalyst",s.c],["anchor",s.a],["spark",s.sp]].sort((a,b)=>b[1]-a[1])[0][0];}
+function detectArc(d) {
+  const sc = {weaver:0,catalyst:0,anchor:0,spark:0,tide:0,scout:0,oracle:0,mirror:0,seed:0};
+  const g = k => (d[k]||"").toLowerCase();
+  const steps = g("steps") + " " + g("social");
+  const methods = [/google/,/whatsapp|telegram|grupo/,/amigo|friend|pregunt|ask/,/linkedin/,/instagram|facebook/].filter(r=>r.test(steps)).length;
+
+  // Age signals
+  const age = parseInt(d.age) || (() => { const yr=(d.dob||"").match(/\b(19|20)\d{2}\b/); return yr ? new Date().getFullYear()-parseInt(yr[0]) : 0; })();
+  if (age > 0 && age < 25) sc.spark += 3;
+  else if (age >= 25 && age < 30) sc.spark += 1;
+  if (age > 55) sc.anchor += 2;
+
+  // Occupation
+  if (/student|estudi/.test(g("occ"))) sc.spark += 3;
+  if (/founder|startup|emprend/.test(g("occ"))) { sc.catalyst += 2; sc.scout += 1; }
+  if (/retir|jubil/.test(g("occ"))) sc.anchor += 4;
+  if (/sales|marketing|ventas|comunic|PR|relacion/.test(g("occ"))) sc.mirror += 2;
+  if (/medic|doctor|nurs|psic|counsel|teach|maest|profe|docen/.test(g("occ"))) sc.oracle += 2;
+
+  // Connector role (conn field)
+  if (/always|siempre|all the time|todo el tiempo/.test(g("conn"))) sc.weaver += 5;
+  else if (/often|seguido|frecuente/.test(g("conn"))) sc.weaver += 3;
+  else if (/sometimes|a veces|de vez en cuando/.test(g("conn"))) sc.oracle += 2;
+  else if (/no\b|nunca|never|not really|rara/.test(g("conn"))) { sc.seed += 2; sc.anchor += 1; }
+
+  // Life change / transition
+  if (/new city|nueva ciudad|mudé|moved|me mudé|reloc/.test(g("chg"))) { sc.scout += 3; sc.catalyst += 1; }
+  else if (/new job|nuevo trabajo|startup|emprend/.test(g("chg"))) { sc.catalyst += 2; sc.scout += 1; }
+  else if (/nothing|stable|nada|tranqui|igual|same|sin cambios/.test(g("chg"))) { sc.anchor += 2; sc.seed += 1; }
+
+  // How they search for people
+  if (methods >= 3) { sc.tide += 3; sc.mirror += 1; }
+  else if (methods === 2) sc.tide += 1;
+  if (/amigo|friend|close|cercano/.test(g("steps")) && !/linkedin|instagram|google/.test(g("steps"))) sc.seed += 2;
+  if (/google/.test(g("steps")) && /mov|mud|new|nuev/.test(g("chg"))) sc.scout += 2;
+
+  // Social media
+  if (/yes|si\b|claro|mucho/.test(g("social"))) { sc.tide += 1; sc.mirror += 2; }
+  if (/linkedin/.test(steps)) sc.mirror += 1;
+
+  // Frequency of needing new contacts
+  if (/often|frequently|seguido|mucho|siempre/.test(g("freq"))) sc.mirror += 2;
+  if (/rarely|almost never|casi nunca|poco|raro/.test(g("freq"))) { sc.seed += 2; sc.anchor += 1; }
+  if (/sometimes|a veces|occasionally/.test(g("freq"))) sc.tide += 1;
+
+  // Missed connection signal
+  if (/yes|si\b|claro|paso|me paso|varias/.test(g("missed"))) sc.oracle += 2;
+
+  // Would try app
+  if (/yes|si\b|claro|absolutely/.test(g("advance"))) { sc.scout += 1; sc.catalyst += 1; }
+
+  return Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0];
+}
 
 const isNo=s=>/^no\b|nunca|never|not really|nope|para nada/.test((s||"").toLowerCase().trim());
 const isYes=s=>/si\b|yes|claro|absolutely|definitely|por supuesto/.test((s||"").toLowerCase());
@@ -289,20 +356,37 @@ async function finalize(lang, history) {
     : "You are a personality guide. Specific, mystical, shareable. NEVER surveys. Profile text only.";
 
   const p = lang==="es"
-    ? "Perfil para "+n+". Arquetipo: "+AL.n+". Camino de Vida "+lp+" ("+lpn+")."+(signName?" Sol en "+signName+".":"")+(saturnNote?" "+saturnNote:"")
-      +"\n\nDATOS REALES:\n"+sum
-      +"\n\nFORMATO — exactamente 3 secciones. CADA SECCIÓN: UNA SOLA ORACIÓN. Corta. Específica. No genérica. Mística. Algo que haga que quieran mandárselo a alguien.\n\n"
-      +"🎁 TU DON SOCIAL\n[1 oración MUY específica con detalles reales de esta persona. Que sienta que la leyeron.]\n\n"
-      +"⚡ TU PUNTO CIEGO\n[1 oración honesta, con algo concreto de sus datos. Suave pero precisa.]\n\n"
-      +"😄 LA VERDAD QUE NADIE TE DICE\n[1 línea. Incomodamente específica. Combina su signo"+(signName?" "+signName:"")+", arquetipo "+AL.n+", y un dato real. Que se rían nerviosamente y la reenvíen.]"
-    : "Profile for "+n+". Archetype: "+AL.n+". Life Path "+lp+" ("+lpn+")."+(signName?" Sun in "+signName+".":"")+(saturnNote?" "+saturnNote:"")
-      +"\n\nREAL DATA:\n"+sum
-      +"\n\nFORMAT — exactly 3 sections. EACH SECTION: ONE SENTENCE ONLY. Short. Specific. Not generic. Mystical. Something they'll want to send to someone.\n\n"
-      +"🎁 YOUR SOCIAL GIFT\n[1 sentence using real specific details from this person. Should feel like you read their mind.]\n\n"
-      +"⚡ YOUR BLIND SPOT\n[1 honest sentence grounded in something concrete from their data.]\n\n"
-      +"😄 THE TRUTH NOBODY TELLS YOU\n[1 line. Uncomfortably specific. Combine their sign"+(signName?" "+signName:"")+", archetype "+AL.n+", and a real data point. Make them laugh nervously and immediately forward it.]";
+    ? "Escribí un perfil para "+n+". Arquetipo: "+AL.n+". Camino de Vida "+lp+" ("+lpn+")."+(signName?" Sol en "+signName+".":"")+(saturnNote?" "+saturnNote:"")
+      +"\n\nDATOS DE LA CONVERSACIÓN:\n"+sum
+      +"\n\nREGLAS ESTRICTAS — si las rompés, el perfil falla:\n"
+      +"1. NUNCA repitas hechos directamente. 'Vivís en X y trabajás de Y' es un fracaso total.\n"
+      +"2. Cruzá 2-3 datos inesperados y decí lo que revelan JUNTOS — no los hechos, sino la verdad detrás de ellos.\n"
+      +"3. Escribí como una tarotista que también tiene sus notas de terapia: precisa, un poco incómoda, cálida pero sin edulcorar.\n"
+      +"4. Usá voseo argentino natural. Directo. No adulador.\n"
+      +"5. Cada sección: MÁXIMO 2 oraciones cortas.\n\n"
+      +"FORMATO — exactamente 3 secciones:\n\n"
+      +"🎁 TU DON SOCIAL\n"
+      +"Cruzá su ocupación, cómo encuentra gente, y su rol de conector para revelar su poder subyacente — no lo que hace, sino por qué funciona. Máx 2 oraciones.\n\n"
+      +"⚡ TU PUNTO CIEGO\n"
+      +"Usá su patrón de búsqueda O su respuesta sobre conexiones perdidas para nombrar algo que no ve de sí mismo. No un defecto — una fortaleza oculta que no usa. 1 oración.\n\n"
+      +"😄 LA VERDAD QUE NADIE TE DICE\n"
+      +"1 línea. Savage y específica. Combiná su signo solar"+(signName?" ("+signName+")":" (si lo sabés)")+", su arquetipo "+AL.n+", y un dato concreto de la conversación. Que la lea, haga pausa, y se la mande a alguien ahora mismo."
+    : "Write a profile for "+n+". Archetype: "+AL.n+". Life Path "+lp+" ("+lpn+")."+(signName?" Sun in "+signName+".":"")+(saturnNote?" "+saturnNote:"")
+      +"\n\nCONVERSATION DATA:\n"+sum
+      +"\n\nSTRICT RULES — break these and the profile fails:\n"
+      +"1. NEVER repeat facts back. 'You live in X and work as Y' is a complete failure.\n"
+      +"2. Cross-reference 2-3 unexpected data points and say what they reveal TOGETHER — not the facts, but the truth behind them.\n"
+      +"3. Write like a tarot reader who also has their therapy notes: precise, slightly uncomfortable, warm but not soft.\n"
+      +"4. Each section: MAX 2 short sentences.\n\n"
+      +"FORMAT — exactly 3 sections:\n\n"
+      +"🎁 YOUR SOCIAL GIFT\n"
+      +"Cross-reference their occupation, how they find people, and their connector role to reveal their underlying power — not what they do, but why it works. Max 2 sentences.\n\n"
+      +"⚡ YOUR BLIND SPOT\n"
+      +"Use their search pattern OR their missed-connection answer to name the one thing they don't see about themselves. Not a flaw — a hidden strength they're underusing. 1 sentence.\n\n"
+      +"😄 THE TRUTH NOBODY TELLS YOU\n"
+      +"1 line. Savage and specific. Combine their sun sign"+(signName?" ("+signName+")":" (if known)")+", archetype "+AL.n+", and one real data point from the conversation. The kind of line they read, pause, then immediately forward to someone.";
 
-  let report = await rawCall(sys, [{role:"user",content:p}], 350);
+  let report = await rawCall(sys, [{role:"user",content:p}], 450);
   if (!report) {
     report = lang==="es"
       ? "🎁 TU DON SOCIAL\nTenes una manera natural de entender lo que la gente necesita antes de que lo digan. Conectas con proposito, no por accidente.\n\n⚡ TU PUNTO CIEGO\nSubestimas lo que ya tenes en tu red.\n\n🔢 Numero de vida "+lp+" — "+lpn+".\nConectas con intencion.\n\n😄 LA VERDAD QUE NADIE TE DICE\nSos la persona a la que todos llaman cuando necesitan algo y la ultima a la que se le agradece. Clasico."
