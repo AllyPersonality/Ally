@@ -1,0 +1,9 @@
+node_modules/
+.env
+dist/
+data.json
+ally.db
+*.db-shm
+*.db-wal
+.DS_Store
+.claude/
