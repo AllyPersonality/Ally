@@ -2,17 +2,21 @@ import { useState, useRef, useEffect } from "react";
 
 const ARC = {
   weaver:  { e:"🕸️", c:"#C9A84C", bg:"linear-gradient(135deg,#1a1200,#2d1f00,#1a1200)", br:"rgba(201,168,76,.5)",
-    en:{n:"THE WEAVER",  s:"The Connector",  t:"Everyone's calling you. You're not always picking up."},
-    es:{n:"EL TEJEDOR",  s:"El Conector",    t:"Todo el mundo te llama. No siempre atendes."} },
+    gif:"https://media.giphy.com/media/l0Exdm9UgTNmqVWLK/giphy.gif",
+    en:{n:"THE WEAVER",  s:"The Connector",  t:"Everyone's calling you. You're not always picking up.",  gc:"Your phone has been ringing. All of them."},
+    es:{n:"EL TEJEDOR",  s:"El Conector",    t:"Todo el mundo te llama. No siempre atendes.",            gc:"Tu teléfono no para. Todos."} },
   catalyst:{ e:"🔥", c:"#E8714A", bg:"linear-gradient(135deg,#1a0800,#2d1200,#1a0800)", br:"rgba(232,113,74,.5)",
-    en:{n:"THE CATALYST",s:"The Mover",      t:"Always in motion. Occasionally lost. Usually fine."},
-    es:{n:"EL CATALIZADOR",s:"El Motor",     t:"Siempre en movimiento. Generalmente bien."} },
+    gif:"https://media.giphy.com/media/QBd2kLB74zFUl2MR1g/giphy.gif",
+    en:{n:"THE CATALYST",s:"The Mover",      t:"Always in motion. Occasionally lost. Usually fine.",     gc:"Chaotic. Effective. Somehow fine."},
+    es:{n:"EL CATALIZADOR",s:"El Motor",     t:"Siempre en movimiento. Generalmente bien.",               gc:"Caótico. Efectivo. Misteriosamente bien."} },
   anchor:  { e:"⚓", c:"#7BAFC4", bg:"linear-gradient(135deg,#001018,#001a28,#001018)", br:"rgba(123,175,196,.5)",
-    en:{n:"THE ANCHOR",  s:"The Foundation", t:"You don't rush. Things come to you."},
-    es:{n:"EL ANCLA",    s:"La Base",        t:"No te apuras. Las cosas llegan a vos."} },
+    gif:"https://media.giphy.com/media/3oEjI9DSFxHB5aJzha/giphy.gif",
+    en:{n:"THE ANCHOR",  s:"The Foundation", t:"You don't rush. Things come to you.",                    gc:"They'll figure it out. You already have."},
+    es:{n:"EL ANCLA",    s:"La Base",        t:"No te apuras. Las cosas llegan a vos.",                  gc:"Ellos lo van a entender. Vos ya lo sabés."} },
   spark:   { e:"⚡", c:"#8DC47A", bg:"linear-gradient(135deg,#091400,#122400,#091400)", br:"rgba(141,196,122,.5)",
-    en:{n:"THE SPARK",   s:"The Builder",    t:"Earlier than most. More intentional than all of them."},
-    es:{n:"LA CHISPA",   s:"La Constructora",t:"Mas temprano que la mayoria. Mas intencional que todos."} },
+    gif:"https://media.giphy.com/media/xT5LMHxhOfscxv7CeQ/giphy.gif",
+    en:{n:"THE SPARK",   s:"The Builder",    t:"Earlier than most. More intentional than all of them.",  gc:"You saw this coming. Most people didn't."},
+    es:{n:"LA CHISPA",   s:"La Constructora",t:"Mas temprano que la mayoria. Mas intencional que todos.",gc:"Vos lo veías venir. La mayoría no."} },
 };
 
 const LPen={1:"The Leader",2:"The Mediator",3:"The Communicator",4:"The Builder",5:"The Explorer",6:"The Nurturer",7:"The Seeker",8:"The Achiever",9:"The Humanitarian",11:"The Visionary",22:"The Master Builder"};
@@ -285,22 +289,20 @@ async function finalize(lang, history) {
     : "You are a personality guide. Specific, mystical, shareable. NEVER surveys. Profile text only.";
 
   const p = lang==="es"
-    ? "Perfil para "+n+". Tipo: "+AL.n+" ("+AL.s+"). Camino de Vida "+lp+" — "+lpn+"."+(signName?"\nSol en "+signName+".":"")+(saturnNote?"\n"+saturnNote:"")
-      +"\n\nDATOS:\n"+sum
-      +"\n\nFORMATO EXACTO — 4 secciones, sin headers extra:\n\n"
-      +"🎁 TU DON SOCIAL\n[2 oraciones MUY especificas usando datos reales de esta persona. No genericas.]\n\n"
-      +"⚡ TU PUNTO CIEGO\n[1 oracion honesta y amable.]\n\n"
-      +"🔢 Numero de vida "+lp+" — "+lpn+".\n[1 oracion sobre como conecta esta persona especificamente.]\n\n"
-      +"😄 LA VERDAD QUE NADIE TE DICE\n[1 linea. Tiene que sentirse incomodamente especifica — como si supiera algo que nadie mas diria. Combina su signo solar"+(signName?" ("+signName+")":"")+", su arquetipo "+AL.n+", y algo real de sus datos. Que quieran mandarsela a alguien ahora mismo.]"
-    : "Profile for "+n+". Type: "+AL.n+" ("+AL.s+"). Life Path "+lp+" — "+lpn+"."+(signName?"\nSun in "+signName+".":"")+(saturnNote?"\n"+saturnNote:"")
-      +"\n\nDATA:\n"+sum
-      +"\n\nEXACT FORMAT — 4 sections, no extra headers:\n\n"
-      +"🎁 YOUR SOCIAL GIFT\n[2 VERY specific sentences using real details from this person. Not generic.]\n\n"
-      +"⚡ YOUR BLIND SPOT\n[1 honest, gentle sentence.]\n\n"
-      +"🔢 Life number "+lp+" — "+lpn+".\n[1 sentence about how this specific person connects.]\n\n"
-      +"😄 THE TRUTH NOBODY TELLS YOU\n[1 line. Make it feel uncomfortably specific — like it knows something nobody else would say. Combine their sun sign"+(signName?" ("+signName+")":"")+", their archetype "+AL.n+", and something real from their data. Make it something they HAVE to send to someone right now.]";
+    ? "Perfil para "+n+". Arquetipo: "+AL.n+". Camino de Vida "+lp+" ("+lpn+")."+(signName?" Sol en "+signName+".":"")+(saturnNote?" "+saturnNote:"")
+      +"\n\nDATOS REALES:\n"+sum
+      +"\n\nFORMATO — exactamente 3 secciones. CADA SECCIÓN: UNA SOLA ORACIÓN. Corta. Específica. No genérica. Mística. Algo que haga que quieran mandárselo a alguien.\n\n"
+      +"🎁 TU DON SOCIAL\n[1 oración MUY específica con detalles reales de esta persona. Que sienta que la leyeron.]\n\n"
+      +"⚡ TU PUNTO CIEGO\n[1 oración honesta, con algo concreto de sus datos. Suave pero precisa.]\n\n"
+      +"😄 LA VERDAD QUE NADIE TE DICE\n[1 línea. Incomodamente específica. Combina su signo"+(signName?" "+signName:"")+", arquetipo "+AL.n+", y un dato real. Que se rían nerviosamente y la reenvíen.]"
+    : "Profile for "+n+". Archetype: "+AL.n+". Life Path "+lp+" ("+lpn+")."+(signName?" Sun in "+signName+".":"")+(saturnNote?" "+saturnNote:"")
+      +"\n\nREAL DATA:\n"+sum
+      +"\n\nFORMAT — exactly 3 sections. EACH SECTION: ONE SENTENCE ONLY. Short. Specific. Not generic. Mystical. Something they'll want to send to someone.\n\n"
+      +"🎁 YOUR SOCIAL GIFT\n[1 sentence using real specific details from this person. Should feel like you read their mind.]\n\n"
+      +"⚡ YOUR BLIND SPOT\n[1 honest sentence grounded in something concrete from their data.]\n\n"
+      +"😄 THE TRUTH NOBODY TELLS YOU\n[1 line. Uncomfortably specific. Combine their sign"+(signName?" "+signName:"")+", archetype "+AL.n+", and a real data point. Make them laugh nervously and immediately forward it.]";
 
-  let report = await rawCall(sys, [{role:"user",content:p}], 800);
+  let report = await rawCall(sys, [{role:"user",content:p}], 350);
   if (!report) {
     report = lang==="es"
       ? "🎁 TU DON SOCIAL\nTenes una manera natural de entender lo que la gente necesita antes de que lo digan. Conectas con proposito, no por accidente.\n\n⚡ TU PUNTO CIEGO\nSubestimas lo que ya tenes en tu red.\n\n🔢 Numero de vida "+lp+" — "+lpn+".\nConectas con intencion.\n\n😄 LA VERDAD QUE NADIE TE DICE\nSos la persona a la que todos llaman cuando necesitan algo y la ultima a la que se le agradece. Clasico."
@@ -547,6 +549,14 @@ export default function BotPage() {
                     <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#F2EDE6",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
                     <div style={{background:arc.c+"15",border:"1px solid "+arc.c+"40",borderRadius:12,padding:"13px 18px",fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontStyle:"italic",color:"rgba(242,237,230,.9)",lineHeight:1.5}}>"{AL.t}"</div>
+
+                    {/* GIF */}
+                    {arc.gif && (
+                      <div style={{marginTop:16,borderRadius:14,overflow:"hidden",border:"1px solid "+arc.c+"30",position:"relative"}}>
+                        <img src={arc.gif} alt="" style={{width:"100%",maxHeight:220,objectFit:"cover",display:"block"}} onError={e=>{e.target.parentElement.style.display="none";}}/>
+                        <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"10px 14px",background:"linear-gradient(transparent,rgba(0,0,0,.75))",fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontStyle:"italic",color:"rgba(242,237,230,.9)",textAlign:"left"}}>{AL.gc}</div>
+                      </div>
+                    )}
 
                     {/* Life Path */}
                     <div style={{marginTop:14,display:"inline-flex",alignItems:"center",gap:8,background:"rgba(242,237,230,.06)",border:"1px solid rgba(242,237,230,.12)",borderRadius:20,padding:"5px 14px"}}>
