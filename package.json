@@ -2,6 +2,7 @@
   "name": "ally",
   "version": "1.0.0",
   "type": "module",
+  "engines": { "node": ">=20" },
   "scripts": {
     "dev": "concurrently \"node --env-file=.env server.js\" \"vite\"",
     "build": "vite build",
