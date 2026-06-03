@@ -100,6 +100,17 @@ export default function DashboardPage() {
   const advNo      = resps.filter(r => isNo(r.advance||""));
   const advMaybe   = resps.filter(r => isMaybe(r.advance||""));
 
+  // Minutes spent typing — the session id is "r:<startMs>" and ts is the last
+  // save, so duration = ts − start. Ignore broken / absurd values (>3h).
+  const typingMins = r => {
+    const m = /^r:(\d+)$/.exec(r.id || "");
+    if (!m) return null;
+    const mins = (Date.parse(r.ts) - parseInt(m[1])) / 60000;
+    return (mins > 0 && mins <= 180) ? mins : null;
+  };
+  const allMins  = resps.map(typingMins).filter(v => v != null);
+  const avgMins  = allMins.length ? allMins.reduce((a,b)=>a+b,0) / allMins.length : 0;
+
   const searchUsed = {
     "Ask friends":  resps.filter(r => /amigo|friend|pregunt|ask|conocid/.test((r.steps||"").toLowerCase())).length,
     "WhatsApp":     resps.filter(r => /whatsapp|grupo|group|telegram/.test((r.steps||"").toLowerCase())).length,
@@ -120,9 +131,33 @@ export default function DashboardPage() {
   resps.forEach(r => { if (isRealCity(r.city)) { const c=r.city.trim(); cities[c]=(cities[c]||0)+1; } });
   const cityData = Object.entries(cities).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name,value}));
 
-  const occs = {};
-  resps.forEach(r => { if (r.occ) { const o=r.occ.trim().slice(0,35); occs[o]=(occs[o]||0)+1; } });
-  const occData = Object.entries(occs).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name,value}));
+  // Occupation segments — keyword-matched, grouped into clean buckets.
+  // Student is independent: someone who works AND studies is counted in both
+  // Student and their (first-matching) work category.
+  const OCC_WORK = [
+    ["Freelancer",                  /freelance|independent|independiente|autónomo|autonomo/i],
+    ["Big Corporate",               /corporate|company|empresa|manager|director|executive|employed|trabajo en/i],
+    ["Intern",                      /intern|pasante|internship|práctica|practica/i],
+    ["Entrepreneur / Startup",      /founder|startup|emprendedor|entrepreneur|own business|negocio propio/i],
+    ["Teacher / Educator",          /teacher|profesor|maestra|docente|educator|teaching/i],
+    ["Scientist / Researcher",      /scientist|researcher|investigador|phd|lab|ciencia/i],
+    ["Retired",                     /retired|jubilado|jubilada|retiro/i],
+    ["Unemployed / Figuring it out",/unemployed|desempleado|figuring|looking for|between jobs|sin trabajo|neet/i],
+  ];
+  const OCC_STUDENT = /student|studying|university|college|estudio|estudiante|carrera|facultad/i;
+  const OCC_ORDER = ["Student", ...OCC_WORK.map(([n])=>n), "Other"];
+  const occCounts = Object.fromEntries(OCC_ORDER.map(n=>[n,0]));
+  resps.forEach(r => {
+    const o = (r.occ||"").trim();
+    if (!o) return;
+    const isStudent = OCC_STUDENT.test(o);
+    const work = OCC_WORK.find(([,re])=>re.test(o));
+    if (isStudent) occCounts["Student"]++;
+    if (work) occCounts[work[0]]++;
+    if (!isStudent && !work) occCounts["Other"]++;
+  });
+  const occData = OCC_ORDER.map(name=>({name, value:occCounts[name]}))
+    .filter(d=>d.value>0).sort((a,b)=>b.value-a.value);
 
   const arcData = Object.entries(resps.reduce((acc,r)=>{ if(r.arc){acc[r.arc]=(acc[r.arc]||0)+1;} return acc; },{}))
     .map(([name,value])=>({name:ARC_LABELS[name]||name, value, color:ARC_COLORS[name]||"#666"}));
@@ -199,6 +234,7 @@ export default function DashboardPage() {
                 {label:"Active connectors",val:connectors.length, sub:"Claudia profile base", c:"#C9A84C"},
                 {label:"Want to try app",  val:advYes.length,     sub:pct(advYes.length,total)+" Block I yes", c:"#8DC47A"},
                 {label:"Said no",          val:advNo.length,      sub:pct(advNo.length,total)+" Block I no", c:"rgba(232,113,74,.7)"},
+                {label:"Avg time typing",  val:allMins.length?avgMins.toFixed(1):"—", sub:allMins.length?"min / session · n="+allMins.length:"no timing data", c:"#7BAFC4"},
               ].map(s=>(
                 <div key={s.label} className="card">
                   <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:600,color:s.c,lineHeight:1,marginBottom:6}}>{s.val}</div>
@@ -255,10 +291,10 @@ export default function DashboardPage() {
                 <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Top Occupations</div>
                 {occData.length>0?(
                   <ResponsiveContainer width="100%" height={Math.max(180, occData.length * 36)}>
-                    <BarChart data={occData.map(d=>({...d, name: d.name.length>22 ? d.name.slice(0,21)+"…" : d.name}))}
+                    <BarChart data={occData}
                       layout="vertical" margin={{left:4,right:24,top:4,bottom:4}} barSize={14} barCategoryGap="35%">
                       <XAxis type="number" allowDecimals={false} tickCount={Math.min(occData.reduce((m,d)=>Math.max(m,d.value),0)+1,6)} tick={{fill:"rgba(242,237,230,.3)",fontSize:10}} axisLine={false} tickLine={false}/>
-                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.65)",fontSize:10,width:140}} axisLine={false} tickLine={false} width={148}/>
+                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.65)",fontSize:10}} axisLine={false} tickLine={false} width={168} interval={0}/>
                       <Tooltip contentStyle={tip}/>
                       <Bar dataKey="value" fill="#8DC47A" radius={[0,3,3,0]}/>
                     </BarChart>
@@ -312,6 +348,7 @@ export default function DashboardPage() {
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:3}}>
                       <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:500,color:"#F2EDE6"}}>{r.name||"Anonymous"}</div>
                       <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0,marginLeft:8}}>
+                        {typingMins(r)!=null&&<div title="Time typing" style={{fontSize:10,color:"rgba(123,175,196,.7)"}}>⌛ {typingMins(r)<1?"<1":Math.round(typingMins(r))}m</div>}
                         <div style={{fontSize:10,color:"rgba(242,237,230,.3)"}}>{ago(r.ts)}</div>
                         <button className="del-btn" title="Delete" onClick={e=>deleteResp(r.id,e)}>🗑</button>
                       </div>
