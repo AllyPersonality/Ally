@@ -196,7 +196,7 @@ function systemPrompt(lang, stage, collected) {
     "",
     "ALREADY COLLECTED (do not re-ask these): "+(collected||"nothing yet")+".",
     "",
-    "EXPLORE naturally, only fields not yet collected: name; exact age; gender (open question, no options); date of birth (never explain why); city; occupation; whether they like their work; growth ambitions; life changes or transitions; how often they need new contacts; how they find people when they need them; whether they ever realized too late a contact could have helped; whether people come to them for introductions; whether they would try a tool that finds the right person inside their own contacts.",
+    "EXPLORE naturally, only fields not yet collected: name; exact age; gender (open question, no options); date of birth (never explain why); city (a place name — if they answer with something that is clearly NOT a place name like a feeling or sentence, warmly acknowledge it and ask again: 'Got it — and which city or town are you based in?'); occupation (what they do for work or study — if they answer with 'yes', 'no', a feeling, or something clearly not a job, gently ask what they do for work); whether they like their work; growth ambitions; life changes or transitions; how often they need new contacts; how they find people when they need them; whether they ever realized too late a contact could have helped; whether people come to them for introductions; whether they would try a tool that finds the right person inside their own contacts.",
     "",
     "COMPLETION: after about 14 exchanges end with exactly: 'Perfect [name], calculating your profile now...' and stop.",
     "",
@@ -216,6 +216,28 @@ function valid(text) {
   if (qs === 0) return false;
   if (qs > 3) return false;
   if (text.split(/[.!?]+/).filter(s => s.trim().length > 3).length > 5) return false;
+  return true;
+}
+
+// ── ANSWER VALIDATION — prevents saving garbage to structured fields ─────────
+const BAD_CITY_WORDS = /\b(enjoy|enjoying|figuring|still|okay|ok|sure|love|hate|feel|going|getting|trying|don't|doesn't|really|great|good|bad|fine|work here|live here|yes\b|no\b|maybe)\b/i;
+
+function isValidForField(field, value) {
+  const v = (value || "").trim();
+  if (!v) return false;
+  if (field === "city") {
+    if (v.length > 30) return false;
+    if (v.split(/\s+/).length > 5) return false;
+    if (BAD_CITY_WORDS.test(v)) return false;
+    if (/[.!?]/.test(v)) return false; // sentence punctuation = not a city
+    return true;
+  }
+  if (field === "occ") {
+    // Reject single-word yes/no/feeling answers
+    if (/^(yes|no|maybe|sure|okay|ok|si\b|nope|claro|yeah|fine|good|bad|great)$/i.test(v)) return false;
+    if (/^(i (really |do )?(enjoy|like|love|hate|feel)|it'?s (great|good|fine|okay))/i.test(v)) return false;
+    return true;
+  }
   return true;
 }
 
@@ -339,7 +361,7 @@ async function finalize(lang, history) {
   let data = {};
   const ext = await rawCall(
     "Extract data from the conversation. Return ONLY valid JSON, no markdown.",
-    [{role:"user",content:"Extract values for keys with clear answers.\nKeys: name, age, gender, dob, city, occ, jobfeel, grow, chg, freq, steps, social, pro, found, srchtime, srchfeel, missed, conn, count, advance\n\nSTRICT RULES:\n- age: exact number only.\n- gender: exactly what they said.\n- city: ONLY a place/location name like 'Buenos Aires', 'Córdoba', 'New York'. NEVER a job title, sentence, or description. Max 3 words. If it is not clearly a place name, leave it out.\n- occ: what they do for work or study — can be a phrase or sentence.\n\nConversation:\n"+convo+"\n\nReturn JSON only."}],
+    [{role:"user",content:"Extract values for keys with clear answers.\nKeys: name, age, gender, dob, city, occ, jobfeel, grow, chg, freq, steps, social, pro, found, srchtime, srchfeel, missed, conn, count, advance\n\nCRITICAL RULES — read carefully before extracting:\n- age: extract the number only (e.g. 28, not 'I am 28').\n- gender: exactly what they said.\n- city: MUST be a place/location name (city, town, neighborhood, country). Max 4 words. Valid examples: 'Buenos Aires', 'Córdoba', 'New York', 'Georgia'. INVALID — do NOT extract if the value contains any of: feelings, verbs, 'enjoy', 'yes', 'no', 'work', 'design', 'build', 'study', 'I am', 'figuring', 'still', or any sentence. When in doubt, leave BLANK.\n- occ: what they do for work or study. Valid: 'graphic designer', 'student', 'software engineer'. INVALID — do NOT extract if it is a single 'yes'/'no', a feeling ('I enjoy it'), or any non-job answer. When in doubt, leave BLANK.\n- Never put a sentence into city. Never put yes/no into occ.\n\nConversation:\n"+convo+"\n\nReturn JSON only."}],
     500
   );
   if (ext) { try { data = JSON.parse(ext.replace(/```json|```/g,"").trim()); } catch {} }
@@ -507,10 +529,12 @@ export default function BotPage() {
     push({role:"user", text});
 
     const nt = turns+1; setTurns(nt);
-    // Use activeField (what the bot was asking about) — not positional index
-    const nd = {...data, [activeField]: text};
+    // Validate answer for the current field before saving
+    const answerValid = isValidForField(activeField, text);
+    const nd = {...data};
+    if (answerValid) nd[activeField] = text;
     setData(nd);
-    // Build collected string only from fields that have real values
+    // Build collected string only from fields with validated values
     const collectedStr = Object.entries(nd).filter(([,v])=>v).map(([k,v])=>k+"="+v).join(", ") || "nothing yet";
     const myName = nd.name || "";
 
@@ -525,11 +549,13 @@ export default function BotPage() {
     setTyping(false);
     push({role:"bot", text:reply});
     setHist([...nh, {role:"assistant", content:reply}]);
-    setTopicI(i => Math.min(i+1, TOPICS.length-1));
+    if (answerValid) setTopicI(i => Math.min(i+1, TOPICS.length-1));
 
     // Detect what field the bot just asked about → that field captures the NEXT user answer
+    // If the answer was invalid, the AI will re-ask; try to keep tracking the same field
     const detected = detectNextTopic(reply);
     if (detected) setActiveField(detected);
+    else if (!answerValid) setActiveField(activeField); // hold position if invalid answer
     else setActiveField(fallbackNext);
 
     // Save partial after every turn
