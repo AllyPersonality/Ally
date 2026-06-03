@@ -3,80 +3,70 @@ import { useState, useRef, useEffect } from "react";
 const ARC = {
   weaver:  { e:"🕸️", c:"#C9A84C", bg:"linear-gradient(135deg,#1a1200,#2d1f00,#1a1200)", br:"rgba(201,168,76,.5)",
     gifId:"l2JhpjWPccQhsAMfu",
-    en:{n:"THE WEAVER",  s:"The Connector",       t:"Everyone's calling you. You're not always picking up.",           gc:"Your phone has been ringing. All of them."},
     es:{n:"EL TEJEDOR",  s:"El Conector",          t:"Todo el mundo te llama. No siempre atendes.",                    gc:"Tu teléfono no para. Todos."} },
   catalyst:{ e:"🔥", c:"#E8714A", bg:"linear-gradient(135deg,#1a0800,#2d1200,#1a0800)", br:"rgba(232,113,74,.5)",
     gifId:"l3q2K5jinAlChoCLS",
-    en:{n:"THE CATALYST",s:"The Mover",            t:"Always in motion. Occasionally lost. Usually fine.",              gc:"Chaotic. Effective. Somehow fine."},
     es:{n:"EL CATALIZADOR",s:"El Motor",           t:"Siempre en movimiento. Generalmente bien.",                      gc:"Caótico. Efectivo. Misteriosamente bien."} },
   anchor:  { e:"⚓", c:"#7BAFC4", bg:"linear-gradient(135deg,#001018,#001a28,#001018)", br:"rgba(123,175,196,.5)",
     gifId:"26ufdipQqU2lhNA4g",
-    en:{n:"THE ANCHOR",  s:"The Foundation",       t:"You don't rush. Things come to you.",                             gc:"They'll figure it out. You already have."},
     es:{n:"EL ANCLA",    s:"La Base",              t:"No te apurás. Las cosas llegan a vos.",                          gc:"Ellos lo van a entender. Vos ya lo sabés."} },
   spark:   { e:"⚡", c:"#8DC47A", bg:"linear-gradient(135deg,#091400,#122400,#091400)", br:"rgba(141,196,122,.5)",
     gifId:"3ohzdIuqJoo8QdKlnW",
-    en:{n:"THE SPARK",   s:"The Builder",          t:"Earlier than most. More intentional than all of them.",           gc:"You saw this coming. Most people didn't."},
     es:{n:"LA CHISPA",   s:"La Constructora",      t:"Más temprano que la mayoría. Más intencional que todos.",         gc:"Vos lo veías venir. La mayoría no."} },
   tide:    { e:"🌊", c:"#4ECDC4", bg:"linear-gradient(135deg,#001a18,#002e2c,#001a18)", br:"rgba(78,205,196,.5)",
     gifId:"l0MYEqEzwMWFCg8rm",
-    en:{n:"THE TIDE",    s:"The Understated One",  t:"You know more people than you think. None of them know each other.", gc:"Your network is a secret weapon you forgot you had."},
     es:{n:"LA MAREA",    s:"El Subestimado",       t:"Conocés a más gente de lo que pensás. Ninguno se conoce entre sí.", gc:"Tu red es un arma secreta que te olvidaste de tener."} },
   scout:   { e:"🦅", c:"#C0392B", bg:"linear-gradient(135deg,#1a0400,#2d0800,#1a0400)", br:"rgba(192,57,43,.5)",
     gifId:"26BRBKqUiq586bRVm",
-    en:{n:"THE SCOUT",   s:"The Pioneer",          t:"First in, last remembered. That's about to change.",              gc:"You find the room before anyone else knows it exists."},
     es:{n:"EL EXPLORADOR",s:"El Pionero",          t:"El primero en entrar, el último en ser recordado. Eso está por cambiar.", gc:"Encontrás la sala antes de que alguien más sepa que existe."} },
   oracle:  { e:"🌙", c:"#8E44AD", bg:"linear-gradient(135deg,#0d0018,#1a0030,#0d0018)", br:"rgba(142,68,173,.5)",
     gifId:"3ohhwytHcusSCXXOUg",
-    en:{n:"THE ORACLE",  s:"The Quiet Influence",  t:"People remember conversations with you for years. You forgot them the next day.", gc:"You give advice that changes lives and then wonder why they keep calling."},
     es:{n:"EL ORÁCULO",  s:"La Influencia Silenciosa", t:"La gente recuerda conversaciones con vos por años. Vos las olvidaste al día siguiente.", gc:"Dás consejos que cambian vidas y después te preguntás por qué siguen llamando."} },
   mirror:  { e:"🎭", c:"#95A5A6", bg:"linear-gradient(135deg,#0a0c0d,#141819,#0a0c0d)", br:"rgba(149,165,166,.5)",
     gifId:"l2JhpjWPccQhsAMfu",
-    en:{n:"THE MIRROR",  s:"The Adapter",          t:"You become what the room needs. Exhausting but effective.",        gc:"Somehow always the most interesting person to whoever you're talking to."},
     es:{n:"EL ESPEJO",   s:"El Adaptador",         t:"Te convertís en lo que la sala necesita. Agotador pero efectivo.", gc:"De alguna manera siempre sos la persona más interesante para quien tengas enfrente."} },
   seed:    { e:"🌱", c:"#27AE60", bg:"linear-gradient(135deg,#020e06,#041a0b,#020e06)", br:"rgba(39,174,96,.5)",
     gifId:"26ufdipQqU2lhNA4g",
-    en:{n:"THE SEED",    s:"The Long Game Player", t:"Slow to trust. Worth the wait.",                                   gc:"Your network is small, intentional, and quietly terrifying."},
     es:{n:"LA SEMILLA",  s:"El Jugador a Largo Plazo", t:"Lento para confiar. Vale la pena esperar.",                  gc:"Tu red es chica, intencional, y silenciosamente aterradora."} },
 };
 
-const LPen={1:"The Leader",2:"The Mediator",3:"The Communicator",4:"The Builder",5:"The Explorer",6:"The Nurturer",7:"The Seeker",8:"The Achiever",9:"The Humanitarian",11:"The Visionary",22:"The Master Builder"};
 const LPes={1:"El Lider",2:"El Mediador",3:"El Comunicador",4:"El Constructor",5:"El Explorador",6:"El Cuidador",7:"El Buscador",8:"El Realizador",9:"El Humanitario",11:"El Visionario",22:"El Gran Constructor"};
 
 // ── NATAL DATA ───────────────────────────────────────────────────────────────
 const SIGNS = {
-  aries:       {e:"♈",en:"Aries",       es:"Aries"},
-  taurus:      {e:"♉",en:"Taurus",      es:"Tauro"},
-  gemini:      {e:"♊",en:"Gemini",      es:"Géminis"},
-  cancer:      {e:"♋",en:"Cancer",      es:"Cáncer"},
-  leo:         {e:"♌",en:"Leo",         es:"Leo"},
-  virgo:       {e:"♍",en:"Virgo",       es:"Virgo"},
-  libra:       {e:"♎",en:"Libra",       es:"Libra"},
-  scorpio:     {e:"♏",en:"Scorpio",     es:"Escorpio"},
-  sagittarius: {e:"♐",en:"Sagittarius", es:"Sagitario"},
-  capricorn:   {e:"♑",en:"Capricorn",   es:"Capricornio"},
-  aquarius:    {e:"♒",en:"Aquarius",    es:"Acuario"},
-  pisces:      {e:"♓",en:"Pisces",      es:"Piscis"},
+  aries:       {e:"♈",es:"Aries"},
+  taurus:      {e:"♉",es:"Tauro"},
+  gemini:      {e:"♊",es:"Géminis"},
+  cancer:      {e:"♋",es:"Cáncer"},
+  leo:         {e:"♌",es:"Leo"},
+  virgo:       {e:"♍",es:"Virgo"},
+  libra:       {e:"♎",es:"Libra"},
+  scorpio:     {e:"♏",es:"Escorpio"},
+  sagittarius: {e:"♐",es:"Sagitario"},
+  capricorn:   {e:"♑",es:"Capricornio"},
+  aquarius:    {e:"♒",es:"Acuario"},
+  pisces:      {e:"♓",es:"Piscis"},
 };
 
 const SIGN_TRAIT = {
-  aries:       {en:"You make connections on impulse. They somehow always work out.",                         es:"Conectás por impulso. De alguna manera siempre funciona."},
-  taurus:      {en:"People trust you before you've said anything. That's the whole game.",                   es:"La gente te tiene confianza antes de que abras la boca. Ese es todo el juego."},
-  gemini:      {en:"You know someone everywhere. The hard part is remembering what you told them.",          es:"Conocés a alguien en todos lados. Lo difícil es recordar qué le dijiste."},
-  cancer:      {en:"Your inner circle is small, fiercely chosen, and would move mountains for you.",         es:"Tu círculo íntimo es chico, elegido con fiereza, y movería montañas por vos."},
-  leo:         {en:"You don't find your people — they find you.",                                            es:"No encontrás a tu gente — te encuentra a vos."},
-  virgo:       {en:"You know exactly who to call for every problem. Most people don't even notice.",         es:"Sabés exactamente a quién llamar para cada problema. La mayoría ni lo nota."},
-  libra:       {en:"You are the person both sides call when they need a bridge.",                            es:"Sos la persona a la que los dos lados llaman cuando necesitan un puente."},
-  scorpio:     {en:"Your connections are few but they open doors nobody else can.",                          es:"Tus conexiones son pocas pero abren puertas que nadie más puede abrir."},
-  sagittarius: {en:"You collect people across time zones without even trying.",                              es:"Coleccionás personas en todos los husos horarios sin querer."},
-  capricorn:   {en:"Every connection you build is a slow investment that compounds for years.",              es:"Cada conexión que construís es una inversión lenta que crece por años."},
-  aquarius:    {en:"You don't network — you find your people and then you build something.",                 es:"No hacés networking — encontrás a tu gente y después construís algo."},
-  pisces:      {en:"Strangers tell you their secrets. You already know this.",                               es:"Los desconocidos te cuentan sus secretos. Ya lo sabés."},
+  aries:       {es:"Conectás por impulso. De alguna manera siempre funciona."},
+  taurus:      {es:"La gente te tiene confianza antes de que abras la boca. Ese es todo el juego."},
+  gemini:      {es:"Conocés a alguien en todos lados. Lo difícil es recordar qué le dijiste."},
+  cancer:      {es:"Tu círculo íntimo es chico, elegido con fiereza, y movería montañas por vos."},
+  leo:         {es:"No encontrás a tu gente — te encuentra a vos."},
+  virgo:       {es:"Sabés exactamente a quién llamar para cada problema. La mayoría ni lo nota."},
+  libra:       {es:"Sos la persona a la que los dos lados llaman cuando necesitan un puente."},
+  scorpio:     {es:"Tus conexiones son pocas pero abren puertas que nadie más puede abrir."},
+  sagittarius: {es:"Coleccionás personas en todos los husos horarios sin querer."},
+  capricorn:   {es:"Cada conexión que construís es una inversión lenta que crece por años."},
+  aquarius:    {es:"No hacés networking — encontrás a tu gente y después construís algo."},
+  pisces:      {es:"Los desconocidos te cuentan sus secretos. Ya lo sabés."},
 };
 
 const SATURN_MSG = {
-  approaching: {en:"🪐 Saturn Return incoming (you're close) — you're sensing it already: the life you're building doesn't quite fit anymore.",    es:"🪐 Retorno de Saturno en camino — ya lo sentís: la vida que construís ya no te termina de cerrar."},
-  first:       {en:"🪐 Saturn Return active (27–30) — the version of you that everyone expects is on borrowed time.",                              es:"🪐 Retorno de Saturno activo (27–30) — la versión tuya que todos esperan está viviendo de prestado."},
-  second:      {en:"🪐 Second Saturn Return (56–60) — you've done this before. You already know what doesn't fit won't ever fit.",                es:"🪐 Segundo Retorno de Saturno (56–60) — ya pasaste por esto. Ya sabés: lo que no encaja ahora, nunca va a encajar."},
+  approaching: {es:"🪐 Retorno de Saturno en camino — ya lo sentís: la vida que construís ya no te termina de cerrar."},
+  first:       {es:"🪐 Retorno de Saturno activo (27–30) — la versión tuya que todos esperan está viviendo de prestado."},
+  second:      {es:"🪐 Segundo Retorno de Saturno (56–60) — ya pasaste por esto. Ya sabés: lo que no encaja ahora, nunca va a encajar."},
 };
 
 function calcLP(s){const d=(s||"").replace(/\D/g,"").split("").map(Number);if(!d.length)return 5;let n=d.reduce((a,b)=>a+b,0);while(n>9&&n!==11&&n!==22)n=String(n).split("").map(Number).reduce((a,b)=>a+b,0);return n||5;}
@@ -126,7 +116,7 @@ function detectArc(d) {
   const sc = {weaver:0,catalyst:0,anchor:0,spark:0,tide:0,scout:0,oracle:0,mirror:0,seed:0};
   const g = k => (d[k]||"").toLowerCase();
   const steps = g("steps") + " " + g("social");
-  const methods = [/google/,/whatsapp|telegram|grupo/,/amigo|friend|pregunt|ask/,/linkedin/,/instagram|facebook/].filter(r=>r.test(steps)).length;
+  const methods = [/google/,/whatsapp|telegram|grupo/,/amigo|pregunt/,/linkedin/,/instagram|facebook/].filter(r=>r.test(steps)).length;
 
   // Age signals
   const age = parseInt(d.age) || (() => { const yr=(d.dob||"").match(/\b(19|20)\d{2}\b/); return yr ? new Date().getFullYear()-parseInt(yr[0]) : 0; })();
@@ -135,52 +125,52 @@ function detectArc(d) {
   if (age > 55) sc.anchor += 2;
 
   // Occupation
-  if (/student|estudi/.test(g("occ"))) sc.spark += 3;
+  if (/estudi/.test(g("occ"))) sc.spark += 3;
   if (/founder|startup|emprend/.test(g("occ"))) { sc.catalyst += 2; sc.scout += 1; }
-  if (/retir|jubil/.test(g("occ"))) sc.anchor += 4;
-  if (/sales|marketing|ventas|comunic|PR|relacion/.test(g("occ"))) sc.mirror += 2;
-  if (/medic|doctor|nurs|psic|counsel|teach|maest|profe|docen/.test(g("occ"))) sc.oracle += 2;
+  if (/jubil/.test(g("occ"))) sc.anchor += 4;
+  if (/ventas|marketing|comunic|relacion/.test(g("occ"))) sc.mirror += 2;
+  if (/medic|psic|maest|profe|docen/.test(g("occ"))) sc.oracle += 2;
 
   // Connector role (conn field)
-  if (/always|siempre|all the time|todo el tiempo/.test(g("conn"))) sc.weaver += 5;
-  else if (/often|seguido|frecuente/.test(g("conn"))) sc.weaver += 3;
-  else if (/sometimes|a veces|de vez en cuando/.test(g("conn"))) sc.oracle += 2;
-  else if (/no\b|nunca|never|not really|rara/.test(g("conn"))) { sc.seed += 2; sc.anchor += 1; }
+  if (/siempre|todo el tiempo/.test(g("conn"))) sc.weaver += 5;
+  else if (/seguido|frecuente/.test(g("conn"))) sc.weaver += 3;
+  else if (/a veces|de vez en cuando/.test(g("conn"))) sc.oracle += 2;
+  else if (/no\b|nunca|rara/.test(g("conn"))) { sc.seed += 2; sc.anchor += 1; }
 
   // Life change / transition
-  if (/new city|nueva ciudad|mudé|moved|me mudé|reloc/.test(g("chg"))) { sc.scout += 3; sc.catalyst += 1; }
-  else if (/new job|nuevo trabajo|startup|emprend/.test(g("chg"))) { sc.catalyst += 2; sc.scout += 1; }
-  else if (/nothing|stable|nada|tranqui|igual|same|sin cambios/.test(g("chg"))) { sc.anchor += 2; sc.seed += 1; }
+  if (/nueva ciudad|mudé|me mudé|reloc/.test(g("chg"))) { sc.scout += 3; sc.catalyst += 1; }
+  else if (/nuevo trabajo|startup|emprend/.test(g("chg"))) { sc.catalyst += 2; sc.scout += 1; }
+  else if (/nada|tranqui|igual|sin cambios/.test(g("chg"))) { sc.anchor += 2; sc.seed += 1; }
 
   // How they search for people
   if (methods >= 3) { sc.tide += 3; sc.mirror += 1; }
   else if (methods === 2) sc.tide += 1;
-  if (/amigo|friend|close|cercano/.test(g("steps")) && !/linkedin|instagram|google/.test(g("steps"))) sc.seed += 2;
-  if (/google/.test(g("steps")) && /mov|mud|new|nuev/.test(g("chg"))) sc.scout += 2;
+  if (/amigo|cercano/.test(g("steps")) && !/linkedin|instagram|google/.test(g("steps"))) sc.seed += 2;
+  if (/google/.test(g("steps")) && /mud|nuev/.test(g("chg"))) sc.scout += 2;
 
   // Social media
-  if (/yes|si\b|claro|mucho/.test(g("social"))) { sc.tide += 1; sc.mirror += 2; }
+  if (/si\b|claro|mucho/.test(g("social"))) { sc.tide += 1; sc.mirror += 2; }
   if (/linkedin/.test(steps)) sc.mirror += 1;
 
   // Frequency of needing new contacts
-  if (/often|frequently|seguido|mucho|siempre/.test(g("freq"))) sc.mirror += 2;
-  if (/rarely|almost never|casi nunca|poco|raro/.test(g("freq"))) { sc.seed += 2; sc.anchor += 1; }
-  if (/sometimes|a veces|occasionally/.test(g("freq"))) sc.tide += 1;
+  if (/seguido|mucho|siempre/.test(g("freq"))) sc.mirror += 2;
+  if (/casi nunca|poco|raro/.test(g("freq"))) { sc.seed += 2; sc.anchor += 1; }
+  if (/a veces/.test(g("freq"))) sc.tide += 1;
 
   // Missed connection signal
-  if (/yes|si\b|claro|paso|me paso|varias/.test(g("missed"))) sc.oracle += 2;
+  if (/si\b|claro|paso|me paso|varias/.test(g("missed"))) sc.oracle += 2;
 
   // Would try app
-  if (/yes|si\b|claro|absolutely/.test(g("advance"))) { sc.scout += 1; sc.catalyst += 1; }
+  if (/si\b|claro/.test(g("advance"))) { sc.scout += 1; sc.catalyst += 1; }
 
   return Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0];
 }
 
-const isNo=s=>/^no\b|nunca|never|not really|nope|para nada/.test((s||"").toLowerCase().trim());
-const isYes=s=>/si\b|yes|claro|absolutely|definitely|por supuesto/.test((s||"").toLowerCase());
+const isNo=s=>/^no\b|nunca|para nada/.test((s||"").toLowerCase().trim());
+const isYes=s=>/si\b|claro|por supuesto/.test((s||"").toLowerCase());
 
 // ── SYSTEM PROMPT ────────────────────────────────────────────────────────────
-function systemPrompt(lang, stage, collected) {
+function systemPrompt(stage, collected) {
   const common = [
     "You are in stage: "+stage+". You do NOT follow a fixed question order. You adapt freely to what the user just said.",
     "",
@@ -196,21 +186,22 @@ function systemPrompt(lang, stage, collected) {
     "",
     "ALREADY COLLECTED (do not re-ask these): "+(collected||"nothing yet")+".",
     "",
-    "EXPLORE naturally, only fields not yet collected: name; exact age; gender (open question, no options); date of birth (never explain why); city (a place name — if they answer with something that is clearly NOT a place name like a feeling or sentence, warmly acknowledge it and ask again: 'Got it — and which city or town are you based in?'); occupation (what they do for work or study — if they answer with 'yes', 'no', a feeling, or something clearly not a job, gently ask what they do for work); whether they like their work; growth ambitions; life changes or transitions; how often they need new contacts; how they find people when they need them; whether they ever realized too late a contact could have helped; whether people come to them for introductions; whether they would try a tool that finds the right person inside their own contacts.",
+    "EXPLORE naturally, only fields not yet collected: name; exact age; gender (open question, no options); date of birth (never explain why); city (a place name — if they answer with something that is clearly NOT a place name like a feeling or sentence, warmly acknowledge it and ask again: 'Perfecto — ¿y en qué ciudad o pueblo estás?'); occupation (what they do for work or study — if they answer with 'sí', 'no', a feeling, or something clearly not a job, gently ask what they do for work); whether they like their work; growth ambitions; life changes or transitions; how often they need new contacts; how they find people when they need them; whether they ever realized too late a contact could have helped; whether people come to them for introductions; whether they would try a tool that finds the right person inside their own contacts.",
     "",
-    "COMPLETION: after about 14 exchanges end with exactly: 'Perfect [name], calculating your profile now...' and stop.",
+    "COMPLETION: after about 14 exchanges end with exactly: 'Perfecto [nombre], calculando tu perfil ahora...' and stop.",
     "",
     "NEVER say: survey, research, data, questionnaire, segmentation.",
+    "",
+    "Respond ONLY in natural Argentine Spanish with voseo (vos, tenés, sos, querés, etc.). Never use English. Completion line: 'Perfecto [nombre], calculando tu perfil ahora...'",
   ];
-  if (lang === "es") return common.join("\n") + "\n\nThe user chose Spanish. Respond ONLY in natural Argentine Spanish with voseo. Completion line: 'Perfecto [nombre], calculando tu perfil ahora...'";
-  return common.join("\n") + "\n\nThe user chose English.";
+  return common.join("\n");
 }
 
-const isDone = t => /calculando tu perfil|calculating your profile/i.test(t||"");
+const isDone = t => /calculando tu perfil/i.test(t||"");
 
 function valid(text) {
   if (!text || text.length < 2) return false;
-  if (/\b(survey|research|questionnaire|encuesta|cuestionario|investigaci)/i.test(text)) return false;
+  if (/\b(encuesta|cuestionario|investigaci)/i.test(text)) return false;
   const qs = (text.match(/\?|¿/g) || []).length;
   if (isDone(text)) return true;
   if (qs === 0) return false;
@@ -220,7 +211,7 @@ function valid(text) {
 }
 
 // ── ANSWER VALIDATION — prevents saving garbage to structured fields ─────────
-const BAD_CITY_WORDS = /\b(enjoy|enjoying|figuring|still|okay|ok|sure|love|hate|feel|going|getting|trying|don't|doesn't|really|great|good|bad|fine|work here|live here|yes\b|no\b|maybe)\b/i;
+const BAD_CITY_WORDS = /\b(disfruto|disfrutando|pensando|todavía|bien|ok|seguro|amo|odio|siento|yendo|tratando|no\b|realmente|genial|bueno|malo|trabajo acá|vivo acá|sí\b|si\b|quizás|tal vez)\b/i;
 
 function isValidForField(field, value) {
   const v = (value || "").trim();
@@ -234,8 +225,8 @@ function isValidForField(field, value) {
   }
   if (field === "occ") {
     // Reject single-word yes/no/feeling answers
-    if (/^(yes|no|maybe|sure|okay|ok|si\b|nope|claro|yeah|fine|good|bad|great)$/i.test(v)) return false;
-    if (/^(i (really |do )?(enjoy|like|love|hate|feel)|it'?s (great|good|fine|okay))/i.test(v)) return false;
+    if (/^(sí|si|no|quizás|tal vez|seguro|ok|claro|bien|bueno|malo|genial)$/i.test(v)) return false;
+    if (/^(me (encanta|gusta)|lo (disfruto|amo|odio)|es (genial|bueno|bien))/i.test(v)) return false;
     return true;
   }
   return true;
@@ -244,91 +235,90 @@ function isValidForField(field, value) {
 // ── FIELD DETECTION — reads the bot reply to know what was just asked ────────
 function detectNextTopic(text) {
   const t = (text||"").toLowerCase();
-  if (/how old|your age|cuantos a|qu. edad/.test(t)) return "age";
-  if (/gender|g.nero/.test(t)) return "gender";
-  if (/birth|born|fecha.*nacimiento|cumplea/.test(t)) return "dob";
-  if (/where.*from|where.*live|city|ciudad|de donde|d.nde/.test(t)) return "city";
-  if (/your name|c.mo te llam/.test(t)) return "name";
-  if (/what do you do|work|study|trabaj|estudi|hac.s en la vida/.test(t)) return "occ";
-  if (/like.*job|enjoy.*work|te gusta lo que hac|disfrutas/.test(t)) return "jobfeel";
-  if (/grow|growth|calling|crecer|algo.*diferente/.test(t)) return "grow";
-  if (/change|transition|new.*happening|pasando algo/.test(t)) return "chg";
-  if (/how often|cada cu.nto/.test(t)) return "freq";
-  if (/first.*step|what do you do first|que haces primero/.test(t)) return "steps";
-  if (/social media|redes sociales/.test(t)) return "social";
-  if (/professional|profesional/.test(t)) return "pro";
-  if (/realized.*late|contact.*could|diste cuenta/.test(t)) return "missed";
-  if (/people.*ask.*connect|te.*piden.*conect/.test(t)) return "conn";
-  if (/how many.*year|cu.ntas.*a.o/.test(t)) return "count";
-  if (/app.*exist|try.*tool|probarias|existiera/.test(t)) return "advance";
+  if (/cuantos a|cuántos a|qu. edad/.test(t)) return "age";
+  if (/g.nero/.test(t)) return "gender";
+  if (/fecha.*nacimiento|cumplea/.test(t)) return "dob";
+  if (/ciudad|de donde|de dónde|d.nde est|d.nde viv/.test(t)) return "city";
+  if (/c.mo te llam|tu nombre/.test(t)) return "name";
+  if (/trabaj|estudi|hac.s en la vida|a qu. te ded/.test(t)) return "occ";
+  if (/te gusta lo que hac|disfrutas|disfrutás/.test(t)) return "jobfeel";
+  if (/crecer|algo.*diferente|te llama/.test(t)) return "grow";
+  if (/cambio|transici|pasando algo|por pasar/.test(t)) return "chg";
+  if (/cada cu.nto/.test(t)) return "freq";
+  if (/que haces primero|qué hacés primero|primer.*paso/.test(t)) return "steps";
+  if (/redes sociales/.test(t)) return "social";
+  if (/profesional/.test(t)) return "pro";
+  if (/diste cuenta|te diste cuenta|demasiado tarde/.test(t)) return "missed";
+  if (/te.*piden.*conect|vienen a vos/.test(t)) return "conn";
+  if (/cu.ntas.*person|cu.ntas.*a.o/.test(t)) return "count";
+  if (/probarias|probarías|existiera|app/.test(t)) return "advance";
   return null;
 }
 
 // ── LOCAL FALLBACK ENGINE ────────────────────────────────────────────────────
 const TOPICS = ["name","age","gender","dob","city","occ","jobfeel","grow","chg","freq","steps","social","pro","missed","conn","count","advance"];
 
-function localAck(lastTopic, answer, lang) {
-  const es = lang === "es", a = (answer||"").toLowerCase();
-  if (lastTopic === "name") return es ? "Un placer, "+answer+"!" : "Great to meet you, "+answer+"!";
-  if (lastTopic === "age") return es ? "Perfecto." : "Got it.";
-  if (lastTopic === "gender") return es ? "Buenisimo." : "Got it.";
-  if (lastTopic === "dob") return es ? "Perfecto." : "Got it.";
-  if (lastTopic === "city") return es ? answer+"! Buenisimo." : answer+"! Nice.";
+function localAck(lastTopic, answer) {
+  const a = (answer||"").toLowerCase();
+  if (lastTopic === "name") return "Un placer, "+answer+"!";
+  if (lastTopic === "age") return "Perfecto.";
+  if (lastTopic === "gender") return "Buenisimo.";
+  if (lastTopic === "dob") return "Perfecto.";
+  if (lastTopic === "city") return answer+"! Buenisimo.";
   if (lastTopic === "occ") {
-    const both = (/work|job|trabajo/.test(a)&&/studi|estudia/.test(a))||/both|las dos/.test(a);
-    if (both) return es ? "Wow, trabajas Y estudias, eso requiere una energia increible." : "Wow, you work AND study, that takes incredible energy.";
-    if (/estudi|student/.test(a)) return es ? "Wow, estudiante! El momento mas emocionante de la vida." : "Wow, a student! The most exciting stage of life.";
-    if (/ama de casa|hogar|familia|mom|mother|home/.test(a)) return es ? "El trabajo mas importante del mundo, enorme respeto." : "Honestly the most important job in the world, huge respect.";
-    if (/emprend|founder|startup/.test(a)) return es ? "Emprendedor/a! Eso requiere una valentia que pocos tienen." : "An entrepreneur! That takes courage most people only talk about.";
-    if (/medic|doctor|nurs|salud|health/.test(a)) return es ? "Salud! Son la red mas importante de cualquier comunidad." : "Healthcare — the backbone of any community.";
-    if (/maest|profe|docen|teach/.test(a)) return es ? "Docente! Estas moldeando el futuro literalmente." : "A teacher! Literally shaping the future.";
-    if (/jubil|retir/.test(a)) return es ? "Una vida entera construida, eso vale mas que cualquier titulo." : "A whole lifetime built, worth more than any degree.";
-    return es ? "Wow, "+answer+", que mundo interesante." : "Wow, "+answer+", what an interesting world.";
+    const both = (/trabajo/.test(a)&&/estudia/.test(a))||/las dos/.test(a);
+    if (both) return "Wow, trabajas Y estudias, eso requiere una energia increible.";
+    if (/estudi/.test(a)) return "Wow, estudiante! El momento mas emocionante de la vida.";
+    if (/ama de casa|hogar|familia/.test(a)) return "El trabajo mas importante del mundo, enorme respeto.";
+    if (/emprend|founder|startup/.test(a)) return "Emprendedor/a! Eso requiere una valentia que pocos tienen.";
+    if (/medic|salud/.test(a)) return "Salud! Son la red mas importante de cualquier comunidad.";
+    if (/maest|profe|docen/.test(a)) return "Docente! Estas moldeando el futuro literalmente.";
+    if (/jubil/.test(a)) return "Una vida entera construida, eso vale mas que cualquier titulo.";
+    return "Wow, "+answer+", que mundo interesante.";
   }
-  if (lastTopic === "jobfeel") return isNo(answer)?(es?"Honesto, eso tiene merito admitirlo.":"Honest, that takes guts to admit."):(es?"Se nota que lo disfrutas.":"That really comes through.");
-  if (lastTopic === "grow") return isNo(answer)?(es?"Saber donde queres estar ya es una habilidad.":"Knowing where you want to be is a skill."):(es?"Me encanta esa ambicion.":"Love that ambition.");
+  if (lastTopic === "jobfeel") return isNo(answer)?"Honesto, eso tiene merito admitirlo.":"Se nota que lo disfrutas.";
+  if (lastTopic === "grow") return isNo(answer)?"Saber donde queres estar ya es una habilidad.":"Me encanta esa ambicion.";
   if (lastTopic === "chg") {
-    if (/mud|ciudad|mov|city/.test(a)) return es ? "Mudarse resetea todo, la red incluida." : "Moving resets everything, your network included.";
-    if (isNo(answer)||/nada|nothing|tranqui/.test(a)) return es ? "La estabilidad dice mucho tambien." : "Stability says a lot too.";
-    return es ? "Eso suena importante." : "That sounds significant.";
+    if (/mud|ciudad/.test(a)) return "Mudarse resetea todo, la red incluida.";
+    if (isNo(answer)||/nada|tranqui/.test(a)) return "La estabilidad dice mucho tambien.";
+    return "Eso suena importante.";
   }
-  if (lastTopic === "freq") return isNo(answer)?(es?"Tu red ya cubre bastante entonces.":"Interesting, your network covers a lot."):(es?"Entiendo.":"Got it.");
+  if (lastTopic === "freq") return isNo(answer)?"Tu red ya cubre bastante entonces.":"Entiendo.";
   if (lastTopic === "steps") {
-    if (/google/.test(a)) return es ? "Google, el recurso universal." : "Google, the universal fallback.";
-    if (/whatsapp|grupo|group/.test(a)) return es ? "El boca a boca digital, un clasico." : "Digital word of mouth, a classic.";
-    if (/amigo|friend|pregunt|ask/.test(a)) return es ? "Preguntarle a alguien de confianza, siempre funciona." : "Asking someone you trust, still the best network.";
-    return es ? "Interesante proceso." : "Interesting process.";
+    if (/google/.test(a)) return "Google, el recurso universal.";
+    if (/whatsapp|grupo/.test(a)) return "El boca a boca digital, un clasico.";
+    if (/amigo|pregunt/.test(a)) return "Preguntarle a alguien de confianza, siempre funciona.";
+    return "Interesante proceso.";
   }
-  if (lastTopic === "social") return isNo(answer)?(es?"Mucha gente no las usa para eso.":"A lot of people don't use them for that."):(es?"Buenisimo.":"Good.");
-  if (lastTopic === "pro") return isNo(answer)?(es?"Tu red ya cubre esas situaciones entonces.":"Your network covers those then."):(es?"Tiene sentido.":"That makes sense.");
-  if (lastTopic === "missed") return isYes(answer)||/paso|me paso|varias/.test(a)?(es?"La respuesta estaba ahi, invisible.":"The answer was right there, invisible."):(es?"Dice algo bueno de como buscas.":"That says something good about how you search.");
-  if (lastTopic === "conn") return /siempre|always|often|seguido/.test(a)?(es?"El conector de cabecera, eso es un superpoder.":"The go-to connector — that's a real superpower."):(es?"No todos tienen ese rol y esta perfecto.":"Not everyone plays that role and that's fine.");
-  if (lastTopic === "count") return es ? "Mas de lo que la mayoria se da cuenta." : "More than most people realize.";
-  return es ? "Buenisimo." : "Got it.";
+  if (lastTopic === "social") return isNo(answer)?"Mucha gente no las usa para eso.":"Buenisimo.";
+  if (lastTopic === "pro") return isNo(answer)?"Tu red ya cubre esas situaciones entonces.":"Tiene sentido.";
+  if (lastTopic === "missed") return isYes(answer)||/paso|me paso|varias/.test(a)?"La respuesta estaba ahi, invisible.":"Dice algo bueno de como buscas.";
+  if (lastTopic === "conn") return /siempre|seguido/.test(a)?"El conector de cabecera, eso es un superpoder.":"No todos tienen ese rol y esta perfecto.";
+  if (lastTopic === "count") return "Mas de lo que la mayoria se da cuenta.";
+  return "Buenisimo.";
 }
 
-function localQuestion(topic, lang, name) {
-  const es = lang === "es";
+function localQuestion(topic, name) {
   const Q = {
-    name:    es?"Empecemos, como te llamas?":"Let's start — what's your name?",
-    age:     es?(name?name+", ":"")+"cuantos anos tenes?":(name?name+", ":"")+"how old are you?",
-    gender:  es?"Y cual es tu genero?":"And what's your gender?",
-    dob:     es?(name?name+", ":"")+"cual es tu fecha de nacimiento? Dia, mes y anio.":(name?name+", ":"")+"what's your date of birth? Day, month and year.",
-    city:    es?"De donde sos?":"Where are you from?",
-    occ:     es?"Y que haces en la vida, trabajas, estudias, emprendes?":"What do you do — work, study, run something?",
-    jobfeel: es?"Te gusta lo que haces, o llegaste ahi de casualidad?":"Do you love what you do, or did you end up there by accident?",
-    grow:    es?"Tenes ganas de crecer en eso, o hay algo diferente que te llama?":"Do you want to grow in that, or is something else calling you?",
-    chg:     es?(name?name+", ":"")+"esta pasando algo nuevo en tu vida, o esta por pasar?":(name?name+", ":"")+"is anything new happening in your life, or about to?",
-    freq:    es?"Cada cuanto necesitas encontrar a alguien nuevo, un profesional, un contacto?":"How often do you need to find someone new — a professional, a contact?",
-    steps:   es?"Cuando necesitas encontrar a alguien especifico, que haces primero?":"When you need to find someone specific, what do you do first?",
-    social:  es?"Usas las redes sociales para conectar o encontrar gente?":"Do you use social media to connect or find people?",
-    pro:     es?"En el ultimo anio necesitaste encontrar algun profesional que no tenias?":"In the last year, did you need to find a professional you didn't have?",
-    missed:  es?(name?name+", ":"")+"alguna vez te diste cuenta tarde de que alguien en tus contactos podia haber ayudado?":(name?name+", ":"")+"did you ever realize too late that someone already in your contacts could have helped?",
-    conn:    es?"La gente viene a vos a pedirte que los conectes con alguien?":"Do people come to you asking to be connected with someone?",
-    count:   es?"En el ultimo anio, cuantas personas conectaste con alguien que necesitaban?":"In the last year, how many people did you connect to someone they needed?",
-    advance: es?"Ultima, si existiera una app que encuentra a la persona correcta dentro de tus propios contactos en segundos, la probarias?":"Last one — if an app found the right person inside your own contacts in seconds, would you try it?",
+    name:    "Empecemos, como te llamas?",
+    age:     (name?name+", ":"")+"cuantos anos tenes?",
+    gender:  "Y cual es tu genero?",
+    dob:     (name?name+", ":"")+"cual es tu fecha de nacimiento? Dia, mes y anio.",
+    city:    "De donde sos?",
+    occ:     "Y que haces en la vida, trabajas, estudias, emprendes?",
+    jobfeel: "Te gusta lo que haces, o llegaste ahi de casualidad?",
+    grow:    "Tenes ganas de crecer en eso, o hay algo diferente que te llama?",
+    chg:     (name?name+", ":"")+"esta pasando algo nuevo en tu vida, o esta por pasar?",
+    freq:    "Cada cuanto necesitas encontrar a alguien nuevo, un profesional, un contacto?",
+    steps:   "Cuando necesitas encontrar a alguien especifico, que haces primero?",
+    social:  "Usas las redes sociales para conectar o encontrar gente?",
+    pro:     "En el ultimo anio necesitaste encontrar algun profesional que no tenias?",
+    missed:  (name?name+", ":"")+"alguna vez te diste cuenta tarde de que alguien en tus contactos podia haber ayudado?",
+    conn:    "La gente viene a vos a pedirte que los conectes con alguien?",
+    count:   "En el ultimo anio, cuantas personas conectaste con alguien que necesitaban?",
+    advance: "Ultima, si existiera una app que encuentra a la persona correcta dentro de tus propios contactos en segundos, la probarias?",
   };
-  return Q[topic] || (es?"Contame un poco mas?":"Tell me a bit more?");
+  return Q[topic] || "Contame un poco mas?";
 }
 
 // ── API ───────────────────────────────────────────────────────────────────────
@@ -345,18 +335,18 @@ async function rawCall(system, messages, maxTokens) {
   } catch { return null; }
 }
 
-async function nextTurn(lang, history, stage, collected, nextTopic, lastTopic, lastAnswer, name) {
-  let reply = await rawCall(systemPrompt(lang, stage, collected), history, 200);
+async function nextTurn(history, stage, collected, nextTopic, lastTopic, lastAnswer, name) {
+  let reply = await rawCall(systemPrompt(stage, collected), history, 200);
   if (reply && !valid(reply)) {
-    const repair = "Rewrite this: max 3 sentences, exactly one question, no lists, no survey words, same meaning, conversational. Message: \"\"\""+reply+"\"\"\"";
-    const fixed = await rawCall(systemPrompt(lang, stage, collected), [...history, {role:"assistant",content:reply},{role:"user",content:repair}], 200);
+    const repair = "Reescribí esto: máximo 3 oraciones, exactamente una pregunta, sin listas, sin palabras de encuesta, mismo significado, conversacional, en español argentino con voseo. Mensaje: \"\"\""+reply+"\"\"\"";
+    const fixed = await rawCall(systemPrompt(stage, collected), [...history, {role:"assistant",content:reply},{role:"user",content:repair}], 200);
     reply = (fixed && valid(fixed)) ? fixed : null;
   }
   if (reply && valid(reply)) return reply;
-  return localAck(lastTopic, lastAnswer, lang) + " " + localQuestion(nextTopic, lang, name);
+  return localAck(lastTopic, lastAnswer) + " " + localQuestion(nextTopic, name);
 }
 
-async function finalize(lang, history) {
+async function finalize(history) {
   const convo = history.map(m => (m.role==="user"?"USER":"ALLY")+": "+m.content).join("\n");
   let data = {};
   const ext = await rawCall(
@@ -369,23 +359,20 @@ async function finalize(lang, history) {
   // Safety net: if city looks like a job description or sentence, move it to occ
   if (data.city) {
     const cw = data.city.trim().split(/\s+/).length;
-    const jobLike = /\b(i am|i'm|am a|work|design|build|studi|project|engineer|developer|graphic|manager|director|student|teacher|doctor|nurse|consultant|freelance|architect|analyst)\b/i.test(data.city);
+    const jobLike = /\b(soy|trabajo|diseño|construyo|estudi|proyecto|ingenier|desarrollador|gráfico|gerente|director|estudiante|maestr|doctor|enfermer|consultor|freelance|arquitect|analista)\b/i.test(data.city);
     if (cw > 4 || jobLike) { if (!data.occ) data.occ = data.city; data.city = null; }
   }
 
-  const lp=calcLP(data.dob||""), arcId=detectArc(data), arc=ARC[arcId], AL=arc[lang], lpn=lang==="es"?(LPes[lp]||""):(LPen[lp]||""), n=data.name||"";
+  const lp=calcLP(data.dob||""), arcId=detectArc(data), arc=ARC[arcId], AL=arc.es, lpn=LPes[lp]||"", n=data.name||"";
   const sign = sunSign(data.dob);
   const saturn = saturnReturn(data.age);
-  const signName = sign ? (lang==="es" ? SIGNS[sign].es : SIGNS[sign].en) : "";
-  const saturnNote = saturn ? (lang==="es" ? SATURN_MSG[saturn].es : SATURN_MSG[saturn].en) : "";
+  const signName = sign ? SIGNS[sign].es : "";
+  const saturnNote = saturn ? SATURN_MSG[saturn].es : "";
 
   const sum = Object.entries(data).map(([k,v])=>k+": "+v).join("\n");
-  const sys = lang==="es"
-    ? "Sos un guia de personalidad. Espanol argentino con voseo. Especifico, mistico, compartible. NUNCA encuestas. Solo el texto del perfil."
-    : "You are a personality guide. Specific, mystical, shareable. NEVER surveys. Profile text only.";
+  const sys = "Sos un guia de personalidad. Espanol argentino con voseo. Especifico, mistico, compartible. NUNCA encuestas. Solo el texto del perfil.";
 
-  const p = lang==="es"
-    ? "Escribí un perfil para "+n+". Arquetipo: "+AL.n+". Camino de Vida "+lp+" ("+lpn+")."+(signName?" Sol en "+signName+".":"")+(saturnNote?" "+saturnNote:"")
+  const p = "Escribí un perfil para "+n+". Arquetipo: "+AL.n+". Camino de Vida "+lp+" ("+lpn+")."+(signName?" Sol en "+signName+".":"")+(saturnNote?" "+saturnNote:"")
       +"\n\nDATOS DE LA CONVERSACIÓN:\n"+sum
       +"\n\nREGLAS ESTRICTAS — si las rompés, el perfil falla:\n"
       +"1. NUNCA repitas hechos directamente. 'Vivís en X y trabajás de Y' es un fracaso total.\n"
@@ -399,46 +386,30 @@ async function finalize(lang, history) {
       +"⚡ TU PUNTO CIEGO\n"
       +"Usá su patrón de búsqueda O su respuesta sobre conexiones perdidas para nombrar algo que no ve de sí mismo. No un defecto — una fortaleza oculta que no usa. 1 oración.\n\n"
       +"😄 LA VERDAD QUE NADIE TE DICE\n"
-      +"1 línea. Savage y específica. Combiná su signo solar"+(signName?" ("+signName+")":" (si lo sabés)")+", su arquetipo "+AL.n+", y un dato concreto de la conversación. Que la lea, haga pausa, y se la mande a alguien ahora mismo."
-    : "Write a profile for "+n+". Archetype: "+AL.n+". Life Path "+lp+" ("+lpn+")."+(signName?" Sun in "+signName+".":"")+(saturnNote?" "+saturnNote:"")
-      +"\n\nCONVERSATION DATA:\n"+sum
-      +"\n\nSTRICT RULES — break these and the profile fails:\n"
-      +"1. NEVER repeat facts back. 'You live in X and work as Y' is a complete failure.\n"
-      +"2. Cross-reference 2-3 unexpected data points and say what they reveal TOGETHER — not the facts, but the truth behind them.\n"
-      +"3. Write like a tarot reader who also has their therapy notes: precise, slightly uncomfortable, warm but not soft.\n"
-      +"4. Each section: MAX 2 short sentences.\n\n"
-      +"FORMAT — exactly 3 sections:\n\n"
-      +"🎁 YOUR SOCIAL GIFT\n"
-      +"Cross-reference their occupation, how they find people, and their connector role to reveal their underlying power — not what they do, but why it works. Max 2 sentences.\n\n"
-      +"⚡ YOUR BLIND SPOT\n"
-      +"Use their search pattern OR their missed-connection answer to name the one thing they don't see about themselves. Not a flaw — a hidden strength they're underusing. 1 sentence.\n\n"
-      +"😄 THE TRUTH NOBODY TELLS YOU\n"
-      +"1 line. Savage and specific. Combine their sun sign"+(signName?" ("+signName+")":" (if known)")+", archetype "+AL.n+", and one real data point from the conversation. The kind of line they read, pause, then immediately forward to someone.";
+      +"1 línea. Savage y específica. Combiná su signo solar"+(signName?" ("+signName+")":" (si lo sabés)")+", su arquetipo "+AL.n+", y un dato concreto de la conversación. Que la lea, haga pausa, y se la mande a alguien ahora mismo.";
 
   let report = await rawCall(sys, [{role:"user",content:p}], 450);
   if (!report) {
-    report = lang==="es"
-      ? "🎁 TU DON SOCIAL\nTenes una manera natural de entender lo que la gente necesita antes de que lo digan. Conectas con proposito, no por accidente.\n\n⚡ TU PUNTO CIEGO\nSubestimas lo que ya tenes en tu red.\n\n🔢 Numero de vida "+lp+" — "+lpn+".\nConectas con intencion.\n\n😄 LA VERDAD QUE NADIE TE DICE\nSos la persona a la que todos llaman cuando necesitan algo y la ultima a la que se le agradece. Clasico."
-      : "🎁 YOUR SOCIAL GIFT\nYou have a natural sense of what people need before they say it. You connect with intention, not by accident.\n\n⚡ YOUR BLIND SPOT\nYou underestimate what's already in your network.\n\n🔢 Life number "+lp+" — "+lpn+".\nYou connect with intention.\n\n😄 THE TRUTH NOBODY TELLS YOU\nYou're the one everyone calls when they need something and the last one they think to thank. Classic.";
+    report = "🎁 TU DON SOCIAL\nTenes una manera natural de entender lo que la gente necesita antes de que lo digan. Conectas con proposito, no por accidente.\n\n⚡ TU PUNTO CIEGO\nSubestimas lo que ya tenes en tu red.\n\n🔢 Numero de vida "+lp+" — "+lpn+".\nConectas con intencion.\n\n😄 LA VERDAD QUE NADIE TE DICE\nSos la persona a la que todos llaman cuando necesitan algo y la ultima a la que se le agradece. Clasico.";
   }
   return { data, lp, arcId, report, sign, saturn };
 }
 
 // ── SAVE ──────────────────────────────────────────────────────────────────────
-async function savePartial(id, data, lang) {
+async function savePartial(id, data) {
   try {
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ id, ts: new Date().toISOString(), lang, status:"abandoned", ...data }),
+      body: JSON.stringify({ id, ts: new Date().toISOString(), lang:"es", status:"abandoned", ...data }),
     });
   } catch {}
 }
 
-async function saveResp(id, data, lang, lp, arcId, report, sign, saturn) {
+async function saveResp(id, data, lp, arcId, report, sign, saturn) {
   try {
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ id, ts: new Date().toISOString(), lang, status:"completed",
+      body: JSON.stringify({ id, ts: new Date().toISOString(), lang:"es", status:"completed",
         lp: String(lp), arc: arcId, report, sign: sign||null, saturn: saturn||null, ...data }),
     });
   } catch {}
@@ -484,8 +455,6 @@ const CSS = `
 `;
 
 export default function BotPage() {
-  const [view,      setView]     = useState("lang");
-  const [lang,      setLang]     = useState(null);
   const [msgs,      setMsgs]     = useState([]);
   const [hist,      setHist]     = useState([]);
   const [input,     setInput]    = useState("");
@@ -500,24 +469,22 @@ export default function BotPage() {
   const [copied,    setCopied]   = useState(false);
   const [smsg,      setSmsg]     = useState("");
 
-  const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null);
+  const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null), started=useRef(false);
 
   useEffect(()=>{bot.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
-  useEffect(()=>{if(!typing&&lang&&!done&&view==="chat")setTimeout(()=>inp.current?.focus(),80);},[typing,lang,done,view]);
+  useEffect(()=>{if(!typing&&!done)setTimeout(()=>inp.current?.focus(),80);},[typing,done]);
+  useEffect(()=>{ if(!started.current){ started.current=true; start(); } },[]);
 
   function push(m){setMsgs(p=>[...p,{id:Date.now()+Math.random(),...m}]);}
 
-  async function start(l){
-    setLang(l); setView("chat");
+  async function start(){
     sessionId.current = "r:" + Date.now();
     setActiveField("name");
-    const op = l==="es"
-      ? "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te doy un perfil completo.\n\nLa mayoria dice que es incomodamente preciso 😄"
-      : "Welcome to your Social Personality Test.\n\nLet's just chat for a bit about how you move through the world. At the end I'll give you a full profile.\n\nMost people say it is uncomfortably accurate 😄";
+    const op = "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te doy un perfil completo.\n\nLa mayoria dice que es incomodamente preciso 😄";
     await sleep(300); setTyping(true); await sleep(900); setTyping(false);
     push({role:"bot", text:op});
     await sleep(450); setTyping(true); await sleep(600); setTyping(false);
-    const first = localQuestion("name", l, "");
+    const first = localQuestion("name", "");
     push({role:"bot", text:first});
     setHist([{role:"assistant", content:first}]);
   }
@@ -543,7 +510,7 @@ export default function BotPage() {
 
     const fallbackNext = TOPICS[Math.min(topicI+1, TOPICS.length-1)];
     const stage = nt < 4 ? "warmup" : nt < 11 ? "open_conversation" : "wind_down";
-    const reply = await nextTurn(lang, nh, stage, collectedStr, fallbackNext, activeField, text, myName);
+    const reply = await nextTurn(nh, stage, collectedStr, fallbackNext, activeField, text, myName);
 
     await sleep(150+Math.random()*300);
     setTyping(false);
@@ -559,16 +526,16 @@ export default function BotPage() {
     else setActiveField(fallbackNext);
 
     // Save partial after every turn
-    await savePartial(sessionId.current, nd, lang);
+    await savePartial(sessionId.current, nd);
 
     if (isDone(reply) || topicI+1 >= TOPICS.length) {
       await sleep(700); setTyping(true);
-      const res = await finalize(lang, [...nh, {role:"assistant", content:reply}]);
+      const res = await finalize([...nh, {role:"assistant", content:reply}]);
       const merged = {...nd, ...res.data};
       setTyping(false);
       push({role:"result", lp:res.lp, arcId:res.arcId, report:res.report, sign:res.sign, saturn:res.saturn});
       setDone(true);
-      await saveResp(sessionId.current, merged, lang, res.lp, res.arcId, res.report, res.sign, res.saturn);
+      await saveResp(sessionId.current, merged, res.lp, res.arcId, res.report, res.sign, res.saturn);
     }
     busy.current = false;
   }
@@ -576,43 +543,23 @@ export default function BotPage() {
   function onKey(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}
 
   function shareText(arcId,lp){
-    const A=ARC[arcId],AL=A[lang],ln=lang==="es"?(LPes[lp]||""):(LPen[lp]||"");
-    return lang==="es"
-      ? "Hice el Test de Personalidad Social de Ally\n\nSoy "+AL.n+" "+A.e+"\n\n\""+AL.t+"\"\n\nCamino de Vida "+lp+" — "+ln+"\n\nY vos?"
-      : "I took the Ally Social Personality Test\n\nI am "+AL.n+" "+A.e+"\n\n\""+AL.t+"\"\n\nLife Path "+lp+" — "+ln+"\n\nWhat are you?";
+    const A=ARC[arcId],AL=A.es,ln=LPes[lp]||"";
+    return "Hice el Test de Personalidad Social de Ally\n\nSoy "+AL.n+" "+A.e+"\n\n\""+AL.t+"\"\n\nCamino de Vida "+lp+" — "+ln+"\n\nY vos?";
   }
   async function share(arcId,lp,t){
     try{await navigator.clipboard.writeText(shareText(arcId,lp));}catch{}
     if(t==="fb") window.open("https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent("https://ally.app"),"_blank");
-    else if(t==="ig"){setSmsg(lang==="es"?"Copiado — pegalo en tu historia":"Copied — paste into your story");setTimeout(()=>setSmsg(""),3000);}
+    else if(t==="ig"){setSmsg("Copiado — pegalo en tu historia");setTimeout(()=>setSmsg(""),3000);}
     else{setCopied(true);setTimeout(()=>setCopied(false),2500);}
   }
   function reset(){
-    setView("lang");setLang(null);setMsgs([]);setHist([]);setInput("");setTyping(false);
+    setMsgs([]);setHist([]);setInput("");setTyping(false);
     setDone(false);setTurns(0);setTopicI(0);setActiveField("name");setData({});
     setEmail("");setEmailOk(false);setCopied(false);setSmsg("");
+    start();
   }
 
   const prog = Math.min(95, Math.round((topicI/TOPICS.length)*100));
-
-  // ── LANG ──────────────────────────────────────────────────────────────────
-  if (view==="lang") return (
-    <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"#090705",backgroundImage:"radial-gradient(rgba(242,237,230,.04) 1px,transparent 1px)",backgroundSize:"36px 36px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0 24px",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative"}}>
-      <style>{CSS}</style>
-      <div style={{position:"absolute",width:480,height:480,borderRadius:"50%",background:"radial-gradient(circle,rgba(191,160,98,.09) 0%,transparent 70%)",pointerEvents:"none"}}/>
-      <div style={{width:"100%",maxWidth:380,textAlign:"center"}} className="fi">
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:"rgba(191,160,98,.7)",textTransform:"uppercase",marginBottom:36}}>✦ &nbsp;Ally&nbsp; ✦</div>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(44px,10vw,68px)",fontWeight:300,lineHeight:1.0,color:"#F2EDE6",marginBottom:2}}>Personality</h1>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(44px,10vw,68px)",fontWeight:600,fontStyle:"italic",lineHeight:1.0,color:"#BFA062",marginBottom:28}}>Test</h1>
-        <div style={{width:40,height:1,background:"rgba(191,160,98,.4)",margin:"0 auto 20px"}}/>
-        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:300,fontStyle:"italic",color:"rgba(242,237,230,.45)",lineHeight:1.65,marginBottom:48}}>Discover what kind of connector you really are</p>
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
-          <button className="lb" onClick={()=>start("en")}>English</button>
-          <button className="lb" onClick={()=>start("es")}>Español</button>
-        </div>
-      </div>
-    </div>
-  );
 
   // ── CHAT ──────────────────────────────────────────────────────────────────
   return (
@@ -624,7 +571,7 @@ export default function BotPage() {
             <div style={{width:36,height:36,borderRadius:"50%",flexShrink:0,background:"rgba(191,160,98,.12)",border:"1px solid rgba(191,160,98,.35)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"#BFA062"}}>✦</div>
             <div>
               <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:500,letterSpacing:.6}}>Ally</div>
-              <div style={{fontSize:11,color:"rgba(242,237,230,.35)"}}>{done?(lang==="es"?"Completo":"Complete"):typing?(lang==="es"?"Escribiendo...":"Typing..."):(lang==="es"?"En linea":"Online")}</div>
+              <div style={{fontSize:11,color:"rgba(242,237,230,.35)"}}>{done?"Completo":typing?"Escribiendo...":"En linea"}</div>
             </div>
           </div>
           {done&&<div style={{fontSize:11,color:"rgba(141,196,122,.8)",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:1}}>✓ Saved</div>}
@@ -648,12 +595,12 @@ export default function BotPage() {
             </div>
           );
           if (m.role==="result") {
-            const arc=ARC[m.arcId]||ARC.catalyst, AL=arc[lang]||arc.en;
-            const lpn = lang==="es" ? (LPes[m.lp]||"") : (LPen[m.lp]||"");
+            const arc=ARC[m.arcId]||ARC.catalyst, AL=arc.es;
+            const lpn = LPes[m.lp]||"";
             const signData = m.sign && SIGNS[m.sign];
-            const signLabel = signData ? (lang==="es" ? signData.es : signData.en) : null;
-            const signTrait = m.sign && SIGN_TRAIT[m.sign] ? (lang==="es" ? SIGN_TRAIT[m.sign].es : SIGN_TRAIT[m.sign].en) : null;
-            const saturnText = m.saturn && SATURN_MSG[m.saturn] ? (lang==="es" ? SATURN_MSG[m.saturn].es : SATURN_MSG[m.saturn].en) : null;
+            const signLabel = signData ? signData.es : null;
+            const signTrait = m.sign && SIGN_TRAIT[m.sign] ? SIGN_TRAIT[m.sign].es : null;
+            const saturnText = m.saturn && SATURN_MSG[m.saturn] ? SATURN_MSG[m.saturn].es : null;
             return (
               <div key={m.id} className="pp" style={{margin:"4px 0"}}>
                 <div style={{borderRadius:20,overflow:"hidden",border:"2px solid "+arc.br,boxShadow:"0 0 60px "+arc.c+"22"}}>
@@ -662,7 +609,7 @@ export default function BotPage() {
                   <div style={{background:arc.bg,padding:"34px 22px 26px",textAlign:"center",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
                     <div style={{fontSize:68,marginBottom:12,filter:"drop-shadow(0 0 18px "+arc.c+"88)"}}>{arc.e}</div>
-                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>{lang==="es"?"Tu tipo es":"You are"}</div>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>Tu tipo es</div>
                     <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#F2EDE6",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
                     <div style={{background:arc.c+"15",border:"1px solid "+arc.c+"40",borderRadius:12,padding:"13px 18px",fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontStyle:"italic",color:"rgba(242,237,230,.9)",lineHeight:1.5}}>"{AL.t}"</div>
@@ -681,14 +628,14 @@ export default function BotPage() {
 
                     {/* Life Path */}
                     <div style={{marginTop:14,display:"inline-flex",alignItems:"center",gap:8,background:"rgba(242,237,230,.06)",border:"1px solid rgba(242,237,230,.12)",borderRadius:20,padding:"5px 14px"}}>
-                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"rgba(242,237,230,.5)",letterSpacing:1}}>{lang==="es"?"Camino de Vida":"Life Path"} {m.lp} — {lpn}</span>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"rgba(242,237,230,.5)",letterSpacing:1}}>Camino de Vida {m.lp} — {lpn}</span>
                     </div>
 
                     {/* Sun sign */}
                     {signLabel && signTrait && (
                       <div style={{marginTop:12,padding:"11px 16px",background:"rgba(242,237,230,.05)",border:"1px solid rgba(242,237,230,.1)",borderRadius:12,textAlign:"left"}}>
                         <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:3,color:arc.c+"bb",textTransform:"uppercase",marginBottom:5}}>
-                          {signData.e} {lang==="es"?"Sol en":"Sun in"} {signLabel}
+                          {signData.e} Sol en {signLabel}
                         </div>
                         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontStyle:"italic",color:"rgba(242,237,230,.8)",lineHeight:1.5}}>{signTrait}</div>
                       </div>
@@ -706,28 +653,28 @@ export default function BotPage() {
                   <div style={{background:"rgba(6,5,3,.98)",padding:"20px 18px"}}>
                     <div style={{fontFamily:"'Barlow',sans-serif",fontSize:15,lineHeight:1.9,color:"rgba(242,237,230,.8)",whiteSpace:"pre-wrap",wordBreak:"break-word",marginBottom:20}}>{m.report}</div>
                     <div style={{height:1,background:"rgba(242,237,230,.07)",marginBottom:16}}/>
-                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:3,color:arc.c+"88",textTransform:"uppercase",textAlign:"center",marginBottom:12}}>{lang==="es"?"Te identificas? Compartilo":"Feels accurate? Share it"} 👇</div>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:3,color:arc.c+"88",textTransform:"uppercase",textAlign:"center",marginBottom:12}}>Te identificas? Compartilo 👇</div>
                     <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:14}}>
-                      <button className="sfb" onClick={()=>share(m.arcId,m.lp,"fb")}><span style={{fontSize:17,fontWeight:700}}>f</span>{lang==="es"?"COMPARTIR EN FACEBOOK":"SHARE ON FACEBOOK"}</button>
-                      <button className="sig" onClick={()=>share(m.arcId,m.lp,"ig")}><span style={{fontSize:14}}>◎</span>{lang==="es"?"COMPARTIR EN INSTAGRAM":"SHARE ON INSTAGRAM"}</button>
+                      <button className="sfb" onClick={()=>share(m.arcId,m.lp,"fb")}><span style={{fontSize:17,fontWeight:700}}>f</span>COMPARTIR EN FACEBOOK</button>
+                      <button className="sig" onClick={()=>share(m.arcId,m.lp,"ig")}><span style={{fontSize:14}}>◎</span>COMPARTIR EN INSTAGRAM</button>
                       {smsg&&<div style={{textAlign:"center",fontSize:12,color:"rgba(141,196,122,.8)",padding:"3px 0"}}>{smsg}</div>}
-                      <button className="scp" onClick={()=>share(m.arcId,m.lp,"copy")}>{copied?"✓ COPIED":(lang==="es"?"COPIAR TEXTO":"COPY TEXT")}</button>
+                      <button className="scp" onClick={()=>share(m.arcId,m.lp,"copy")}>{copied?"✓ COPIADO":"COPIAR TEXTO"}</button>
                     </div>
                     {!emailOk ? (
                       <div style={{background:"rgba(242,237,230,.04)",border:"1px solid rgba(242,237,230,.08)",borderRadius:12,padding:"13px"}}>
-                        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:arc.c+"CC",textTransform:"uppercase",marginBottom:8}}>{lang==="es"?"Cuando lanza Ally?":"When Ally launches?"}</div>
+                        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:arc.c+"CC",textTransform:"uppercase",marginBottom:8}}>Cuando lanza Ally?</div>
                         <div style={{display:"flex",gap:8}}>
-                          <input type="email" placeholder={lang==="es"?"tu@email.com":"your@email.com"} value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&email.includes("@"))setEmailOk(true);}}/>
+                          <input type="email" placeholder="tu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&email.includes("@"))setEmailOk(true);}}/>
                           <button onClick={()=>email.includes("@")&&setEmailOk(true)} style={{background:arc.c,border:"none",borderRadius:8,padding:"0 15px",color:"#090705",fontFamily:"'Barlow Condensed',sans-serif",fontSize:17,fontWeight:600,cursor:"pointer",flexShrink:0}}>→</button>
                         </div>
                       </div>
                     ) : (
-                      <div style={{textAlign:"center",padding:12,background:arc.c+"10",borderRadius:10,fontSize:13,color:"rgba(242,237,230,.6)"}}>{lang==="es"?"Estas en la lista! 🎉":"You are on the list! 🎉"}</div>
+                      <div style={{textAlign:"center",padding:12,background:arc.c+"10",borderRadius:10,fontSize:13,color:"rgba(242,237,230,.6)"}}>Estas en la lista! 🎉</div>
                     )}
                   </div>
                 </div>
                 <div style={{textAlign:"center",marginTop:12}}>
-                  <button onClick={reset} style={{background:"none",border:"none",color:"rgba(242,237,230,.22)",fontSize:12,fontFamily:"'Barlow',sans-serif",cursor:"pointer",textDecoration:"underline"}}>{lang==="es"?"Empezar de nuevo":"Start over"}</button>
+                  <button onClick={reset} style={{background:"none",border:"none",color:"rgba(242,237,230,.22)",fontSize:12,fontFamily:"'Barlow',sans-serif",cursor:"pointer",textDecoration:"underline"}}>Empezar de nuevo</button>
                 </div>
               </div>
             );
@@ -751,7 +698,7 @@ export default function BotPage() {
             <textarea ref={inp} rows={1} value={input}
               onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,140)+"px";}}
               onKeyDown={onKey}
-              placeholder={typing?"...":(lang==="es"?"Escribe tu respuesta...":"Type your answer…")}
+              placeholder={typing?"...":"Escribe tu respuesta..."}
               disabled={typing} style={{height:"26px"}}/>
             <button onClick={submit} disabled={!input.trim()||typing}
               style={{width:36,height:36,borderRadius:"50%",flexShrink:0,border:"none",
@@ -761,7 +708,7 @@ export default function BotPage() {
                 transition:"background .2s",fontSize:16,
                 color:input.trim()&&!typing?"#090705":"rgba(242,237,230,.2)"}}>↑</button>
           </div>
-          <div style={{textAlign:"center",marginTop:6,fontSize:11,color:"rgba(242,237,230,.18)"}}>{lang==="es"?"Enter para enviar":"Enter to send"}</div>
+          <div style={{textAlign:"center",marginTop:6,fontSize:11,color:"rgba(242,237,230,.18)"}}>Enter para enviar</div>
         </div>
       )}
     </div>
