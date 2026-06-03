@@ -127,11 +127,6 @@ export default function DashboardPage() {
   const arcData = Object.entries(resps.reduce((acc,r)=>{ if(r.arc){acc[r.arc]=(acc[r.arc]||0)+1;} return acc; },{}))
     .map(([name,value])=>({name:ARC_LABELS[name]||name, value, color:ARC_COLORS[name]||"#666"}));
 
-  const langData = [
-    {name:"Spanish", value: resps.filter(r=>r.lang==="es").length, color:"#BFA062"},
-    {name:"English", value: resps.filter(r=>r.lang==="en").length, color:"#7BAFC4"},
-  ].filter(d=>d.value>0);
-
   const filtered = resps.filter(r => {
     const s = search.toLowerCase();
     const matchSearch = !s || (r.name||"").toLowerCase().includes(s) || (r.city||"").toLowerCase().includes(s) || (r.occ||"").toLowerCase().includes(s);
@@ -471,20 +466,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:20}}>
-              <div className="card">
-                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Language Split</div>
-                {langData.length>0?(
-                  <ResponsiveContainer width="100%" height={120}>
-                    <PieChart>
-                      <Pie data={langData} cx="50%" cy="50%" outerRadius={45} dataKey="value" label={({name,percent})=>name+" "+Math.round(percent*100)+"%"} fontSize={11}>
-                        {langData.map((d,i)=><Cell key={i} fill={d.color}/>)}
-                      </Pie>
-                      <Tooltip contentStyle={tip}/>
-                    </PieChart>
-                  </ResponsiveContainer>
-                ):<div style={{fontSize:12,color:"rgba(242,237,230,.25)",paddingTop:30,textAlign:"center"}}>Not enough data yet</div>}
-              </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr",gap:16,marginBottom:20}}>
               <div className="card">
                 <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Block I — Decision Signal</div>
                 <div style={{marginTop:6,padding:"12px 14px",background:total&&advNo.length/total>0.35?"rgba(232,113,74,.07)":total&&advYes.length/total>0.5?"rgba(141,196,122,.07)":"rgba(191,160,98,.07)",borderRadius:8,fontSize:13,color:"rgba(242,237,230,.6)",lineHeight:1.6}}>
