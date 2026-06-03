@@ -109,9 +109,20 @@ export default function DashboardPage() {
   };
   const searchData = Object.entries(searchUsed).filter(([,n])=>n>0).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value);
 
+  const isRealCity = v => {
+    if (!v) return false;
+    const s = v.trim();
+    if (s.split(/\s+/).length > 4) return false;
+    if (/\b(i am|i'm|am a|work|design|build|studi|project|engineer|developer|graphic|manager|director|student|teacher|doctor|nurse|consultant|freelance|architect|analyst)\b/i.test(s)) return false;
+    return true;
+  };
   const cities = {};
-  resps.forEach(r => { if (r.city) { const c=r.city.trim(); cities[c]=(cities[c]||0)+1; } });
+  resps.forEach(r => { if (isRealCity(r.city)) { const c=r.city.trim(); cities[c]=(cities[c]||0)+1; } });
   const cityData = Object.entries(cities).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name,value}));
+
+  const occs = {};
+  resps.forEach(r => { if (r.occ) { const o=r.occ.trim().slice(0,35); occs[o]=(occs[o]||0)+1; } });
+  const occData = Object.entries(occs).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name,value}));
 
   const arcData = Object.entries(resps.reduce((acc,r)=>{ if(r.arc){acc[r.arc]=(acc[r.arc]||0)+1;} return acc; },{}))
     .map(([name,value])=>({name:ARC_LABELS[name]||name, value, color:ARC_COLORS[name]||"#666"}));
@@ -231,7 +242,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
               <div className="card">
                 <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Top Cities</div>
                 {cityData.length>0?(
@@ -246,21 +257,35 @@ export default function DashboardPage() {
                 ):<div style={{fontSize:12,color:"rgba(242,237,230,.25)",paddingTop:40,textAlign:"center"}}>Not enough data yet</div>}
               </div>
               <div className="card">
-                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Block I — Would Try App</div>
-                {[
-                  {label:"Yes",   val:advYes.length,   c:"#8DC47A"},
-                  {label:"Maybe", val:advMaybe.length, c:"#C9A84C"},
-                  {label:"No",    val:advNo.length,    c:"#E8714A"},
-                ].map(row=>(
-                  <div key={row.label} style={{display:"flex",alignItems:"center",gap:8,marginBottom:11}}>
-                    <span style={{fontSize:12,color:"rgba(242,237,230,.6)",minWidth:50}}>{row.label}</span>
-                    <div style={{flex:1,height:6,background:"rgba(242,237,230,.07)",borderRadius:3}}>
-                      <div style={{width:total?((row.val/total)*100)+"%":"0%",height:"100%",background:row.c,borderRadius:3,transition:"width .6s"}}/>
-                    </div>
-                    <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,color:row.c,width:30,textAlign:"right"}}>{row.val}</span>
-                  </div>
-                ))}
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Top Occupations</div>
+                {occData.length>0?(
+                  <ResponsiveContainer width="100%" height={160}>
+                    <BarChart data={occData} layout="vertical" margin={{left:0,right:20}}>
+                      <XAxis type="number" tick={{fill:"rgba(242,237,230,.3)",fontSize:10}} axisLine={false} tickLine={false}/>
+                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.6)",fontSize:11}} axisLine={false} tickLine={false} width={110}/>
+                      <Tooltip contentStyle={tip}/>
+                      <Bar dataKey="value" fill="#8DC47A" radius={[0,3,3,0]}/>
+                    </BarChart>
+                  </ResponsiveContainer>
+                ):<div style={{fontSize:12,color:"rgba(242,237,230,.25)",paddingTop:40,textAlign:"center"}}>Not enough data yet</div>}
               </div>
+            </div>
+
+            <div className="card">
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Block I — Would Try App</div>
+              {[
+                {label:"Yes",   val:advYes.length,   c:"#8DC47A"},
+                {label:"Maybe", val:advMaybe.length, c:"#C9A84C"},
+                {label:"No",    val:advNo.length,    c:"#E8714A"},
+              ].map(row=>(
+                <div key={row.label} style={{display:"flex",alignItems:"center",gap:8,marginBottom:11}}>
+                  <span style={{fontSize:12,color:"rgba(242,237,230,.6)",minWidth:50}}>{row.label}</span>
+                  <div style={{flex:1,height:6,background:"rgba(242,237,230,.07)",borderRadius:3}}>
+                    <div style={{width:total?((row.val/total)*100)+"%":"0%",height:"100%",background:row.c,borderRadius:3,transition:"width .6s"}}/>
+                  </div>
+                  <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,color:row.c,width:30,textAlign:"right"}}>{row.val}</span>
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -339,10 +339,17 @@ async function finalize(lang, history) {
   let data = {};
   const ext = await rawCall(
     "Extract data from the conversation. Return ONLY valid JSON, no markdown.",
-    [{role:"user",content:"Extract values for keys with clear answers.\nKeys: name, age, gender, dob, city, occ, jobfeel, grow, chg, freq, steps, social, pro, found, srchtime, srchfeel, missed, conn, count, advance\n\nFor age: exact number. For gender: exactly what they said.\n\nConversation:\n"+convo+"\n\nReturn JSON only."}],
+    [{role:"user",content:"Extract values for keys with clear answers.\nKeys: name, age, gender, dob, city, occ, jobfeel, grow, chg, freq, steps, social, pro, found, srchtime, srchfeel, missed, conn, count, advance\n\nSTRICT RULES:\n- age: exact number only.\n- gender: exactly what they said.\n- city: ONLY a place/location name like 'Buenos Aires', 'Córdoba', 'New York'. NEVER a job title, sentence, or description. Max 3 words. If it is not clearly a place name, leave it out.\n- occ: what they do for work or study — can be a phrase or sentence.\n\nConversation:\n"+convo+"\n\nReturn JSON only."}],
     500
   );
   if (ext) { try { data = JSON.parse(ext.replace(/```json|```/g,"").trim()); } catch {} }
+
+  // Safety net: if city looks like a job description or sentence, move it to occ
+  if (data.city) {
+    const cw = data.city.trim().split(/\s+/).length;
+    const jobLike = /\b(i am|i'm|am a|work|design|build|studi|project|engineer|developer|graphic|manager|director|student|teacher|doctor|nurse|consultant|freelance|architect|analyst)\b/i.test(data.city);
+    if (cw > 4 || jobLike) { if (!data.occ) data.occ = data.city; data.city = null; }
+  }
 
   const lp=calcLP(data.dob||""), arcId=detectArc(data), arc=ARC[arcId], AL=arc[lang], lpn=lang==="es"?(LPes[lp]||""):(LPen[lp]||""), n=data.name||"";
   const sign = sunSign(data.dob);
