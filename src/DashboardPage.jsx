@@ -246,10 +246,10 @@ export default function DashboardPage() {
               <div className="card">
                 <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Top Cities</div>
                 {cityData.length>0?(
-                  <ResponsiveContainer width="100%" height={160}>
-                    <BarChart data={cityData} layout="vertical" margin={{left:0,right:20}}>
-                      <XAxis type="number" tick={{fill:"rgba(242,237,230,.3)",fontSize:10}} axisLine={false} tickLine={false}/>
-                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.6)",fontSize:11}} axisLine={false} tickLine={false} width={90}/>
+                  <ResponsiveContainer width="100%" height={Math.max(180, cityData.length * 36)}>
+                    <BarChart data={cityData} layout="vertical" margin={{left:4,right:24,top:4,bottom:4}} barSize={14} barCategoryGap="35%">
+                      <XAxis type="number" allowDecimals={false} tickCount={Math.min(cityData.reduce((m,d)=>Math.max(m,d.value),0)+1,6)} tick={{fill:"rgba(242,237,230,.3)",fontSize:10}} axisLine={false} tickLine={false}/>
+                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.65)",fontSize:10,width:90}} axisLine={false} tickLine={false} width={96}/>
                       <Tooltip contentStyle={tip}/>
                       <Bar dataKey="value" fill="#7BAFC4" radius={[0,3,3,0]}/>
                     </BarChart>
@@ -259,10 +259,11 @@ export default function DashboardPage() {
               <div className="card">
                 <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Top Occupations</div>
                 {occData.length>0?(
-                  <ResponsiveContainer width="100%" height={160}>
-                    <BarChart data={occData} layout="vertical" margin={{left:0,right:20}}>
-                      <XAxis type="number" tick={{fill:"rgba(242,237,230,.3)",fontSize:10}} axisLine={false} tickLine={false}/>
-                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.6)",fontSize:11}} axisLine={false} tickLine={false} width={110}/>
+                  <ResponsiveContainer width="100%" height={Math.max(180, occData.length * 36)}>
+                    <BarChart data={occData.map(d=>({...d, name: d.name.length>22 ? d.name.slice(0,21)+"…" : d.name}))}
+                      layout="vertical" margin={{left:4,right:24,top:4,bottom:4}} barSize={14} barCategoryGap="35%">
+                      <XAxis type="number" allowDecimals={false} tickCount={Math.min(occData.reduce((m,d)=>Math.max(m,d.value),0)+1,6)} tick={{fill:"rgba(242,237,230,.3)",fontSize:10}} axisLine={false} tickLine={false}/>
+                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.65)",fontSize:10,width:140}} axisLine={false} tickLine={false} width={148}/>
                       <Tooltip contentStyle={tip}/>
                       <Bar dataKey="value" fill="#8DC47A" radius={[0,3,3,0]}/>
                     </BarChart>
