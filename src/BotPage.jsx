@@ -427,18 +427,21 @@ async function finalize(lang, history) {
 // ── SAVE ──────────────────────────────────────────────────────────────────────
 async function savePartial(id, data, lang) {
   try {
+    const now = new Date().toISOString();
+    const payload = { id, ts_start: tsStart.current, ts: now, lang, status:"abandoned", ...data };
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ id, ts: new Date().toISOString(), lang, status:"abandoned", ...data }),
+      body: JSON.stringify(payload),
     });
   } catch {}
 }
 
 async function saveResp(id, data, lang, lp, arcId, report, sign, saturn) {
   try {
+    const now = new Date().toISOString();
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ id, ts: new Date().toISOString(), lang, status:"completed",
+      body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang, status:"completed",
         lp: String(lp), arc: arcId, report, sign: sign||null, saturn: saturn||null, ...data }),
     });
   } catch {}
@@ -500,7 +503,7 @@ export default function BotPage() {
   const [copied,    setCopied]   = useState(false);
   const [smsg,      setSmsg]     = useState("");
 
-  const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null);
+  const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null), tsStart=useRef(null);
 
   useEffect(()=>{start("es");},[]);
   useEffect(()=>{bot.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
@@ -511,6 +514,7 @@ export default function BotPage() {
   async function start(l){
     setLang(l); setView("chat");
     sessionId.current = "r:" + Date.now();
+    tsStart.current = new Date().toISOString();
     setActiveField("name");
     const op = l==="es"
       ? "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te doy un perfil completo.\n\nLa mayoria dice que es incomodamente preciso 😄"

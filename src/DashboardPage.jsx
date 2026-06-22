@@ -23,6 +23,7 @@ const ARC_COLORS = {
 const ago = ts => { const m=Math.floor((Date.now()-new Date(ts))/60000); return m<1?"just now":m<60?m+"m ago":m<1440?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago"; };
 const pct = (n,t) => t ? Math.round((n/(t||1))*100)+"%" : "—";
 const ageRange = age => { const a=parseInt(age); if(!a||isNaN(a))return ""; if(a<20)return "under 20"; const lo=Math.floor(a/10)*10; return lo+"-"+(lo+10); };
+const timeSpent = (ts_start, ts) => { if(!ts_start||!ts) return "—"; const m=Math.floor((new Date(ts)-new Date(ts_start))/60000); return m<1?"<1m":m+"m"; };
 
 const CSS_DASH = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Barlow+Condensed:wght@300;400;500;600&family=Barlow:wght@300;400&display=swap');
@@ -339,7 +340,8 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     {(r.age||r.gender)&&<div style={{fontSize:12,color:"rgba(191,160,98,.7)",marginBottom:3,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.3}}>{[r.age,r.age?ageRange(r.age):null,r.gender].filter(Boolean).join(" · ")}</div>}
-                    <div style={{fontSize:12,color:"rgba(242,237,230,.4)",marginBottom:7,lineHeight:1.4}}>{[r.city,r.occ].filter(Boolean).join(" · ")||"—"}</div>
+                    <div style={{fontSize:12,color:"rgba(242,237,230,.4)",marginBottom:3,lineHeight:1.4}}>{[r.city,r.occ].filter(Boolean).join(" · ")||"—"}</div>
+                    <div style={{fontSize:11,color:"rgba(242,237,230,.25)",marginBottom:7}}>⏱ {timeSpent(r.ts_start,r.ts)}</div>
                     <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
                       {r.status==="abandoned"&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.35)",border:"1px solid rgba(242,237,230,.1)"}}>ABANDONED</span>}
                       {r.lang&&<span className="badge" style={{background:"rgba(191,160,98,.08)",color:"rgba(191,160,98,.75)",border:"1px solid rgba(191,160,98,.2)"}}>{r.lang.toUpperCase()}</span>}
