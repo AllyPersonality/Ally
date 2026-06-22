@@ -428,7 +428,7 @@ async function finalize(lang, history) {
 async function savePartial(id, data, lang) {
   try {
     const now = new Date().toISOString();
-    const payload = { id, ts_start: tsStart.current, ts: now, lang, status:"abandoned", ...data };
+    const payload = { id, ts_start: tsStart.current, ts: now, lang, version, status:"abandoned", ...data };
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload),
@@ -441,7 +441,7 @@ async function saveResp(id, data, lang, lp, arcId, report, sign, saturn) {
     const now = new Date().toISOString();
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang, status:"completed",
+      body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang, version, status:"completed",
         lp: String(lp), arc: arcId, report, sign: sign||null, saturn: saturn||null, ...data }),
     });
   } catch {}
@@ -486,7 +486,7 @@ const CSS = `
   ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(242,237,230,.1);border-radius:2px}
 `;
 
-export default function BotPage() {
+export default function BotPage({ version = "football" }) {
   const [view,      setView]     = useState("chat");
   const [lang,      setLang]     = useState("es");
   const [msgs,      setMsgs]     = useState([]);
@@ -647,7 +647,7 @@ export default function BotPage() {
                   {/* ── Archetype header ── */}
                   <div style={{background:arc.bg,padding:"34px 22px 26px",textAlign:"center",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
-                    <img src={`/caricatures/${m.arcId}.svg`} alt={AL.n} style={{width:120,height:120,marginBottom:12,filter:"drop-shadow(0 0 18px "+arc.c+"88)"}} />
+                    <img src={`/caricatures/${version}/${m.arcId}.svg`} alt={AL.n} style={{width:120,height:120,marginBottom:12,filter:"drop-shadow(0 0 18px "+arc.c+"88)"}} />
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>{lang==="es"?"Tu tipo es":"You are"}</div>
                     <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#F2EDE6",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>

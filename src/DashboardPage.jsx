@@ -345,6 +345,7 @@ export default function DashboardPage() {
                     <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
                       {r.status==="abandoned"&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.35)",border:"1px solid rgba(242,237,230,.1)"}}>ABANDONED</span>}
                       {r.lang&&<span className="badge" style={{background:"rgba(191,160,98,.08)",color:"rgba(191,160,98,.75)",border:"1px solid rgba(191,160,98,.2)"}}>{r.lang.toUpperCase()}</span>}
+                      {r.version&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.5)",border:"1px solid rgba(242,237,230,.1)"}}>{r.version==="football"?"⚽ Football":"🎭 Culture"}</span>}
                       {r.arc&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.5)",border:"1px solid rgba(242,237,230,.1)"}}>{ARC_LABELS[r.arc]}</span>}
                       {r.pro&&!isNo(r.pro)&&<span className="badge" style={{background:"rgba(232,113,74,.08)",color:"rgba(232,113,74,.8)",border:"1px solid rgba(232,113,74,.2)"}}>PAIN H1</span>}
                       {isYes(r.missed||"")&&<span className="badge" style={{background:"rgba(232,113,74,.12)",color:"rgba(232,113,74,.9)",border:"1px solid rgba(232,113,74,.25)"}}>H1 KILLER ⚡</span>}
