@@ -120,9 +120,26 @@ export default function DashboardPage() {
   resps.forEach(r => { if (isRealCity(r.city)) { const c=r.city.trim(); cities[c]=(cities[c]||0)+1; } });
   const cityData = Object.entries(cities).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name,value}));
 
-  const occs = {};
-  resps.forEach(r => { if (r.occ) { const o=r.occ.trim().slice(0,35); occs[o]=(occs[o]||0)+1; } });
-  const occData = Object.entries(occs).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name,value}));
+  const OCC_SEGMENTS = [
+    { name:"Student",               rx:/student|studying|university|college|estudio|estudiante|carrera|facultad/i },
+    { name:"Freelancer",            rx:/freelance|independent|independiente|aut.nomo|autonomo/i },
+    { name:"Big Corporate",         rx:/corporate|company|empresa|manager|director|executive|employed|trabajo en/i },
+    { name:"Intern",                rx:/intern|pasante|internship|pr.ctica|practica/i },
+    { name:"Entrepreneur / Startup",rx:/founder|startup|emprendedor|entrepreneur|own business|negocio propio/i },
+    { name:"Teacher / Educator",    rx:/teacher|profesor|maestra|docente|educator|teaching/i },
+    { name:"Scientist / Researcher",rx:/scientist|researcher|investigador|phd|lab\b|ciencia/i },
+    { name:"Retired",               rx:/retired|jubilado|jubilada|retiro/i },
+    { name:"Unemployed / Figuring", rx:/unemployed|desempleado|figuring|looking for|between jobs|sin trabajo|neet/i },
+  ];
+  const occCounts = Object.fromEntries(OCC_SEGMENTS.map(s=>[s.name,0]));
+  occCounts["Other"] = 0;
+  resps.forEach(r => {
+    if (!r.occ) return;
+    const matched = OCC_SEGMENTS.filter(s => s.rx.test(r.occ));
+    if (matched.length === 0) occCounts["Other"]++;
+    else matched.forEach(s => occCounts[s.name]++);
+  });
+  const occData = Object.entries(occCounts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([name,value])=>({name,value}));
 
   const arcData = Object.entries(resps.reduce((acc,r)=>{ if(r.arc){acc[r.arc]=(acc[r.arc]||0)+1;} return acc; },{}))
     .map(([name,value])=>({name:ARC_LABELS[name]||name, value, color:ARC_COLORS[name]||"#666"}));
