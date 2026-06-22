@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ARC = {
   weaver:  { e:"🕸️", c:"#C9A84C", bg:"linear-gradient(135deg,#1a1200,#2d1f00,#1a1200)", br:"rgba(201,168,76,.5)",
@@ -487,7 +488,10 @@ const CSS = `
 `;
 
 export default function BotPage({ version = "football" }) {
-  const [view,      setView]     = useState("chat");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isRootPath = location.pathname === "/";
+  const [view,      setView]     = useState(isRootPath ? "choose" : "chat");
   const [lang,      setLang]     = useState("es");
   const [msgs,      setMsgs]     = useState([]);
   const [hist,      setHist]     = useState([]);
@@ -599,6 +603,25 @@ export default function BotPage({ version = "football" }) {
   }
 
   const prog = Math.min(95, Math.round((topicI/TOPICS.length)*100));
+
+  // ── VERSION CHOOSER ──────────────────────────────────────────────────────────
+  if (view === "choose") return (
+    <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"#090705",backgroundImage:"radial-gradient(rgba(242,237,230,.04) 1px,transparent 1px)",backgroundSize:"36px 36px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0 24px",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative"}}>
+      <style>{CSS}</style>
+      <div style={{position:"absolute",width:480,height:480,borderRadius:"50%",background:"radial-gradient(circle,rgba(191,160,98,.09) 0%,transparent 70%)",pointerEvents:"none"}}/>
+      <div style={{width:"100%",maxWidth:420,textAlign:"center"}} className="fi">
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:"rgba(191,160,98,.7)",textTransform:"uppercase",marginBottom:36}}>✦ &nbsp;Ally&nbsp; ✦</div>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(44px,10vw,68px)",fontWeight:300,lineHeight:1.0,color:"#F2EDE6",marginBottom:2}}>Personality</h1>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(44px,10vw,68px)",fontWeight:600,fontStyle:"italic",lineHeight:1.0,color:"#BFA062",marginBottom:28}}>Test</h1>
+        <div style={{width:40,height:1,background:"rgba(191,160,98,.4)",margin:"0 auto 24px"}}/>
+        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:300,fontStyle:"italic",color:"rgba(242,237,230,.45)",lineHeight:1.65,marginBottom:48}}>Descubrí qué tipo de conector sos realmente</p>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <button className="lb" onClick={()=>{setView("chat");}} style={{background:"rgba(191,160,98,.12)",border:"2px solid #BFA062",color:"#F2EDE6",padding:"14px 28px",borderRadius:12,fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:500,letterSpacing:1,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}}>⚽ Football Edition</button>
+          <button className="lb" onClick={()=>{navigate("/cultural");}} style={{background:"rgba(242,237,230,.05)",border:"2px solid rgba(242,237,230,.2)",color:"rgba(242,237,230,.7)",padding:"14px 28px",borderRadius:12,fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:500,letterSpacing:1,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}}>🎭 Culture Edition</button>
+        </div>
+      </div>
+    </div>
+  );
 
   // ── CHAT ──────────────────────────────────────────────────────────────────
   return (
