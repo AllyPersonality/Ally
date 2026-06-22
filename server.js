@@ -127,6 +127,7 @@ if (isProd) {
   const distPath = join(__dirname, "dist");
   // Serve static assets (JS, CSS, images)
   app.use("/assets", express.static(join(distPath, "assets")));
+  app.use("/caricatures", express.static(join(distPath, "caricatures")));
   // All page routes — explicitly send index.html
   app.get("*", (_req, _res) => {
     _res.sendFile(join(distPath, "index.html"));
