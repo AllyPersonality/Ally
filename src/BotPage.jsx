@@ -386,19 +386,16 @@ async function finalize(lang, history) {
     if (cw > 4 || jobLike) { if (!data.occ) data.occ = data.city; data.city = null; }
   }
 
-  const lp=calcLP(data.dob||""), arcId=detectArc(data), arc=ARC[arcId], AL=arc[lang], lpn=lang==="es"?(LPes[lp]||""):(LPen[lp]||""), n=data.name||"";
+  const lp=calcLP(data.dob||""), arcId=detectArc(data), arc=ARC[arcId], AL=arc.es, lpn=LPes[lp]||"", n=data.name||"";
   const sign = sunSign(data.dob);
   const saturn = saturnReturn(data.age);
-  const signName = sign ? (lang==="es" ? SIGNS[sign].es : SIGNS[sign].en) : "";
-  const saturnNote = saturn ? (lang==="es" ? SATURN_MSG[saturn].es : SATURN_MSG[saturn].en) : "";
+  const signName = sign ? SIGNS[sign].es : "";
+  const saturnNote = saturn ? SATURN_MSG[saturn].es : "";
 
   const sum = Object.entries(data).map(([k,v])=>k+": "+v).join("\n");
-  const sys = lang==="es"
-    ? "Sos un guia de personalidad. Espanol argentino con voseo. Especifico, mistico, compartible. NUNCA encuestas. Solo el texto del perfil."
-    : "You are a personality guide. Specific, mystical, shareable. NEVER surveys. Profile text only.";
+  const sys = "Sos un guia de personalidad. Espanol argentino con voseo. Especifico, mistico, compartible. NUNCA encuestas. Solo el texto del perfil.";
 
-  const p = lang==="es"
-    ? "Escribí un perfil para "+n+". Arquetipo: "+AL.n+". Camino de Vida "+lp+" ("+lpn+")."+(signName?" Sol en "+signName+".":"")+(saturnNote?" "+saturnNote:"")
+  const p = "Escribí un perfil para "+n+". Arquetipo: "+AL.n+". Camino de Vida "+lp+" ("+lpn+")."+(signName?" Sol en "+signName+".":"")+(saturnNote?" "+saturnNote:"")
       +"\n\nDATOS DE LA CONVERSACIÓN:\n"+sum
       +"\n\nREGLAS ESTRICTAS — si las rompés, el perfil falla:\n"
       +"1. NUNCA repitas hechos directamente. 'Vivís en X y trabajás de Y' es un fracaso total.\n"
@@ -412,27 +409,11 @@ async function finalize(lang, history) {
       +"⚡ TU PUNTO CIEGO\n"
       +"Usá su patrón de búsqueda O su respuesta sobre conexiones perdidas para nombrar algo que no ve de sí mismo. No un defecto — una fortaleza oculta que no usa. 1 oración.\n\n"
       +"😄 LA VERDAD QUE NADIE TE DICE\n"
-      +"1 línea. Savage y específica. Combiná su signo solar"+(signName?" ("+signName+")":" (si lo sabés)")+", su arquetipo "+AL.n+", y un dato concreto de la conversación. Que la lea, haga pausa, y se la mande a alguien ahora mismo."
-    : "Write a profile for "+n+". Archetype: "+AL.n+". Life Path "+lp+" ("+lpn+")."+(signName?" Sun in "+signName+".":"")+(saturnNote?" "+saturnNote:"")
-      +"\n\nCONVERSATION DATA:\n"+sum
-      +"\n\nSTRICT RULES — break these and the profile fails:\n"
-      +"1. NEVER repeat facts back. 'You live in X and work as Y' is a complete failure.\n"
-      +"2. Cross-reference 2-3 unexpected data points and say what they reveal TOGETHER — not the facts, but the truth behind them.\n"
-      +"3. Write like a tarot reader who also has their therapy notes: precise, slightly uncomfortable, warm but not soft.\n"
-      +"4. Each section: MAX 2 short sentences.\n\n"
-      +"FORMAT — exactly 3 sections:\n\n"
-      +"🎁 YOUR SOCIAL GIFT\n"
-      +"Cross-reference their occupation, how they find people, and their connector role to reveal their underlying power — not what they do, but why it works. Max 2 sentences.\n\n"
-      +"⚡ YOUR BLIND SPOT\n"
-      +"Use their search pattern OR their missed-connection answer to name the one thing they don't see about themselves. Not a flaw — a hidden strength they're underusing. 1 sentence.\n\n"
-      +"😄 THE TRUTH NOBODY TELLS YOU\n"
-      +"1 line. Savage and specific. Combine their sun sign"+(signName?" ("+signName+")":" (if known)")+", archetype "+AL.n+", and one real data point from the conversation. The kind of line they read, pause, then immediately forward to someone.";
+      +"1 línea. Savage y específica. Combiná su signo solar"+(signName?" ("+signName+")":" (si lo sabés)")+", su arquetipo "+AL.n+", y un dato concreto de la conversación. Que la lea, haga pausa, y se la mande a alguien ahora mismo.";
 
   let report = await rawCall(sys, [{role:"user",content:p}], 450);
   if (!report) {
-    report = lang==="es"
-      ? "🎁 TU DON SOCIAL\nTenes una manera natural de entender lo que la gente necesita antes de que lo digan. Conectas con proposito, no por accidente.\n\n⚡ TU PUNTO CIEGO\nSubestimas lo que ya tenes en tu red.\n\n🔢 Numero de vida "+lp+" — "+lpn+".\nConectas con intencion.\n\n😄 LA VERDAD QUE NADIE TE DICE\nSos la persona a la que todos llaman cuando necesitan algo y la ultima a la que se le agradece. Clasico."
-      : "🎁 YOUR SOCIAL GIFT\nYou have a natural sense of what people need before they say it. You connect with intention, not by accident.\n\n⚡ YOUR BLIND SPOT\nYou underestimate what's already in your network.\n\n🔢 Life number "+lp+" — "+lpn+".\nYou connect with intention.\n\n😄 THE TRUTH NOBODY TELLS YOU\nYou're the one everyone calls when they need something and the last one they think to thank. Classic.";
+    report = "🎁 TU DON SOCIAL\nTenes una manera natural de entender lo que la gente necesita antes de que lo digan. Conectas con proposito, no por accidente.\n\n⚡ TU PUNTO CIEGO\nSubestimas lo que ya tenes en tu red.\n\n🔢 Numero de vida "+lp+" — "+lpn+".\nConectas con intencion.\n\n😄 LA VERDAD QUE NADIE TE DICE\nSos la persona a la que todos llaman cuando necesitan algo y la ultima a la que se le agradece. Clasico.";
   }
   return { data, lp, arcId, report, sign, saturn };
 }
