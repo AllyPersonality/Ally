@@ -23,8 +23,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <Routes>
-        <Route path="/" element={<BotPage version="football" />} />
-        <Route path="/cultural" element={<BotPage version="cultural" />} />
+        <Route path="/" element={<BotPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </ErrorBoundary>

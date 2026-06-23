@@ -499,12 +499,10 @@ const CSS = `
   ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(242,237,230,.1);border-radius:2px}
 `;
 
-export default function BotPage({ version = "football" }) {
+export default function BotPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isRootPath = location.pathname === "/";
-  const [view,      setView]     = useState(isRootPath ? "choose" : "chat");
-  const [lang,      setLang]     = useState("es");
+  const [version,   setVersion]  = useState(null);
+  const [view,      setView]     = useState("version");
   const [msgs,      setMsgs]     = useState([]);
   const [hist,      setHist]     = useState([]);
   const [input,     setInput]    = useState("");
@@ -521,24 +519,22 @@ export default function BotPage({ version = "football" }) {
 
   const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null), tsStart=useRef(null);
 
-  useEffect(()=>{start("es");},[]);
+  useEffect(()=>{if(version)start();},[version]);
   useEffect(()=>{bot.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
   useEffect(()=>{if(!typing&&lang&&!done&&view==="chat")setTimeout(()=>inp.current?.focus(),80);},[typing,lang,done,view]);
 
   function push(m){setMsgs(p=>[...p,{id:Date.now()+Math.random(),...m}]);}
 
-  async function start(l){
-    setLang(l); setView("chat");
+  async function start(){
+    setView("chat");
     sessionId.current = "r:" + Date.now();
     tsStart.current = new Date().toISOString();
     setActiveField("name");
-    const op = l==="es"
-      ? "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te voy a dar un perfil completo sobre vos.\n\nSe dice que te saca la ficha bastante bien 😄"
-      : "Welcome to your Social Personality Test.\n\nLet's just chat for a bit about how you move through the world. At the end I'll give you a full profile.\n\nMost people say it is uncomfortably accurate 😄";
+    const op = "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te voy a dar un perfil completo sobre vos.\n\nSe dice que te saca la ficha bastante bien 😄";
     await sleep(300); setTyping(true); await sleep(900); setTyping(false);
     push({role:"bot", text:op});
     await sleep(450); setTyping(true); await sleep(600); setTyping(false);
-    const first = localQuestion("name", l, "");
+    const first = localQuestion("name", "es", "");
     push({role:"bot", text:first});
     setHist([{role:"assistant", content:first}]);
   }
@@ -564,7 +560,7 @@ export default function BotPage({ version = "football" }) {
 
     const fallbackNext = TOPICS[Math.min(topicI+1, TOPICS.length-1)];
     const stage = nt < 4 ? "warmup" : nt < 11 ? "open_conversation" : "wind_down";
-    const reply = await nextTurn(lang, nh, stage, collectedStr, fallbackNext, activeField, text, myName);
+    const reply = await nextTurn("es", nh, stage, collectedStr, fallbackNext, activeField, text, myName);
 
     await sleep(150+Math.random()*300);
     setTyping(false);
@@ -580,16 +576,16 @@ export default function BotPage({ version = "football" }) {
     else setActiveField(fallbackNext);
 
     // Save partial after every turn
-    await savePartial(sessionId.current, nd, lang);
+    await savePartial(sessionId.current, nd, "es");
 
     if (isDone(reply) || topicI+1 >= TOPICS.length) {
       await sleep(700); setTyping(true);
-      const res = await finalize(lang, [...nh, {role:"assistant", content:reply}]);
+      const res = await finalize("es", [...nh, {role:"assistant", content:reply}]);
       const merged = {...nd, ...res.data};
       setTyping(false);
       push({role:"result", lp:res.lp, arcId:res.arcId, report:res.report, sign:res.sign, saturn:res.saturn});
       setDone(true);
-      await saveResp(sessionId.current, merged, lang, res.lp, res.arcId, res.report, res.sign, res.saturn);
+      await saveResp(sessionId.current, merged, "es", res.lp, res.arcId, res.report, res.sign, res.saturn);
     }
     busy.current = false;
   }
@@ -597,39 +593,37 @@ export default function BotPage({ version = "football" }) {
   function onKey(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}
 
   function shareText(arcId,lp){
-    const A=ARC[arcId],AL=A[lang],ln=lang==="es"?(LPes[lp]||""):(LPen[lp]||"");
-    return lang==="es"
-      ? "Hice el Test de Personalidad Social de Ally\n\nSoy "+AL.n+" "+A.e+"\n\n\""+AL.t+"\"\n\nCamino de Vida "+lp+" — "+ln+"\n\nY vos?"
-      : "I took the Ally Social Personality Test\n\nI am "+AL.n+" "+A.e+"\n\n\""+AL.t+"\"\n\nLife Path "+lp+" — "+ln+"\n\nWhat are you?";
+    const A=ARC[arcId],AL=A.es,ln=LPes[lp]||"";
+    return "Hice el Test de Personalidad Social de Ally\n\nSoy "+AL.n+" "+A.e+"\n\n\""+AL.t+"\"\n\nCamino de Vida "+lp+" — "+ln+"\n\nY vos?";
   }
   async function share(arcId,lp,t){
     try{await navigator.clipboard.writeText(shareText(arcId,lp));}catch{}
     if(t==="fb") window.open("https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent("https://ally.app"),"_blank");
-    else if(t==="ig"){setSmsg(lang==="es"?"Copiado — pegalo en tu historia":"Copied — paste into your story");setTimeout(()=>setSmsg(""),3000);}
+    else if(t==="ig"){setSmsg("Copiado — pegalo en tu historia");setTimeout(()=>setSmsg(""),3000);}
     else{setCopied(true);setTimeout(()=>setCopied(false),2500);}
   }
   function reset(){
-    setView("lang");setLang(null);setMsgs([]);setHist([]);setInput("");setTyping(false);
+    setVersion(null);setView("version");setMsgs([]);setHist([]);setInput("");setTyping(false);
     setDone(false);setTurns(0);setTopicI(0);setActiveField("name");setData({});
     setEmail("");setEmailOk(false);setCopied(false);setSmsg("");
   }
 
   const prog = Math.min(95, Math.round((topicI/TOPICS.length)*100));
 
-  // ── VERSION CHOOSER ──────────────────────────────────────────────────────────
-  if (view === "choose") return (
+  // ── VERSION SELECTION ─────────────────────────────────────────────────────────
+  if (view === "version") return (
     <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"#090705",backgroundImage:"radial-gradient(rgba(242,237,230,.04) 1px,transparent 1px)",backgroundSize:"36px 36px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0 24px",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative"}}>
       <style>{CSS}</style>
       <div style={{position:"absolute",width:480,height:480,borderRadius:"50%",background:"radial-gradient(circle,rgba(191,160,98,.09) 0%,transparent 70%)",pointerEvents:"none"}}/>
-      <div style={{width:"100%",maxWidth:420,textAlign:"center"}} className="fi">
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:"rgba(191,160,98,.7)",textTransform:"uppercase",marginBottom:36}}>✦ &nbsp;Ally&nbsp; ✦</div>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(44px,10vw,68px)",fontWeight:300,lineHeight:1.0,color:"#F2EDE6",marginBottom:2}}>Personality</h1>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(44px,10vw,68px)",fontWeight:600,fontStyle:"italic",lineHeight:1.0,color:"#BFA062",marginBottom:28}}>Test</h1>
+      <div style={{width:"100%",maxWidth:520,textAlign:"center"}} className="fi">
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:"rgba(191,160,98,.7)",textTransform:"uppercase",marginBottom:24}}>✦ &nbsp;Ally&nbsp; ✦</div>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,9vw,64px)",fontWeight:300,lineHeight:1.0,color:"#F2EDE6",marginBottom:8}}>¿Cuál</h1>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,9vw,64px)",fontWeight:600,fontStyle:"italic",lineHeight:1.0,color:"#BFA062",marginBottom:24}}>de los 9 sos vos?</h1>
         <div style={{width:40,height:1,background:"rgba(191,160,98,.4)",margin:"0 auto 24px"}}/>
-        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:300,fontStyle:"italic",color:"rgba(242,237,230,.45)",lineHeight:1.65,marginBottom:48}}>Descubrí qué tipo de conector sos realmente</p>
-        <div style={{display:"flex",flexDirection:"column",gap:14}}>
-          <button className="lb" onClick={()=>{setView("chat");}} style={{background:"rgba(191,160,98,.12)",border:"2px solid #BFA062",color:"#F2EDE6",padding:"14px 28px",borderRadius:12,fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:500,letterSpacing:1,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}}>⚽ Football Edition</button>
-          <button className="lb" onClick={()=>{navigate("/cultural");}} style={{background:"rgba(242,237,230,.05)",border:"2px solid rgba(242,237,230,.2)",color:"rgba(242,237,230,.7)",padding:"14px 28px",borderRadius:12,fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:500,letterSpacing:1,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}}>🎭 Culture Edition</button>
+        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,fontWeight:300,fontStyle:"italic",color:"rgba(242,237,230,.55)",lineHeight:1.65,marginBottom:48}}>9 personalidades. Una es incómodamente la tuya.</p>
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          <button onClick={()=>setVersion("football")} style={{background:"rgba(191,160,98,.12)",border:"2px solid #BFA062",color:"#F2EDE6",padding:"18px 32px",borderRadius:14,fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:2,cursor:"pointer",transition:"all .3s",textTransform:"uppercase",hover:{background:"rgba(191,160,98,.2)","border-color":"#D4AF85"}}}>⚽ Fútbol</button>
+          <button onClick={()=>setVersion("cultural")} style={{background:"rgba(242,237,230,.05)",border:"2px solid rgba(242,237,230,.2)",color:"#F2EDE6",padding:"18px 32px",borderRadius:14,fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:2,cursor:"pointer",transition:"all .3s",textTransform:"uppercase",hover:{background:"rgba(242,237,230,.12)","border-color":"rgba(242,237,230,.4)"}}} onMouseOver={e=>{e.target.style.background="rgba(242,237,230,.12)";e.target.style.borderColor="rgba(242,237,230,.4)"}} onMouseOut={e=>{e.target.style.background="rgba(242,237,230,.05)";e.target.style.borderColor="rgba(242,237,230,.2)"}}>🌟 Cultura</button>
         </div>
       </div>
     </div>
@@ -645,7 +639,7 @@ export default function BotPage({ version = "football" }) {
             <div style={{width:36,height:36,borderRadius:"50%",flexShrink:0,background:"rgba(191,160,98,.12)",border:"1px solid rgba(191,160,98,.35)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"#BFA062"}}>✦</div>
             <div>
               <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:500,letterSpacing:.6}}>Ally</div>
-              <div style={{fontSize:11,color:"rgba(242,237,230,.35)"}}>{done?(lang==="es"?"Completo":"Complete"):typing?(lang==="es"?"Escribiendo...":"Typing..."):(lang==="es"?"En linea":"Online")}</div>
+              <div style={{fontSize:11,color:"rgba(242,237,230,.35)"}}>{done?"Completo":typing?"Escribiendo...":"En linea"}</div>
             </div>
           </div>
           {done&&<div style={{fontSize:11,color:"rgba(141,196,122,.8)",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:1}}>✓ Saved</div>}
@@ -669,12 +663,12 @@ export default function BotPage({ version = "football" }) {
             </div>
           );
           if (m.role==="result") {
-            const arc=ARC[m.arcId]||ARC.catalyst, AL=arc[lang]||arc.en;
-            const lpn = lang==="es" ? (LPes[m.lp]||"") : (LPen[m.lp]||"");
+            const arc=ARC[m.arcId]||ARC.catalyst, AL=arc.es;
+            const lpn = LPes[m.lp]||"";
             const signData = m.sign && SIGNS[m.sign];
-            const signLabel = signData ? (lang==="es" ? signData.es : signData.en) : null;
-            const signTrait = m.sign && SIGN_TRAIT[m.sign] ? (lang==="es" ? SIGN_TRAIT[m.sign].es : SIGN_TRAIT[m.sign].en) : null;
-            const saturnText = m.saturn && SATURN_MSG[m.saturn] ? (lang==="es" ? SATURN_MSG[m.saturn].es : SATURN_MSG[m.saturn].en) : null;
+            const signLabel = signData ? signData.es : null;
+            const signTrait = m.sign && SIGN_TRAIT[m.sign] ? SIGN_TRAIT[m.sign].es : null;
+            const saturnText = m.saturn && SATURN_MSG[m.saturn] ? SATURN_MSG[m.saturn].es : null;
             return (
               <div key={m.id} className="pp" style={{margin:"4px 0"}}>
                 <div style={{borderRadius:20,overflow:"hidden",border:"2px solid "+arc.br,boxShadow:"0 0 60px "+arc.c+"22"}}>
@@ -682,8 +676,8 @@ export default function BotPage({ version = "football" }) {
                   {/* ── Archetype header ── */}
                   <div style={{background:arc.bg,padding:"34px 22px 26px",textAlign:"center",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
-                    <img src={`/caricatures/${CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
-                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>{lang==="es"?"Tu tipo es":"You are"}</div>
+                    <img src={`/caricatures${version==="football"?"-football":""}/{CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>Tu tipo es</div>
                     <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#F2EDE6",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
                     <div style={{background:arc.c+"15",border:"1px solid "+arc.c+"40",borderRadius:12,padding:"13px 18px",fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontStyle:"italic",color:"rgba(242,237,230,.9)",lineHeight:1.5}}>"{AL.t}"</div>
@@ -702,14 +696,14 @@ export default function BotPage({ version = "football" }) {
 
                     {/* Life Path */}
                     <div style={{marginTop:14,display:"inline-flex",alignItems:"center",gap:8,background:"rgba(242,237,230,.06)",border:"1px solid rgba(242,237,230,.12)",borderRadius:20,padding:"5px 14px"}}>
-                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"rgba(242,237,230,.5)",letterSpacing:1}}>{lang==="es"?"Camino de Vida":"Life Path"} {m.lp} — {lpn}</span>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"rgba(242,237,230,.5)",letterSpacing:1}}>Camino de Vida {m.lp} — {lpn}</span>
                     </div>
 
                     {/* Sun sign */}
                     {signLabel && signTrait && (
                       <div style={{marginTop:12,padding:"11px 16px",background:"rgba(242,237,230,.05)",border:"1px solid rgba(242,237,230,.1)",borderRadius:12,textAlign:"left"}}>
                         <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:3,color:arc.c+"bb",textTransform:"uppercase",marginBottom:5}}>
-                          {signData.e} {lang==="es"?"Sol en":"Sun in"} {signLabel}
+                          {signData.e} Sol en {signLabel}
                         </div>
                         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontStyle:"italic",color:"rgba(242,237,230,.8)",lineHeight:1.5}}>{signTrait}</div>
                       </div>
@@ -727,28 +721,28 @@ export default function BotPage({ version = "football" }) {
                   <div style={{background:"rgba(6,5,3,.98)",padding:"20px 18px"}}>
                     <div style={{fontFamily:"'Barlow',sans-serif",fontSize:15,lineHeight:1.9,color:"rgba(242,237,230,.8)",whiteSpace:"pre-wrap",wordBreak:"break-word",marginBottom:20}}>{m.report?.replace(/\*\*/g,"")}</div>
                     <div style={{height:1,background:"rgba(242,237,230,.07)",marginBottom:16}}/>
-                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:3,color:arc.c+"88",textTransform:"uppercase",textAlign:"center",marginBottom:12}}>{lang==="es"?"Te identificas? Compartilo":"Feels accurate? Share it"} 👇</div>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:3,color:arc.c+"88",textTransform:"uppercase",textAlign:"center",marginBottom:12}}>Te identificas? Compartilo 👇</div>
                     <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:14}}>
-                      <button className="sfb" onClick={()=>share(m.arcId,m.lp,"fb")}><span style={{fontSize:17,fontWeight:700}}>f</span>{lang==="es"?"COMPARTIR EN FACEBOOK":"SHARE ON FACEBOOK"}</button>
-                      <button className="sig" onClick={()=>share(m.arcId,m.lp,"ig")}><span style={{fontSize:14}}>◎</span>{lang==="es"?"COMPARTIR EN INSTAGRAM":"SHARE ON INSTAGRAM"}</button>
+                      <button className="sfb" onClick={()=>share(m.arcId,m.lp,"fb")}><span style={{fontSize:17,fontWeight:700}}>f</span>COMPARTIR EN FACEBOOK</button>
+                      <button className="sig" onClick={()=>share(m.arcId,m.lp,"ig")}><span style={{fontSize:14}}>◎</span>COMPARTIR EN INSTAGRAM</button>
                       {smsg&&<div style={{textAlign:"center",fontSize:12,color:"rgba(141,196,122,.8)",padding:"3px 0"}}>{smsg}</div>}
-                      <button className="scp" onClick={()=>share(m.arcId,m.lp,"copy")}>{copied?"✓ COPIED":(lang==="es"?"COPIAR TEXTO":"COPY TEXT")}</button>
+                      <button className="scp" onClick={()=>share(m.arcId,m.lp,"copy")}>{copied?"✓ COPIADO":"COPIAR TEXTO"}</button>
                     </div>
                     {!emailOk ? (
                       <div style={{background:"rgba(242,237,230,.04)",border:"1px solid rgba(242,237,230,.08)",borderRadius:12,padding:"13px"}}>
-                        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:arc.c+"CC",textTransform:"uppercase",marginBottom:8}}>{lang==="es"?"Cuando lanza Ally?":"When Ally launches?"}</div>
+                        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:arc.c+"CC",textTransform:"uppercase",marginBottom:8}}>Cuando lanza Ally?</div>
                         <div style={{display:"flex",gap:8}}>
-                          <input type="email" placeholder={lang==="es"?"tu@email.com":"your@email.com"} value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&email.includes("@"))setEmailOk(true);}}/>
+                          <input type="email" placeholder="tu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&email.includes("@"))setEmailOk(true);}}/>
                           <button onClick={()=>email.includes("@")&&setEmailOk(true)} style={{background:arc.c,border:"none",borderRadius:8,padding:"0 15px",color:"#090705",fontFamily:"'Barlow Condensed',sans-serif",fontSize:17,fontWeight:600,cursor:"pointer",flexShrink:0}}>→</button>
                         </div>
                       </div>
                     ) : (
-                      <div style={{textAlign:"center",padding:12,background:arc.c+"10",borderRadius:10,fontSize:13,color:"rgba(242,237,230,.6)"}}>{lang==="es"?"Estas en la lista! 🎉":"You are on the list! 🎉"}</div>
+                      <div style={{textAlign:"center",padding:12,background:arc.c+"10",borderRadius:10,fontSize:13,color:"rgba(242,237,230,.6)"}}>Estas en la lista! 🎉</div>
                     )}
                   </div>
                 </div>
                 <div style={{textAlign:"center",marginTop:12}}>
-                  <button onClick={reset} style={{background:"none",border:"none",color:"rgba(242,237,230,.22)",fontSize:12,fontFamily:"'Barlow',sans-serif",cursor:"pointer",textDecoration:"underline"}}>{lang==="es"?"Empezar de nuevo":"Start over"}</button>
+                  <button onClick={reset} style={{background:"none",border:"none",color:"rgba(242,237,230,.22)",fontSize:12,fontFamily:"'Barlow',sans-serif",cursor:"pointer",textDecoration:"underline"}}>Empezar de nuevo</button>
                 </div>
               </div>
             );
@@ -772,7 +766,7 @@ export default function BotPage({ version = "football" }) {
             <textarea ref={inp} rows={1} value={input}
               onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,140)+"px";}}
               onKeyDown={onKey}
-              placeholder={typing?"...":(lang==="es"?"Escribe tu respuesta...":"Type your answer…")}
+              placeholder={typing?"...":"Escribe tu respuesta..."}
               disabled={typing} style={{height:"26px"}}/>
             <button onClick={submit} disabled={!input.trim()||typing}
               style={{width:36,height:36,borderRadius:"50%",flexShrink:0,border:"none",
@@ -782,7 +776,7 @@ export default function BotPage({ version = "football" }) {
                 transition:"background .2s",fontSize:16,
                 color:input.trim()&&!typing?"#090705":"rgba(242,237,230,.2)"}}>↑</button>
           </div>
-          <div style={{textAlign:"center",marginTop:6,fontSize:11,color:"rgba(242,237,230,.18)"}}>{lang==="es"?"Enter para enviar":"Enter to send"}</div>
+          <div style={{textAlign:"center",marginTop:6,fontSize:11,color:"rgba(242,237,230,.18)"}}>Enter para enviar</div>
         </div>
       )}
     </div>
