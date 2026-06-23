@@ -521,7 +521,7 @@ export default function BotPage({ version = "football" }) {
     tsStart.current = new Date().toISOString();
     setActiveField("name");
     const op = l==="es"
-      ? "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te doy un perfil completo.\n\nLa mayoria dice que es incomodamente preciso 😄"
+      ? "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te voy a dar un perfil completo sobre vos.\n\nSe dice que te saca la ficha bastante bien 😄"
       : "Welcome to your Social Personality Test.\n\nLet's just chat for a bit about how you move through the world. At the end I'll give you a full profile.\n\nMost people say it is uncomfortably accurate 😄";
     await sleep(300); setTyping(true); await sleep(900); setTyping(false);
     push({role:"bot", text:op});
@@ -670,7 +670,7 @@ export default function BotPage({ version = "football" }) {
                   {/* ── Archetype header ── */}
                   <div style={{background:arc.bg,padding:"34px 22px 26px",textAlign:"center",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
-                    <img src={`/caricatures/${version}/${m.arcId}.svg`} alt={AL.n} style={{width:120,height:120,marginBottom:12,filter:"drop-shadow(0 0 18px "+arc.c+"88)"}} />
+                    <img src={`/caricatures/${m.arcId}.png`} alt={AL.n} style={{width:120,height:120,marginBottom:12,filter:"drop-shadow(0 0 18px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>{lang==="es"?"Tu tipo es":"You are"}</div>
                     <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#F2EDE6",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
@@ -713,7 +713,7 @@ export default function BotPage({ version = "football" }) {
 
                   {/* ── Profile section ── */}
                   <div style={{background:"rgba(6,5,3,.98)",padding:"20px 18px"}}>
-                    <div style={{fontFamily:"'Barlow',sans-serif",fontSize:15,lineHeight:1.9,color:"rgba(242,237,230,.8)",whiteSpace:"pre-wrap",wordBreak:"break-word",marginBottom:20}}>{m.report}</div>
+                    <div style={{fontFamily:"'Barlow',sans-serif",fontSize:15,lineHeight:1.9,color:"rgba(242,237,230,.8)",whiteSpace:"pre-wrap",wordBreak:"break-word",marginBottom:20}}>{m.report?.replace(/\*\*/g,"")}</div>
                     <div style={{height:1,background:"rgba(242,237,230,.07)",marginBottom:16}}/>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:3,color:arc.c+"88",textTransform:"uppercase",textAlign:"center",marginBottom:12}}>{lang==="es"?"Te identificas? Compartilo":"Feels accurate? Share it"} 👇</div>
                     <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:14}}>
