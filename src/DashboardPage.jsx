@@ -145,9 +145,9 @@ export default function DashboardPage() {
   const arcData = Object.entries(resps.reduce((acc,r)=>{ if(r.arc){acc[r.arc]=(acc[r.arc]||0)+1;} return acc; },{}))
     .map(([name,value])=>({name:ARC_LABELS[name]||name, value, color:ARC_COLORS[name]||"#666"}));
 
-  const langData = [
-    {name:"Spanish", value: resps.filter(r=>r.lang==="es").length, color:"#BFA062"},
-    {name:"English", value: resps.filter(r=>r.lang==="en").length, color:"#7BAFC4"},
+  const versionData = [
+    {name:"Fútbol", value: resps.filter(r=>r.version==="football").length, color:"#E8714A"},
+    {name:"Cultura", value: resps.filter(r=>r.version==="cultural").length, color:"#7BAFC4"},
   ].filter(d=>d.value>0);
 
   const filtered = resps.filter(r => {
@@ -344,7 +344,7 @@ export default function DashboardPage() {
                     <div style={{fontSize:11,color:"rgba(242,237,230,.25)",marginBottom:7}}>⏱ {timeSpent(r.ts_start,r.ts)}</div>
                     <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
                       {r.status==="abandoned"&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.35)",border:"1px solid rgba(242,237,230,.1)"}}>ABANDONED</span>}
-                      {r.lang&&<span className="badge" style={{background:"rgba(191,160,98,.08)",color:"rgba(191,160,98,.75)",border:"1px solid rgba(191,160,98,.2)"}}>{r.lang.toUpperCase()}</span>}
+                      {r.lang&&<span className="badge" style={{background:"rgba(191,160,98,.08)",color:"rgba(191,160,98,.75)",border:"1px solid rgba(191,160,98,.2)"}}>{r.lang==="es"?"SPANISH":"ENGLISH"}</span>}
                       {r.version&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.5)",border:"1px solid rgba(242,237,230,.1)"}}>{r.version==="football"?"⚽ Football":"🎭 Culture"}</span>}
                       {r.arc&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.5)",border:"1px solid rgba(242,237,230,.1)"}}>{ARC_LABELS[r.arc]}</span>}
                       {r.pro&&!isNo(r.pro)&&<span className="badge" style={{background:"rgba(232,113,74,.08)",color:"rgba(232,113,74,.8)",border:"1px solid rgba(232,113,74,.2)"}}>PAIN H1</span>}
@@ -364,7 +364,7 @@ export default function DashboardPage() {
                     <div>
                       <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:400,color:"#F2EDE6",marginBottom:3}}>{sel.name||"Anonymous"}</h2>
                       {(sel.age||sel.gender)&&<div style={{fontSize:13,color:"rgba(191,160,98,.8)",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.5,marginBottom:3}}>{[sel.age,sel.age?ageRange(sel.age):null,sel.gender].filter(Boolean).join(" · ")}</div>}
-                      <div style={{fontSize:11,color:"rgba(242,237,230,.3)"}}>{new Date(sel.ts).toLocaleString()} · {sel.lang==="es"?"Spanish":"English"}{sel.lp?" · LP "+sel.lp:""}{sel.arc?" · "+ARC_LABELS[sel.arc]:""} · <span style={{color:sel.status==="completed"?"rgba(141,196,122,.7)":"rgba(242,237,230,.3)"}}>{sel.status||"abandoned"}</span></div>
+                      <div style={{fontSize:11,color:"rgba(242,237,230,.3)"}}>{new Date(sel.ts).toLocaleString()} · Spanish{sel.lp?" · LP "+sel.lp:""}{sel.arc?" · "+ARC_LABELS[sel.arc]:""}{sel.version?" · "+(sel.version==="football"?"⚽ Football":"🎭 Culture"):""} · <span style={{color:sel.status==="completed"?"rgba(141,196,122,.7)":"rgba(242,237,230,.3)"}}>{sel.status||"abandoned"}</span></div>
                     </div>
                     <div style={{display:"flex",gap:8,alignItems:"center"}}>
                       <button onClick={e=>deleteResp(sel.id,e)} style={{background:"none",border:"1px solid rgba(232,113,74,.25)",borderRadius:6,color:"rgba(232,113,74,.6)",fontSize:12,cursor:"pointer",padding:"4px 10px",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:.5,transition:"all .15s"}} onMouseOver={e=>{e.target.style.borderColor="rgba(232,113,74,.7)";e.target.style.color="#E8714A";}} onMouseOut={e=>{e.target.style.borderColor="rgba(232,113,74,.25)";e.target.style.color="rgba(232,113,74,.6)";}}>DELETE</button>
@@ -493,12 +493,12 @@ export default function DashboardPage() {
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:20}}>
               <div className="card">
-                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Language Split</div>
-                {langData.length>0?(
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Bot Version Split</div>
+                {versionData.length>0?(
                   <ResponsiveContainer width="100%" height={120}>
                     <PieChart>
-                      <Pie data={langData} cx="50%" cy="50%" outerRadius={45} dataKey="value" label={({name,percent})=>name+" "+Math.round(percent*100)+"%"} fontSize={11}>
-                        {langData.map((d,i)=><Cell key={i} fill={d.color}/>)}
+                      <Pie data={versionData} cx="50%" cy="50%" outerRadius={45} dataKey="value" label={({name,percent})=>name+" "+Math.round(percent*100)+"%"} fontSize={11}>
+                        {versionData.map((d,i)=><Cell key={i} fill={d.color}/>)}
                       </Pie>
                       <Tooltip contentStyle={tip}/>
                     </PieChart>
