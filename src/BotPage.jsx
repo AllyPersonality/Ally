@@ -479,8 +479,9 @@ const CSS = `
   ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(242,237,230,.1);border-radius:2px}
 `;
 
-export default function BotPage({ version = "cultural" }) {
+export default function BotPage() {
   const navigate = useNavigate();
+  const [version,   setVersion]  = useState(null);
   const [view,      setView]     = useState("choose");
   const [msgs,      setMsgs]     = useState([]);
   const [hist,      setHist]     = useState([]);
@@ -582,39 +583,28 @@ export default function BotPage({ version = "cultural" }) {
     else{setCopied(true);setTimeout(()=>setCopied(false),2500);}
   }
   function reset(){
-    setView("choose");setMsgs([]);setHist([]);setInput("");setTyping(false);
+    setVersion(null);setView("choose");setMsgs([]);setHist([]);setInput("");setTyping(false);
     setDone(false);setTurns(0);setTopicI(0);setActiveField("name");setData({});
     setEmail("");setEmailOk(false);setCopied(false);setSmsg("");
   }
 
   const prog = Math.min(95, Math.round((topicI/TOPICS.length)*100));
 
-  // ── OPENING SCREEN WITH CARICATURES ───────────────────────────────────────────
-  const arcIds = ["weaver", "catalyst", "tide", "oracle", "scout", "mirror", "anchor", "spark", "seed"];
+  // ── VERSION SELECTION SCREEN ──────────────────────────────────────────────────
   if (view === "choose") return (
     <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"#090705",backgroundImage:"radial-gradient(rgba(242,237,230,.04) 1px,transparent 1px)",backgroundSize:"36px 36px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative",overflow:"auto"}}>
       <style>{CSS}</style>
       <div style={{position:"absolute",width:480,height:480,borderRadius:"50%",background:"radial-gradient(circle,rgba(191,160,98,.09) 0%,transparent 70%)",pointerEvents:"none"}}/>
-      <div style={{width:"100%",maxWidth:900,textAlign:"center"}} className="fi">
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:"rgba(191,160,98,.7)",textTransform:"uppercase",marginBottom:16}}>✦ &nbsp;Ally&nbsp; ✦</div>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(40px,8vw,60px)",fontWeight:300,lineHeight:1.0,color:"#F2EDE6",marginBottom:4}}>¿Cuál</h1>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(40px,8vw,60px)",fontWeight:600,fontStyle:"italic",lineHeight:1.0,color:"#BFA062",marginBottom:16}}>de los 9 sos vos?</h1>
-        <div style={{width:40,height:1,background:"rgba(191,160,98,.4)",margin:"0 auto 20px"}}/>
-        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontWeight:300,fontStyle:"italic",color:"rgba(242,237,230,.55)",lineHeight:1.65,marginBottom:40}}>9 personalidades. Una es incómodamente la tuya.</p>
-
-        {/* Caricature Grid */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(100px, 1fr))",gap:12,marginBottom:40,maxWidth:600,margin:"0 auto 40px"}}>
-          {arcIds.map(arcId => {
-            const arc = ARC[arcId];
-            return (
-              <div key={arcId} style={{borderRadius:12,overflow:"hidden",border:"2px solid "+arc.br,background:arc.bg,cursor:"pointer",transition:"all .2s",aspectRatio:"1",display:"flex",alignItems:"center",justifyContent:"center"}} onMouseOver={e=>{e.currentTarget.style.boxShadow="0 0 20px "+arc.c+"88"}} onMouseOut={e=>{e.currentTarget.style.boxShadow="none"}}>
-                <img src={`/caricatures${version==="football"?"-football":""}/`+CARICATURES[arcId]} alt={arc.es.n} style={{width:"80%",height:"80%",objectFit:"contain"}} onError={e=>{e.target.style.display="none"}}/>
-              </div>
-            );
-          })}
+      <div style={{width:"100%",maxWidth:480,textAlign:"center"}} className="fi">
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:"rgba(191,160,98,.7)",textTransform:"uppercase",marginBottom:24}}>✦ &nbsp;Ally&nbsp; ✦</div>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,9vw,64px)",fontWeight:300,lineHeight:1.0,color:"#F2EDE6",marginBottom:8}}>¿Cuál</h1>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,9vw,64px)",fontWeight:600,fontStyle:"italic",lineHeight:1.0,color:"#BFA062",marginBottom:24}}>de los 9 sos vos?</h1>
+        <div style={{width:40,height:1,background:"rgba(191,160,98,.4)",margin:"0 auto 24px"}}/>
+        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,fontWeight:300,fontStyle:"italic",color:"rgba(242,237,230,.55)",lineHeight:1.65,marginBottom:48}}>9 personalidades. Una es incómodamente la tuya.</p>
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          <button onClick={()=>{setVersion("football");start();}} style={{background:"rgba(191,160,98,.12)",border:"2px solid #BFA062",color:"#F2EDE6",padding:"18px 32px",borderRadius:14,fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:2,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}}>⚽ Fútbol</button>
+          <button onClick={()=>{setVersion("cultural");start();}} style={{background:"rgba(242,237,230,.05)",border:"2px solid rgba(242,237,230,.2)",color:"#F2EDE6",padding:"18px 32px",borderRadius:14,fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:2,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}} onMouseOver={e=>{e.target.style.background="rgba(242,237,230,.12)";e.target.style.borderColor="rgba(242,237,230,.4)"}} onMouseOut={e=>{e.target.style.background="rgba(242,237,230,.05)";e.target.style.borderColor="rgba(242,237,230,.2)"}}>🌟 Cultura</button>
         </div>
-
-        <button onClick={()=>setView("chat")} style={{background:"rgba(191,160,98,.12)",border:"2px solid #BFA062",color:"#F2EDE6",padding:"16px 48px",borderRadius:14,fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:600,letterSpacing:2,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}}>¡Hacé el test!</button>
       </div>
     </div>
   );
