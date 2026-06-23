@@ -193,7 +193,7 @@ const isNo=s=>/^no\b|nunca|never|not really|nope|para nada/.test((s||"").toLower
 const isYes=s=>/si\b|yes|claro|absolutely|definitely|por supuesto/.test((s||"").toLowerCase());
 
 // ── SYSTEM PROMPT ────────────────────────────────────────────────────────────
-function systemPrompt(lang, stage, collected) {
+function systemPrompt(stage, collected) {
   const common = [
     "You are in stage: "+stage+". You do NOT follow a fixed question order. You adapt freely to what the user just said.",
     "",
@@ -215,7 +215,7 @@ function systemPrompt(lang, stage, collected) {
     "",
     "NEVER say: survey, research, data, questionnaire, segmentation.",
   ];
-  if (lang === "es") return common.join("\n") + "\n\nThe user chose Spanish. Respond ONLY in natural Argentine Spanish with voseo. Completion line: 'Perfecto [nombre], calculando tu perfil ahora...'";
+  return common.join("\n") + "\n\nThe user chose Spanish. Respond ONLY in natural Argentine Spanish with voseo. Completion line: 'Perfecto [nombre], calculando tu perfil ahora...'";
   return common.join("\n") + "\n\nThe user chose English.";
 }
 
@@ -280,68 +280,67 @@ function detectNextTopic(text) {
 // ── LOCAL FALLBACK ENGINE ────────────────────────────────────────────────────
 const TOPICS = ["name","age","gender","dob","city","occ","jobfeel","grow","chg","freq","steps","social","pro","missed","conn","count","advance"];
 
-function localAck(lastTopic, answer, lang) {
-  const es = lang === "es", a = (answer||"").toLowerCase();
-  if (lastTopic === "name") return es ? "Un placer, "+answer+"!" : "Great to meet you, "+answer+"!";
-  if (lastTopic === "age") return es ? "Perfecto." : "Got it.";
-  if (lastTopic === "gender") return es ? "Buenisimo." : "Got it.";
-  if (lastTopic === "dob") return es ? "Perfecto." : "Got it.";
-  if (lastTopic === "city") return es ? answer+"! Buenisimo." : answer+"! Nice.";
+function localAck(lastTopic, answer) {
+  const a = (answer||"").toLowerCase();
+  if (lastTopic === "name") return "Un placer, "+answer+"!";
+  if (lastTopic === "age") return "Perfecto.";
+  if (lastTopic === "gender") return "Buenisimo.";
+  if (lastTopic === "dob") return "Perfecto.";
+  if (lastTopic === "city") return answer+"! Buenisimo.";
   if (lastTopic === "occ") {
     const both = (/work|job|trabajo/.test(a)&&/studi|estudia/.test(a))||/both|las dos/.test(a);
-    if (both) return es ? "Wow, trabajas Y estudias, eso requiere una energia increible." : "Wow, you work AND study, that takes incredible energy.";
-    if (/estudi|student/.test(a)) return es ? "Wow, estudiante! El momento mas emocionante de la vida." : "Wow, a student! The most exciting stage of life.";
-    if (/ama de casa|hogar|familia|mom|mother|home/.test(a)) return es ? "El trabajo mas importante del mundo, enorme respeto." : "Honestly the most important job in the world, huge respect.";
-    if (/emprend|founder|startup/.test(a)) return es ? "Emprendedor/a! Eso requiere una valentia que pocos tienen." : "An entrepreneur! That takes courage most people only talk about.";
-    if (/medic|doctor|nurs|salud|health/.test(a)) return es ? "Salud! Son la red mas importante de cualquier comunidad." : "Healthcare — the backbone of any community.";
-    if (/maest|profe|docen|teach/.test(a)) return es ? "Docente! Estas moldeando el futuro literalmente." : "A teacher! Literally shaping the future.";
-    if (/jubil|retir/.test(a)) return es ? "Una vida entera construida, eso vale mas que cualquier titulo." : "A whole lifetime built, worth more than any degree.";
-    return es ? "Wow, "+answer+", que mundo interesante." : "Wow, "+answer+", what an interesting world.";
+    if (both) return "Wow, trabajas Y estudias, eso requiere una energia increible.";
+    if (/estudi|student/.test(a)) return "Wow, estudiante! El momento mas emocionante de la vida.";
+    if (/ama de casa|hogar|familia|mom|mother|home/.test(a)) return "El trabajo mas importante del mundo, enorme respeto.";
+    if (/emprend|founder|startup/.test(a)) return "Emprendedor/a! Eso requiere una valentia que pocos tienen.";
+    if (/medic|doctor|nurs|salud|health/.test(a)) return "Salud! Son la red mas importante de cualquier comunidad.";
+    if (/maest|profe|docen|teach/.test(a)) return "Docente! Estas moldeando el futuro literalmente.";
+    if (/jubil|retir/.test(a)) return "Una vida entera construida, eso vale mas que cualquier titulo.";
+    return "Wow, "+answer+", que mundo interesante.";
   }
-  if (lastTopic === "jobfeel") return isNo(answer)?(es?"Honesto, eso tiene merito admitirlo.":"Honest, that takes guts to admit."):(es?"Se nota que lo disfrutas.":"That really comes through.");
-  if (lastTopic === "grow") return isNo(answer)?(es?"Saber donde queres estar ya es una habilidad.":"Knowing where you want to be is a skill."):(es?"Me encanta esa ambicion.":"Love that ambition.");
+  if (lastTopic === "jobfeel") return isNo(answer)?"Honesto, eso tiene merito admitirlo.":"Se nota que lo disfrutas.";
+  if (lastTopic === "grow") return isNo(answer)?"Saber donde queres estar ya es una habilidad.":"Me encanta esa ambicion.";
   if (lastTopic === "chg") {
-    if (/mud|ciudad|mov|city/.test(a)) return es ? "Mudarse resetea todo, la red incluida." : "Moving resets everything, your network included.";
-    if (isNo(answer)||/nada|nothing|tranqui/.test(a)) return es ? "La estabilidad dice mucho tambien." : "Stability says a lot too.";
-    return es ? "Eso suena importante." : "That sounds significant.";
+    if (/mud|ciudad|mov|city/.test(a)) return "Mudarse resetea todo, la red incluida.";
+    if (isNo(answer)||/nada|nothing|tranqui/.test(a)) return "La estabilidad dice mucho tambien.";
+    return "Eso suena importante.";
   }
-  if (lastTopic === "freq") return isNo(answer)?(es?"Tu red ya cubre bastante entonces.":"Interesting, your network covers a lot."):(es?"Entiendo.":"Got it.");
+  if (lastTopic === "freq") return isNo(answer)?"Tu red ya cubre bastante entonces.":"Entiendo.";
   if (lastTopic === "steps") {
-    if (/google/.test(a)) return es ? "Google, el recurso universal." : "Google, the universal fallback.";
-    if (/whatsapp|grupo|group/.test(a)) return es ? "El boca a boca digital, un clasico." : "Digital word of mouth, a classic.";
-    if (/amigo|friend|pregunt|ask/.test(a)) return es ? "Preguntarle a alguien de confianza, siempre funciona." : "Asking someone you trust, still the best network.";
-    return es ? "Interesante proceso." : "Interesting process.";
+    if (/google/.test(a)) return "Google, el recurso universal.";
+    if (/whatsapp|grupo|group/.test(a)) return "El boca a boca digital, un clasico.";
+    if (/amigo|friend|pregunt|ask/.test(a)) return "Preguntarle a alguien de confianza, siempre funciona.";
+    return "Interesante proceso.";
   }
-  if (lastTopic === "social") return isNo(answer)?(es?"Mucha gente no las usa para eso.":"A lot of people don't use them for that."):(es?"Buenisimo.":"Good.");
-  if (lastTopic === "pro") return isNo(answer)?(es?"Tu red ya cubre esas situaciones entonces.":"Your network covers those then."):(es?"Tiene sentido.":"That makes sense.");
-  if (lastTopic === "missed") return isYes(answer)||/paso|me paso|varias/.test(a)?(es?"La respuesta estaba ahi, invisible.":"The answer was right there, invisible."):(es?"Dice algo bueno de como buscas.":"That says something good about how you search.");
-  if (lastTopic === "conn") return /siempre|always|often|seguido/.test(a)?(es?"El conector de cabecera, eso es un superpoder.":"The go-to connector — that's a real superpower."):(es?"No todos tienen ese rol y esta perfecto.":"Not everyone plays that role and that's fine.");
-  if (lastTopic === "count") return es ? "Mas de lo que la mayoria se da cuenta." : "More than most people realize.";
-  return es ? "Buenisimo." : "Got it.";
+  if (lastTopic === "social") return isNo(answer)?"Mucha gente no las usa para eso.":"Buenisimo.";
+  if (lastTopic === "pro") return isNo(answer)?"Tu red ya cubre esas situaciones entonces.":"Tiene sentido.";
+  if (lastTopic === "missed") return isYes(answer)||/paso|me paso|varias/.test(a)?"La respuesta estaba ahi, invisible.":"Dice algo bueno de como buscas.";
+  if (lastTopic === "conn") return /siempre|always|often|seguido/.test(a)?"El conector de cabecera, eso es un superpoder.":"No todos tienen ese rol y esta perfecto.";
+  if (lastTopic === "count") return "Mas de lo que la mayoria se da cuenta.";
+  return "Buenisimo.";
 }
 
-function localQuestion(topic, lang, name) {
-  const es = lang === "es";
+function localQuestion(topic, name) {
   const Q = {
-    name:    es?"Empecemos, como te llamas?":"Let's start — what's your name?",
-    age:     es?(name?name+", ":"")+"cuantos anos tenes?":(name?name+", ":"")+"how old are you?",
-    gender:  es?"Y cual es tu genero?":"And what's your gender?",
-    dob:     es?(name?name+", ":"")+"cual es tu fecha de nacimiento? Dia, mes y anio.":(name?name+", ":"")+"what's your date of birth? Day, month and year.",
-    city:    es?"De donde sos?":"Where are you from?",
-    occ:     es?"Y que haces en la vida, trabajas, estudias, emprendes?":"What do you do — work, study, run something?",
-    jobfeel: es?"Te gusta lo que haces, o llegaste ahi de casualidad?":"Do you love what you do, or did you end up there by accident?",
-    grow:    es?"Tenes ganas de crecer en eso, o hay algo diferente que te llama?":"Do you want to grow in that, or is something else calling you?",
-    chg:     es?(name?name+", ":"")+"esta pasando algo nuevo en tu vida, o esta por pasar?":(name?name+", ":"")+"is anything new happening in your life, or about to?",
-    freq:    es?"Cada cuanto necesitas encontrar a alguien nuevo, un profesional, un contacto?":"How often do you need to find someone new — a professional, a contact?",
-    steps:   es?"Cuando necesitas encontrar a alguien especifico, que haces primero?":"When you need to find someone specific, what do you do first?",
-    social:  es?"Usas las redes sociales para conectar o encontrar gente?":"Do you use social media to connect or find people?",
-    pro:     es?"En el ultimo anio necesitaste encontrar algun profesional que no tenias?":"In the last year, did you need to find a professional you didn't have?",
-    missed:  es?(name?name+", ":"")+"alguna vez te diste cuenta tarde de que alguien en tus contactos podia haber ayudado?":(name?name+", ":"")+"did you ever realize too late that someone already in your contacts could have helped?",
-    conn:    es?"La gente viene a vos a pedirte que los conectes con alguien?":"Do people come to you asking to be connected with someone?",
-    count:   es?"En el ultimo anio, cuantas personas conectaste con alguien que necesitaban?":"In the last year, how many people did you connect to someone they needed?",
-    advance: es?"Ultima, si existiera una app que encuentra a la persona correcta dentro de tus propios contactos en segundos, la probarias?":"Last one — if an app found the right person inside your own contacts in seconds, would you try it?",
+    name:    "Empecemos, como te llamas?",
+    age:     (name?name+", ":"")+"cuantos anos tenes?",
+    gender:  "Y cual es tu genero?",
+    dob:     (name?name+", ":"")+"cual es tu fecha de nacimiento? Dia, mes y anio.",
+    city:    "De donde sos?",
+    occ:     "Y que haces en la vida, trabajas, estudias, emprendes?",
+    jobfeel: "Te gusta lo que haces, o llegaste ahi de casualidad?",
+    grow:    "Tenes ganas de crecer en eso, o hay algo diferente que te llama?",
+    chg:     (name?name+", ":"")+"esta pasando algo nuevo en tu vida, o esta por pasar?",
+    freq:    "Cada cuanto necesitas encontrar a alguien nuevo, un profesional, un contacto?",
+    steps:   "Cuando necesitas encontrar a alguien especifico, que haces primero?",
+    social:  "Usas las redes sociales para conectar o encontrar gente?",
+    pro:     "En el ultimo anio necesitaste encontrar algun profesional que no tenias?",
+    missed:  (name?name+", ":"")+"alguna vez te diste cuenta tarde de que alguien en tus contactos podia haber ayudado?",
+    conn:    "La gente viene a vos a pedirte que los conectes con alguien?",
+    count:   "En el ultimo anio, cuantas personas conectaste con alguien que necesitaban?",
+    advance: "Ultima, si existiera una app que encuentra a la persona correcta dentro de tus propios contactos en segundos, la probarias?",
   };
-  return Q[topic] || (es?"Contame un poco mas?":"Tell me a bit more?");
+  return Q[topic] || "Contame un poco mas?";
 }
 
 // ── API ───────────────────────────────────────────────────────────────────────
@@ -358,18 +357,18 @@ async function rawCall(system, messages, maxTokens) {
   } catch { return null; }
 }
 
-async function nextTurn(lang, history, stage, collected, nextTopic, lastTopic, lastAnswer, name) {
-  let reply = await rawCall(systemPrompt(lang, stage, collected), history, 200);
+async function nextTurn(history, stage, collected, nextTopic, lastTopic, lastAnswer, name) {
+  let reply = await rawCall(systemPrompt(stage, collected), history, 200);
   if (reply && !valid(reply)) {
     const repair = "Rewrite this: max 3 sentences, exactly one question, no lists, no survey words, same meaning, conversational. Message: \"\"\""+reply+"\"\"\"";
-    const fixed = await rawCall(systemPrompt(lang, stage, collected), [...history, {role:"assistant",content:reply},{role:"user",content:repair}], 200);
+    const fixed = await rawCall(systemPrompt(stage, collected), [...history, {role:"assistant",content:reply},{role:"user",content:repair}], 200);
     reply = (fixed && valid(fixed)) ? fixed : null;
   }
   if (reply && valid(reply)) return reply;
-  return localAck(lastTopic, lastAnswer, lang) + " " + localQuestion(nextTopic, lang, name);
+  return localAck(lastTopic, lastAnswer) + " " + localQuestion(nextTopic, name);
 }
 
-async function finalize(lang, history) {
+async function finalize(history) {
   const convo = history.map(m => (m.role==="user"?"USER":"ALLY")+": "+m.content).join("\n");
   let data = {};
   const ext = await rawCall(
@@ -419,10 +418,10 @@ async function finalize(lang, history) {
 }
 
 // ── SAVE ──────────────────────────────────────────────────────────────────────
-async function savePartial(id, data, lang) {
+async function savePartial(id, data) {
   try {
     const now = new Date().toISOString();
-    const payload = { id, ts_start: tsStart.current, ts: now, lang, version, status:"abandoned", ...data };
+    const payload = { id, ts_start: tsStart.current, ts: now, lang:"es", version, status:"abandoned", ...data };
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload),
@@ -430,12 +429,12 @@ async function savePartial(id, data, lang) {
   } catch {}
 }
 
-async function saveResp(id, data, lang, lp, arcId, report, sign, saturn) {
+async function saveResp(id, data, lp, arcId, report, sign, saturn) {
   try {
     const now = new Date().toISOString();
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang, version, status:"completed",
+      body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang:"es", version, status:"completed",
         lp: String(lp), arc: arcId, report, sign: sign||null, saturn: saturn||null, ...data }),
     });
   } catch {}
@@ -501,7 +500,7 @@ export default function BotPage({ version = "cultural" }) {
 
   useEffect(()=>{/* bot starts when user clicks button */},[]);
   useEffect(()=>{bot.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
-  useEffect(()=>{if(!typing&&lang&&!done&&view==="chat")setTimeout(()=>inp.current?.focus(),80);},[typing,lang,done,view]);
+  useEffect(()=>{if(!typing&&!done&&view==="chat")setTimeout(()=>inp.current?.focus(),80);},[typing,done,view]);
 
   function push(m){setMsgs(p=>[...p,{id:Date.now()+Math.random(),...m}]);}
 
@@ -514,7 +513,7 @@ export default function BotPage({ version = "cultural" }) {
     await sleep(300); setTyping(true); await sleep(900); setTyping(false);
     push({role:"bot", text:op});
     await sleep(450); setTyping(true); await sleep(600); setTyping(false);
-    const first = localQuestion("name", "es", "");
+    const first = localQuestion("name", "");
     push({role:"bot", text:first});
     setHist([{role:"assistant", content:first}]);
   }
@@ -540,7 +539,7 @@ export default function BotPage({ version = "cultural" }) {
 
     const fallbackNext = TOPICS[Math.min(topicI+1, TOPICS.length-1)];
     const stage = nt < 4 ? "warmup" : nt < 11 ? "open_conversation" : "wind_down";
-    const reply = await nextTurn("es", nh, stage, collectedStr, fallbackNext, activeField, text, myName);
+    const reply = await nextTurn(nh, stage, collectedStr, fallbackNext, activeField, text, myName);
 
     await sleep(150+Math.random()*300);
     setTyping(false);
@@ -556,16 +555,16 @@ export default function BotPage({ version = "cultural" }) {
     else setActiveField(fallbackNext);
 
     // Save partial after every turn
-    await savePartial(sessionId.current, nd, "es");
+    await savePartial(sessionId.current, nd);
 
     if (isDone(reply) || topicI+1 >= TOPICS.length) {
       await sleep(700); setTyping(true);
-      const res = await finalize("es", [...nh, {role:"assistant", content:reply}]);
+      const res = await finalize([...nh, {role:"assistant", content:reply}]);
       const merged = {...nd, ...res.data};
       setTyping(false);
       push({role:"result", lp:res.lp, arcId:res.arcId, report:res.report, sign:res.sign, saturn:res.saturn});
       setDone(true);
-      await saveResp(sessionId.current, merged, "es", res.lp, res.arcId, res.report, res.sign, res.saturn);
+      await saveResp(sessionId.current, merged, res.lp, res.arcId, res.report, res.sign, res.saturn);
     }
     busy.current = false;
   }
