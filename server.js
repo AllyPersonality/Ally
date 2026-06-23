@@ -9,10 +9,18 @@ const isProd = process.env.NODE_ENV === "production";
 const PORT = process.env.PORT || 3001;
 
 // ── Supabase client (server-side only — key never reaches the browser) ────────
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error("❌ Supabase not configured!");
+  console.error("SUPABASE_URL:", SUPABASE_URL ? "✓ set" : "✗ missing");
+  console.error("SUPABASE_KEY:", SUPABASE_KEY ? "✓ set" : "✗ missing");
+} else {
+  console.log("✓ Supabase configured");
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── App ───────────────────────────────────────────────────────────────────────
 const app = express();
@@ -71,37 +79,46 @@ app.post("/api/responses", async (req, res) => {
     const row = req.body;
     if (!row.id || !row.ts) return res.status(400).json({ error: "Missing id or ts" });
 
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      return res.status(500).json({ error: "Supabase not configured" });
+    }
+
     const { error } = await supabase
       .from("responses")
       .upsert(row, { onConflict: "id" });
 
     if (error) {
-      console.error("Supabase upsert error:", error);
-      return res.status(500).json({ error: error.message });
+      console.error("Supabase upsert error:", JSON.stringify(error));
+      return res.status(500).json({ error: error.message || "Database error" });
     }
+    console.log("POST /api/responses: saved", row.id, "status:", row.status);
     res.json({ ok: true });
   } catch (err) {
-    console.error("Save response error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error("Save response error:", err.message);
+    res.status(500).json({ error: err.message || "Server error" });
   }
 });
 
 // ── API: Get all responses (newest first) ─────────────────────────────────────
 app.get("/api/responses", async (req, res) => {
   try {
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      return res.status(500).json({ error: "Supabase not configured" });
+    }
     const { data, error } = await supabase
       .from("responses")
       .select("*")
       .order("ts", { ascending: false });
 
     if (error) {
-      console.error("Supabase select error:", error);
-      return res.status(500).json({ error: error.message });
+      console.error("Supabase select error:", JSON.stringify(error));
+      return res.status(500).json({ error: error.message || "Database error" });
     }
-    res.json(data);
+    console.log("GET /api/responses: found", data?.length || 0, "responses");
+    res.json(data || []);
   } catch (err) {
-    console.error("Get responses error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error("Get responses error:", err.message);
+    res.status(500).json({ error: err.message || "Server error" });
   }
 });
 
