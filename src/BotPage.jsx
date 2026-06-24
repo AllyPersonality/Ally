@@ -466,6 +466,7 @@ const CSS = `
   @keyframes bn{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
   @keyframes pp{0%{opacity:0;transform:scale(.94)}100%{opacity:1;transform:scale(1)}}
   @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.85}}
+  @keyframes roll{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   .mu{animation:up .28s cubic-bezier(.22,1,.36,1) both}
   .fi{animation:fi .4s ease both}
   .pp{animation:pp .4s cubic-bezier(.22,1,.36,1) both}
@@ -609,15 +610,6 @@ export default function BotPage() {
 
   const prog = Math.min(95, Math.round((topicI/TOPICS.length)*100));
 
-  // Calculate predicted archetype for background color shift - VIVID VERSION
-  const predictedArc = data.occ ? detectArc(data) : "weaver";
-  const arcColors = {
-    weaver:"45,35,10",catalyst:"60,25,8",oracle:"35,10,55",anchor:"5,35,50",
-    spark:"15,50,10",tide:"8,45,45",mirror:"25,28,30",scout:"55,10,5",seed:"10,35,15"
-  };
-  const bgTint = arcColors[predictedArc] || "9,7,5";
-  const tintOpacity = Math.min(0.85, prog / 120); // Much more visible
-
   // ── VERSION SELECTION SCREEN ──────────────────────────────────────────────────
   if (view === "choose") return (
     <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"#090705",backgroundImage:"radial-gradient(rgba(242,237,230,.04) 1px,transparent 1px)",backgroundSize:"36px 36px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative",overflow:"auto"}}>
@@ -639,9 +631,20 @@ export default function BotPage() {
 
   // ── CHAT ──────────────────────────────────────────────────────────────────
   return (
-    <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:`rgb(${bgTint})`,transition:"background 3s ease",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6"}}>
+    <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:"#090705",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative",overflow:"hidden"}}>
       <style>{CSS}</style>
-      <div style={{padding:"13px 18px 10px",borderBottom:"1px solid rgba(242,237,230,.07)",background:`rgb(${bgTint})`,transition:"background 3s ease",flexShrink:0}}>
+
+      {/* Rolling football in background */}
+      {version==="football" && prog>5 && (
+        <div style={{position:"absolute",left:`${prog}%`,top:"50%",width:60,height:60,transition:"left .6s ease",transform:"translateY(-50%)",opacity:0.15,zIndex:0,pointerEvents:"none"}}>
+          <div style={{width:"100%",height:"100%",borderRadius:"50%",background:"radial-gradient(circle at 30% 30%, #fff 0%, #ddd 50%, #999 100%)",boxShadow:"inset -5px -5px 15px rgba(0,0,0,.3), 0 0 20px rgba(255,255,255,.1)",position:"relative",animation:`roll ${20-prog/10}s linear infinite`,transform:`rotate(${prog*36}deg)`,transition:"transform .6s ease"}}>
+            {/* Pentagon pattern for soccer ball */}
+            <div style={{position:"absolute",top:"30%",left:"30%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}/>
+          </div>
+        </div>
+      )}
+
+      <div style={{padding:"13px 18px 10px",borderBottom:"1px solid rgba(242,237,230,.07)",background:"#090705",flexShrink:0,position:"relative",zIndex:1}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:36,height:36,borderRadius:"50%",flexShrink:0,background:"rgba(191,160,98,.12)",border:"1px solid rgba(191,160,98,.35)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"#BFA062"}}>✦</div>
@@ -773,7 +776,7 @@ export default function BotPage() {
       </div>
 
       {!done && (
-        <div style={{padding:"10px 15px 20px",borderTop:"1px solid rgba(242,237,230,.07)",background:`rgb(${bgTint})`,transition:"background 3s ease",flexShrink:0}}>
+        <div style={{padding:"10px 15px 20px",borderTop:"1px solid rgba(242,237,230,.07)",background:"#090705",flexShrink:0,position:"relative",zIndex:1}}>
           <div style={{display:"flex",alignItems:"flex-end",gap:10,background:"rgba(242,237,230,.05)",border:"1px solid rgba(242,237,230,.1)",borderRadius:16,padding:"12px 12px 12px 16px"}}>
             <textarea ref={inp} rows={1} value={input}
               onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,140)+"px";}}
