@@ -373,16 +373,21 @@ async function finalize(history) {
   let data = {};
   const ext = await rawCall(
     "Extract data from the conversation. Return ONLY valid JSON, no markdown.",
-    [{role:"user",content:"Extract values for keys with clear answers.\nKeys: name, age, gender, dob, city, occ, jobfeel, grow, chg, freq, steps, social, pro, found, srchtime, srchfeel, missed, conn, count, advance\n\nCRITICAL RULES — read carefully before extracting:\n- age: extract the number only (e.g. 28, not 'I am 28').\n- gender: exactly what they said.\n- city: MUST be a place/location name (city, town, neighborhood, country). Max 4 words. Valid examples: 'Buenos Aires', 'Córdoba', 'New York', 'Georgia'. INVALID — do NOT extract if the value contains any of: feelings, verbs, 'enjoy', 'yes', 'no', 'work', 'design', 'build', 'study', 'I am', 'figuring', 'still', or any sentence. When in doubt, leave BLANK.\n- occ: what they do for work or study. Valid: 'graphic designer', 'student', 'software engineer'. INVALID — do NOT extract if it is a single 'yes'/'no', a feeling ('I enjoy it'), or any non-job answer. When in doubt, leave BLANK.\n- Never put a sentence into city. Never put yes/no into occ.\n\nConversation:\n"+convo+"\n\nReturn JSON only."}],
+    [{role:"user",content:"Extract values for keys with clear answers.\nKeys: name, age, gender, dob, city, occ, jobfeel, grow, chg, freq, steps, social, pro, found, srchtime, srchfeel, missed, conn, count, advance\n\nCRITICAL RULES — read carefully before extracting:\n- age: extract the number only (e.g. 28, not 'I am 28').\n- gender: exactly what they said.\n- city: MUST be ONLY a real place name (city, town, province, country). Max 30 characters. Max 4 words. Valid examples: 'Buenos Aires', 'Córdoba', 'New York', 'CABA'. INVALID — do NOT extract if longer than 30 characters, contains verbs (work, design, build, study, enjoy, going, getting, trying), job words (engineer, developer, student, teacher, trabajo, estudio), names (Messi), feelings (love, hate, feel), or yes/no. If it looks like a sentence or occupation, leave BLANK.\n- occ: what they do for work or study. Valid: 'graphic designer', 'student', 'software engineer', 'estudiante', 'trabajo en marketing'. INVALID — do NOT extract if it is a single 'yes'/'no', a feeling ('I enjoy it'), or any non-job answer. When in doubt, leave BLANK.\n- Never put a sentence into city. Never put yes/no into occ.\n\nConversation:\n"+convo+"\n\nReturn JSON only."}],
     500
   );
   if (ext) { try { data = JSON.parse(ext.replace(/```json|```/g,"").trim()); } catch {} }
 
-  // Safety net: if city looks like a job description or sentence, move it to occ
+  // Safety net: if city looks like a job description, sentence, or is too long, move to occ or clear it
   if (data.city) {
-    const cw = data.city.trim().split(/\s+/).length;
-    const jobLike = /\b(i am|i'm|am a|work|design|build|studi|project|engineer|developer|graphic|manager|director|student|teacher|doctor|nurse|consultant|freelance|architect|analyst)\b/i.test(data.city);
-    if (cw > 4 || jobLike) { if (!data.occ) data.occ = data.city; data.city = null; }
+    const s = data.city.trim();
+    const cw = s.split(/\s+/).length;
+    const jobLike = /\b(i am|i'm|am a|work|design|build|studi|project|engineer|developer|graphic|manager|director|student|teacher|doctor|nurse|consultant|freelance|architect|analyst|messi|trabajo|estudio|enjoy|figuring|going|getting|trying|love|hate|feel|yes|no|maybe)\b/i.test(s);
+    const hasVerbs = /\b(work|design|build|study|enjoy|going|getting|trying|love|hate|feel)\b/i.test(s);
+    if (s.length > 30 || cw > 4 || jobLike || hasVerbs || /[.!?]/.test(s)) {
+      if (!data.occ && cw > 1 && !hasVerbs) data.occ = data.city;
+      data.city = null;
+    }
   }
 
   const lp=calcLP(data.dob||""), arcId=detectArc(data), arc=ARC[arcId], AL=arc.es, lpn=LPes[lp]||"", n=data.name||"";

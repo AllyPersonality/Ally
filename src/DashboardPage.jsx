@@ -111,11 +111,25 @@ export default function DashboardPage() {
   };
   const searchData = Object.entries(searchUsed).filter(([,n])=>n>0).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value);
 
+  // Networking method breakdown
+  const networkingMethods = {
+    "Pregunto a amigos/conocidos": resps.filter(r => /amigo|conocido|pregunto|recomendacion|boca a boca/i.test((r.steps||""))).length,
+    "WhatsApp/grupos":             resps.filter(r => /whatsapp|grupo|telegram/i.test((r.steps||""))).length,
+    "Google/internet":             resps.filter(r => /google|internet|busco online/i.test((r.steps||""))).length,
+    "Redes sociales":              resps.filter(r => /linkedin|instagram|facebook|redes/i.test((r.steps||""))).length,
+    "No busco / no necesito":      resps.filter(r => /no busco|no necesito|nunca|no suelo/i.test((r.steps||""))).length,
+  };
+  const networkingData = Object.entries(networkingMethods).filter(([,n])=>n>0).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value);
+
   const isRealCity = v => {
     if (!v) return false;
     const s = v.trim();
+    if (s.length > 30) return false;
     if (s.split(/\s+/).length > 4) return false;
-    if (/\b(i am|i'm|am a|work|design|build|studi|project|engineer|developer|graphic|manager|director|student|teacher|doctor|nurse|consultant|freelance|architect|analyst)\b/i.test(s)) return false;
+    // Reject if contains verbs, job-like words, or other non-city indicators
+    if (/\b(i am|i'm|am a|work|design|build|studi|project|engineer|developer|graphic|manager|director|student|teacher|doctor|nurse|consultant|freelance|architect|analyst|messi|trabajo|estudio|enjoy|figuring|going|getting|trying|love|hate|feel|yes|no|maybe)\b/i.test(s)) return false;
+    // Reject if contains sentence punctuation
+    if (/[.!?]/.test(s)) return false;
     return true;
   };
   const cities = {};
@@ -123,15 +137,15 @@ export default function DashboardPage() {
   const cityData = Object.entries(cities).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name,value}));
 
   const OCC_SEGMENTS = [
-    { name:"Student",               rx:/student|studying|university|college|estudio|estudiante|carrera|facultad/i },
-    { name:"Freelancer",            rx:/freelance|independent|independiente|aut.nomo|autonomo/i },
-    { name:"Big Corporate",         rx:/corporate|company|empresa|manager|director|executive|employed|trabajo en/i },
+    { name:"Student",               rx:/student|studying|university|college|estudiante|estudio|universidad|facultad|carrera|secundaria|colegio/i },
+    { name:"Freelancer",            rx:/freelance|independent|independiente|aut.nomo|autonomo|cuenta propia|por mi cuenta/i },
+    { name:"Big Corporate",         rx:/corporate|company|empresa|manager|director|executive|employed|trabajo en|empleado|oficina|corporativo|relacion de dependencia/i },
     { name:"Intern",                rx:/intern|pasante|internship|pr.ctica|practica/i },
-    { name:"Entrepreneur / Startup",rx:/founder|startup|emprendedor|entrepreneur|own business|negocio propio/i },
-    { name:"Teacher / Educator",    rx:/teacher|profesor|maestra|docente|educator|teaching/i },
+    { name:"Entrepreneur / Startup",rx:/founder|startup|emprendedor|entrepreneur|own business|negocio propio|emprendimiento|mi empresa/i },
+    { name:"Teacher / Educator",    rx:/teacher|profesor|maestra|docente|educator|teaching|ense.o|doy clases/i },
     { name:"Scientist / Researcher",rx:/scientist|researcher|investigador|phd|lab\b|ciencia/i },
-    { name:"Retired",               rx:/retired|jubilado|jubilada|retiro/i },
-    { name:"Unemployed / Figuring", rx:/unemployed|desempleado|figuring|looking for|between jobs|sin trabajo|neet/i },
+    { name:"Retired",               rx:/retired|jubilado|jubilada|retiro|retirado/i },
+    { name:"Unemployed / Figuring", rx:/unemployed|desempleado|figuring|looking for|between jobs|sin trabajo|neet|busco trabajo|buscando|nini/i },
   ];
   const occCounts = Object.fromEntries(OCC_SEGMENTS.map(s=>[s.name,0]));
   occCounts["Other"] = 0;
@@ -235,12 +249,12 @@ export default function DashboardPage() {
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
               <div className="card">
-                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>H9 — How They Search</div>
-                {searchData.length>0?(
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:"rgba(191,160,98,.6)",textTransform:"uppercase",marginBottom:14}}>Cómo buscan contactos</div>
+                {networkingData.length>0?(
                   <ResponsiveContainer width="100%" height={160}>
-                    <BarChart data={searchData} layout="vertical" margin={{left:0,right:20}}>
+                    <BarChart data={networkingData} layout="vertical" margin={{left:0,right:20}}>
                       <XAxis type="number" tick={{fill:"rgba(242,237,230,.3)",fontSize:10}} axisLine={false} tickLine={false}/>
-                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.6)",fontSize:11}} axisLine={false} tickLine={false} width={90}/>
+                      <YAxis type="category" dataKey="name" tick={{fill:"rgba(242,237,230,.6)",fontSize:10}} axisLine={false} tickLine={false} width={140}/>
                       <Tooltip contentStyle={tip}/>
                       <Bar dataKey="value" fill={GOLD} radius={[0,3,3,0]}/>
                     </BarChart>
