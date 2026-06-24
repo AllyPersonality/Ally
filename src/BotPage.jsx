@@ -608,6 +608,15 @@ export default function BotPage() {
 
   const prog = Math.min(95, Math.round((topicI/TOPICS.length)*100));
 
+  // Calculate predicted archetype for background color shift
+  const predictedArc = data.occ ? detectArc(data) : "weaver";
+  const arcColors = {
+    weaver:"15,10,5",catalyst:"25,12,5",oracle:"13,0,24",anchor:"0,16,24",
+    spark:"9,20,0",tide:"0,26,24",mirror:"10,12,13",scout:"26,4,0",seed:"2,14,6"
+  };
+  const bgTint = arcColors[predictedArc] || "9,7,5";
+  const tintOpacity = Math.min(0.4, prog / 250); // Subtle, increases with progress
+
   // ── VERSION SELECTION SCREEN ──────────────────────────────────────────────────
   if (view === "choose") return (
     <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"#090705",backgroundImage:"radial-gradient(rgba(242,237,230,.04) 1px,transparent 1px)",backgroundSize:"36px 36px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative",overflow:"auto"}}>
@@ -629,9 +638,9 @@ export default function BotPage() {
 
   // ── CHAT ──────────────────────────────────────────────────────────────────
   return (
-    <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:"#090705",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6"}}>
+    <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:`rgb(${bgTint})`,transition:"background 3s ease",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6"}}>
       <style>{CSS}</style>
-      <div style={{padding:"13px 18px 10px",borderBottom:"1px solid rgba(242,237,230,.07)",background:"#090705",flexShrink:0}}>
+      <div style={{padding:"13px 18px 10px",borderBottom:"1px solid rgba(242,237,230,.07)",background:`rgb(${bgTint})`,transition:"background 3s ease",flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:36,height:36,borderRadius:"50%",flexShrink:0,background:"rgba(191,160,98,.12)",border:"1px solid rgba(191,160,98,.35)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"#BFA062"}}>✦</div>
@@ -642,8 +651,12 @@ export default function BotPage() {
           </div>
           {done&&<div style={{fontSize:11,color:"rgba(141,196,122,.8)",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:1}}>✓ Saved</div>}
         </div>
-        <div style={{height:2,background:"rgba(242,237,230,.07)",borderRadius:2}}>
+        <div style={{height:2,background:"rgba(242,237,230,.07)",borderRadius:2,position:"relative"}}>
           <div style={{width:prog+"%",height:"100%",background:"#BFA062",borderRadius:2,transition:"width .6s"}}/>
+          {/* Walking silhouette */}
+          <div style={{position:"absolute",left:`calc(${prog}% - 12px)`,top:-8,width:24,height:24,transition:"left .6s ease,opacity .3s",opacity:prog>5?1:0}}>
+            <div style={{width:"100%",height:"100%",borderRadius:"50%",background:`rgba(191,160,98,${Math.min(1, prog/100)})`,filter:`blur(${Math.max(0,8-prog/12)}px)`,boxShadow:`0 0 ${Math.min(12, prog/8)}px rgba(191,160,98,.6)`,transition:"filter 2s ease, box-shadow 2s ease"}}/>
+          </div>
         </div>
       </div>
 
@@ -759,7 +772,7 @@ export default function BotPage() {
       </div>
 
       {!done && (
-        <div style={{padding:"10px 15px 20px",borderTop:"1px solid rgba(242,237,230,.07)",background:"#090705",flexShrink:0}}>
+        <div style={{padding:"10px 15px 20px",borderTop:"1px solid rgba(242,237,230,.07)",background:`rgb(${bgTint})`,transition:"background 3s ease",flexShrink:0}}>
           <div style={{display:"flex",alignItems:"flex-end",gap:10,background:"rgba(242,237,230,.05)",border:"1px solid rgba(242,237,230,.1)",borderRadius:16,padding:"12px 12px 12px 16px"}}>
             <textarea ref={inp} rows={1} value={input}
               onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,140)+"px";}}
