@@ -421,12 +421,18 @@ async function finalize(history) {
 async function savePartial(id, data) {
   try {
     const now = new Date().toISOString();
-    const payload = { id, ts_start: tsStart.current, ts: now, lang:"es", status:"in_progress", ...data };
-    await fetch("/api/responses", {
+    const payload = { id, ts_start: tsStart.current || now, ts: now, lang:"es", status:"in_progress", ...data };
+    const res = await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload),
     });
-  } catch {}
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("Save error:", err);
+    }
+  } catch (e) {
+    console.error("Save failed:", e);
+  }
 }
 
 async function saveResp(id, data, lp, arcId, report, sign, saturn) {
