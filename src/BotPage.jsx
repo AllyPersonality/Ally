@@ -465,6 +465,7 @@ const CSS = `
   @keyframes fi{from{opacity:0}to{opacity:1}}
   @keyframes bn{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
   @keyframes pp{0%{opacity:0;transform:scale(.94)}100%{opacity:1;transform:scale(1)}}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.85}}
   .mu{animation:up .28s cubic-bezier(.22,1,.36,1) both}
   .fi{animation:fi .4s ease both}
   .pp{animation:pp .4s cubic-bezier(.22,1,.36,1) both}
@@ -608,14 +609,14 @@ export default function BotPage() {
 
   const prog = Math.min(95, Math.round((topicI/TOPICS.length)*100));
 
-  // Calculate predicted archetype for background color shift
+  // Calculate predicted archetype for background color shift - VIVID VERSION
   const predictedArc = data.occ ? detectArc(data) : "weaver";
   const arcColors = {
-    weaver:"15,10,5",catalyst:"25,12,5",oracle:"13,0,24",anchor:"0,16,24",
-    spark:"9,20,0",tide:"0,26,24",mirror:"10,12,13",scout:"26,4,0",seed:"2,14,6"
+    weaver:"45,35,10",catalyst:"60,25,8",oracle:"35,10,55",anchor:"5,35,50",
+    spark:"15,50,10",tide:"8,45,45",mirror:"25,28,30",scout:"55,10,5",seed:"10,35,15"
   };
   const bgTint = arcColors[predictedArc] || "9,7,5";
-  const tintOpacity = Math.min(0.4, prog / 250); // Subtle, increases with progress
+  const tintOpacity = Math.min(0.85, prog / 120); // Much more visible
 
   // ── VERSION SELECTION SCREEN ──────────────────────────────────────────────────
   if (view === "choose") return (
@@ -651,11 +652,11 @@ export default function BotPage() {
           </div>
           {done&&<div style={{fontSize:11,color:"rgba(141,196,122,.8)",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:1}}>✓ Saved</div>}
         </div>
-        <div style={{height:2,background:"rgba(242,237,230,.07)",borderRadius:2,position:"relative"}}>
-          <div style={{width:prog+"%",height:"100%",background:"#BFA062",borderRadius:2,transition:"width .6s"}}/>
-          {/* Walking silhouette */}
-          <div style={{position:"absolute",left:`calc(${prog}% - 12px)`,top:-8,width:24,height:24,transition:"left .6s ease,opacity .3s",opacity:prog>5?1:0}}>
-            <div style={{width:"100%",height:"100%",borderRadius:"50%",background:`rgba(191,160,98,${Math.min(1, prog/100)})`,filter:`blur(${Math.max(0,8-prog/12)}px)`,boxShadow:`0 0 ${Math.min(12, prog/8)}px rgba(191,160,98,.6)`,transition:"filter 2s ease, box-shadow 2s ease"}}/>
+        <div style={{height:4,background:"rgba(242,237,230,.12)",borderRadius:3,position:"relative",overflow:"visible"}}>
+          <div style={{width:prog+"%",height:"100%",background:"linear-gradient(90deg, #BFA062, #D4AF85)",borderRadius:3,transition:"width .6s ease",boxShadow:"0 0 8px rgba(191,160,98,.4)"}}/>
+          {/* Walking silhouette - VIVID */}
+          <div style={{position:"absolute",left:`calc(${prog}% - 16px)`,top:-14,width:32,height:32,transition:"left .6s ease,opacity .3s",opacity:prog>5?1:0}}>
+            <div style={{width:"100%",height:"100%",borderRadius:"50%",background:`radial-gradient(circle, rgba(191,160,98,${Math.min(1, prog/80)}) 0%, rgba(191,160,98,${Math.min(0.6, prog/100)}) 100%)`,filter:`blur(${Math.max(0,6-prog/16)}px)`,boxShadow:`0 0 ${Math.min(20, prog/5)}px rgba(191,160,98,.9), 0 0 ${Math.min(30, prog/3)}px rgba(191,160,98,.5)`,transition:"filter 1.5s ease, box-shadow 1.5s ease",animation:"pulse 2s ease-in-out infinite"}}/>
           </div>
         </div>
       </div>
