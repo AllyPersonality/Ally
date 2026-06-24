@@ -421,7 +421,7 @@ async function finalize(history) {
 async function savePartial(id, data) {
   try {
     const now = new Date().toISOString();
-    const payload = { id, ts_start: tsStart.current, ts: now, lang:"es", version, status:"abandoned", ...data };
+    const payload = { id, ts_start: tsStart.current, ts: now, lang:"es", status:"abandoned", ...data };
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload),
@@ -434,7 +434,7 @@ async function saveResp(id, data, lp, arcId, report, sign, saturn) {
     const now = new Date().toISOString();
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang:"es", version, status:"completed",
+      body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang:"es", status:"completed",
         lp: String(lp), arc: arcId, report, sign: sign||null, saturn: saturn||null, ...data }),
     });
   } catch {}
