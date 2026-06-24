@@ -468,6 +468,8 @@ const CSS = `
   @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.85}}
   @keyframes roll{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   @keyframes rollAcross{0%{left:-100px}100%{left:calc(100% + 100px)}}
+  @keyframes sparkle{0%,100%{opacity:0;transform:scale(0)}10%{opacity:1;transform:scale(1)}20%{opacity:0;transform:scale(1.5)}}
+  @keyframes bloom{0%,85%,100%{opacity:0;transform:scale(0) rotate(0deg)}90%{opacity:0.15;transform:scale(1) rotate(0deg)}95%{opacity:0.2;transform:scale(1.1) rotate(10deg)}}
   .mu{animation:up .28s cubic-bezier(.22,1,.36,1) both}
   .fi{animation:fi .4s ease both}
   .pp{animation:pp .4s cubic-bezier(.22,1,.36,1) both}
@@ -637,21 +639,41 @@ export default function BotPage() {
 
       {/* Rolling football in background - continuously moving */}
       {version==="football" && (
-        <div style={{position:"absolute",top:"50%",width:80,height:80,transform:"translateY(-50%)",opacity:0.12,zIndex:0,pointerEvents:"none",animation:"rollAcross 25s linear infinite"}}>
-          <div style={{width:"100%",height:"100%",borderRadius:"50%",background:"#fff",position:"relative",animation:"roll 3s linear infinite",boxShadow:"0 4px 12px rgba(0,0,0,.3)"}}>
-            {/* Classic soccer ball pentagon pattern */}
-            <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}>
-              <div style={{position:"absolute",width:12,height:12,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-6px,-6px)"}}/>
+        <>
+          <div style={{position:"absolute",top:"50%",width:80,height:80,transform:"translateY(-50%)",opacity:0.12,zIndex:0,pointerEvents:"none",animation:"rollAcross 25s linear infinite"}}>
+            <div style={{width:"100%",height:"100%",borderRadius:"50%",background:"#fff",position:"relative",animation:"roll 3s linear infinite",boxShadow:"0 4px 12px rgba(0,0,0,.3)"}}>
+              {/* Classic soccer ball pentagon pattern */}
+              <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}>
+                <div style={{position:"absolute",width:12,height:12,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-6px,-6px)"}}/>
+              </div>
+              <div style={{position:"absolute",top:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,-5px)"}}/>
+              <div style={{position:"absolute",top:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,-5px)"}}/>
+              <div style={{position:"absolute",bottom:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,5px)"}}/>
+              <div style={{position:"absolute",bottom:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,5px)"}}/>
+              <div style={{position:"absolute",top:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
+              <div style={{position:"absolute",bottom:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
+              <div style={{position:"absolute",left:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
+              <div style={{position:"absolute",right:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
             </div>
-            <div style={{position:"absolute",top:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,-5px)"}}/>
-            <div style={{position:"absolute",top:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,-5px)"}}/>
-            <div style={{position:"absolute",bottom:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,5px)"}}/>
-            <div style={{position:"absolute",bottom:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,5px)"}}/>
-            <div style={{position:"absolute",top:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
-            <div style={{position:"absolute",bottom:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
-            <div style={{position:"absolute",left:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
-            <div style={{position:"absolute",right:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
           </div>
+          {/* Sparkles */}
+          <div style={{position:"absolute",top:"15%",left:"20%",width:4,height:4,background:"#BFA062",borderRadius:"50%",boxShadow:"0 0 8px #BFA062",opacity:0,animation:"sparkle 4s ease-in-out infinite",zIndex:0,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",top:"25%",right:"25%",width:3,height:3,background:"#E8714A",borderRadius:"50%",boxShadow:"0 0 6px #E8714A",opacity:0,animation:"sparkle 4s ease-in-out 1s infinite",zIndex:0,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",bottom:"30%",left:"30%",width:5,height:5,background:"#8DC47A",borderRadius:"50%",boxShadow:"0 0 10px #8DC47A",opacity:0,animation:"sparkle 4s ease-in-out 2s infinite",zIndex:0,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",top:"60%",right:"15%",width:4,height:4,background:"#BFA062",borderRadius:"50%",boxShadow:"0 0 8px #BFA062",opacity:0,animation:"sparkle 4s ease-in-out 2.5s infinite",zIndex:0,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",bottom:"20%",right:"40%",width:3,height:3,background:"#7BAFC4",borderRadius:"50%",boxShadow:"0 0 6px #7BAFC4",opacity:0,animation:"sparkle 4s ease-in-out 3s infinite",zIndex:0,pointerEvents:"none"}}/>
+        </>
+      )}
+
+      {/* Blooming pink flower for cultural */}
+      {version==="cultural" && (
+        <div style={{position:"absolute",top:"35%",right:"20%",width:60,height:60,opacity:0,animation:"bloom 8s ease-in-out infinite",zIndex:0,pointerEvents:"none"}}>
+          {/* Petals */}
+          {[0,1,2,3,4,5].map(i => (
+            <div key={i} style={{position:"absolute",top:"50%",left:"50%",width:20,height:35,background:"radial-gradient(ellipse at center, #ff9dbf 0%, #ff6b9d 50%, transparent 100%)",borderRadius:"50% 50% 50% 50%/60% 60% 40% 40%",transform:`translate(-50%,-50%) rotate(${i*60}deg) translateY(-15px)`,transformOrigin:"center center"}}/>
+          ))}
+          {/* Center */}
+          <div style={{position:"absolute",top:"50%",left:"50%",width:12,height:12,background:"#ffd700",borderRadius:"50%",transform:"translate(-50%,-50%)",boxShadow:"0 0 8px rgba(255,215,0,.6)"}}/>
         </div>
       )}
 
