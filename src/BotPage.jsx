@@ -665,16 +665,41 @@ export default function BotPage() {
         </>
       )}
 
-      {/* Blooming pink flower for cultural */}
+      {/* Blooming flowers for cultural - pink and purple */}
       {version==="cultural" && (
-        <div style={{position:"absolute",top:"35%",right:"20%",width:60,height:60,opacity:0,animation:"bloom 8s ease-in-out infinite",zIndex:0,pointerEvents:"none"}}>
-          {/* Petals */}
-          {[0,1,2,3,4,5].map(i => (
-            <div key={i} style={{position:"absolute",top:"50%",left:"50%",width:20,height:35,background:"radial-gradient(ellipse at center, #ff9dbf 0%, #ff6b9d 50%, transparent 100%)",borderRadius:"50% 50% 50% 50%/60% 60% 40% 40%",transform:`translate(-50%,-50%) rotate(${i*60}deg) translateY(-15px)`,transformOrigin:"center center"}}/>
-          ))}
-          {/* Center */}
-          <div style={{position:"absolute",top:"50%",left:"50%",width:12,height:12,background:"#ffd700",borderRadius:"50%",transform:"translate(-50%,-50%)",boxShadow:"0 0 8px rgba(255,215,0,.6)"}}/>
-        </div>
+        <>
+          {/* Pink flower 1 */}
+          <div style={{position:"absolute",top:"20%",right:"15%",width:60,height:60,opacity:0,animation:"bloom 10s ease-in-out infinite",zIndex:0,pointerEvents:"none"}}>
+            {[0,1,2,3,4,5].map(i => (
+              <div key={i} style={{position:"absolute",top:"50%",left:"50%",width:20,height:35,background:"radial-gradient(ellipse at center, #ff9dbf 0%, #ff6b9d 50%, transparent 100%)",borderRadius:"50% 50% 50% 50%/60% 60% 40% 40%",transform:`translate(-50%,-50%) rotate(${i*60}deg) translateY(-15px)`,transformOrigin:"center center"}}/>
+            ))}
+            <div style={{position:"absolute",top:"50%",left:"50%",width:12,height:12,background:"#ffd700",borderRadius:"50%",transform:"translate(-50%,-50%)",boxShadow:"0 0 8px rgba(255,215,0,.6)"}}/>
+          </div>
+
+          {/* Purple flower */}
+          <div style={{position:"absolute",top:"50%",left:"20%",width:55,height:55,opacity:0,animation:"bloom 10s ease-in-out 3s infinite",zIndex:0,pointerEvents:"none"}}>
+            {[0,1,2,3,4,5].map(i => (
+              <div key={i} style={{position:"absolute",top:"50%",left:"50%",width:18,height:32,background:"radial-gradient(ellipse at center, #c39dff 0%, #9d6bff 50%, transparent 100%)",borderRadius:"50% 50% 50% 50%/60% 60% 40% 40%",transform:`translate(-50%,-50%) rotate(${i*60}deg) translateY(-14px)`,transformOrigin:"center center"}}/>
+            ))}
+            <div style={{position:"absolute",top:"50%",left:"50%",width:11,height:11,background:"#ffe066",borderRadius:"50%",transform:"translate(-50%,-50%)",boxShadow:"0 0 8px rgba(255,224,102,.6)"}}/>
+          </div>
+
+          {/* Pink flower 2 */}
+          <div style={{position:"absolute",bottom:"25%",right:"25%",width:50,height:50,opacity:0,animation:"bloom 10s ease-in-out 6s infinite",zIndex:0,pointerEvents:"none"}}>
+            {[0,1,2,3,4,5].map(i => (
+              <div key={i} style={{position:"absolute",top:"50%",left:"50%",width:17,height:30,background:"radial-gradient(ellipse at center, #ff9dbf 0%, #ff6b9d 50%, transparent 100%)",borderRadius:"50% 50% 50% 50%/60% 60% 40% 40%",transform:`translate(-50%,-50%) rotate(${i*60}deg) translateY(-13px)`,transformOrigin:"center center"}}/>
+            ))}
+            <div style={{position:"absolute",top:"50%",left:"50%",width:10,height:10,background:"#ffd700",borderRadius:"50%",transform:"translate(-50%,-50%)",boxShadow:"0 0 6px rgba(255,215,0,.6)"}}/>
+          </div>
+
+          {/* Purple flower 2 */}
+          <div style={{position:"absolute",top:"65%",left:"15%",width:58,height:58,opacity:0,animation:"bloom 10s ease-in-out 8s infinite",zIndex:0,pointerEvents:"none"}}>
+            {[0,1,2,3,4,5].map(i => (
+              <div key={i} style={{position:"absolute",top:"50%",left:"50%",width:19,height:34,background:"radial-gradient(ellipse at center, #c39dff 0%, #9d6bff 50%, transparent 100%)",borderRadius:"50% 50% 50% 50%/60% 60% 40% 40%",transform:`translate(-50%,-50%) rotate(${i*60}deg) translateY(-15px)`,transformOrigin:"center center"}}/>
+            ))}
+            <div style={{position:"absolute",top:"50%",left:"50%",width:11,height:11,background:"#ffe066",borderRadius:"50%",transform:"translate(-50%,-50%)",boxShadow:"0 0 8px rgba(255,224,102,.6)"}}/>
+          </div>
+        </>
       )}
 
       <div style={{padding:"13px 18px 10px",borderBottom:"1px solid rgba(242,237,230,.07)",background:"#090705",flexShrink:0,position:"relative",zIndex:1}}>
