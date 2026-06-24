@@ -91,6 +91,7 @@ export default function DashboardPage() {
   // ── COMPUTED ─────────────────────────────────────────────────────────────
   const total      = resps.length;
   const completed  = resps.filter(r => r.status === "completed");
+  const inProgress = resps.filter(r => r.status === "in_progress");
   const abandoned  = resps.filter(r => r.status === "abandoned" || !r.status);
   const hasPain    = resps.filter(r => r.pro && !isNo(r.pro));
   const noPain     = resps.filter(r => r.pro && isNo(r.pro));
@@ -156,6 +157,7 @@ export default function DashboardPage() {
     const matchFilter =
       filter==="all"       ? true :
       filter==="completed" ? (r.status === "completed") :
+      filter==="in_progress" ? (r.status === "in_progress") :
       filter==="abandoned" ? (r.status === "abandoned" || !r.status) :
       filter==="pain"      ? (r.pro && !isNo(r.pro)) :
       filter==="nopain"    ? (r.pro && isNo(r.pro)) :
@@ -317,6 +319,7 @@ export default function DashboardPage() {
               <select value={filter} onChange={e=>setFilter(e.target.value)}>
                 <option value="all">All responses ({total})</option>
                 <option value="completed">Completed ({completed.length})</option>
+                <option value="in_progress">In Progress ({inProgress.length})</option>
                 <option value="abandoned">Abandoned ({abandoned.length})</option>
                 <option value="pain">Felt pain — H1 ({hasPain.length})</option>
                 <option value="nopain">No pain reported ({noPain.length})</option>
@@ -343,8 +346,10 @@ export default function DashboardPage() {
                     <div style={{fontSize:12,color:"rgba(242,237,230,.4)",marginBottom:3,lineHeight:1.4}}>{[r.city,r.occ].filter(Boolean).join(" · ")||"—"}</div>
                     <div style={{fontSize:11,color:"rgba(242,237,230,.25)",marginBottom:7}}>⏱ {timeSpent(r.ts_start,r.ts)}</div>
                     <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
-                      {r.status==="abandoned"&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.35)",border:"1px solid rgba(242,237,230,.1)"}}>ABANDONED</span>}
-                      {r.lang&&<span className="badge" style={{background:"rgba(191,160,98,.08)",color:"rgba(191,160,98,.75)",border:"1px solid rgba(191,160,98,.2)"}}>{r.lang==="es"?"SPANISH":"ENGLISH"}</span>}
+                      {r.status==="completed"&&<span className="badge" style={{background:"rgba(141,196,122,.08)",color:"rgba(141,196,122,.85)",border:"1px solid rgba(141,196,122,.2)"}}>COMPLETED</span>}
+                      {r.status==="in_progress"&&<span className="badge" style={{background:"rgba(191,160,98,.08)",color:"rgba(191,160,98,.8)",border:"1px solid rgba(191,160,98,.2)"}}>IN PROGRESS</span>}
+                      {r.status==="abandoned"&&<span className="badge" style={{background:"rgba(232,113,74,.05)",color:"rgba(232,113,74,.6)",border:"1px solid rgba(232,113,74,.15)"}}>ABANDONED</span>}
+                      {r.lang&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.5)",border:"1px solid rgba(242,237,230,.1)"}}>{r.lang==="es"?"ES":"EN"}</span>}
                       {r.version&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.5)",border:"1px solid rgba(242,237,230,.1)"}}>{r.version==="football"?"⚽ Football":"🎭 Culture"}</span>}
                       {r.arc&&<span className="badge" style={{background:"rgba(242,237,230,.05)",color:"rgba(242,237,230,.5)",border:"1px solid rgba(242,237,230,.1)"}}>{ARC_LABELS[r.arc]}</span>}
                       {r.pro&&!isNo(r.pro)&&<span className="badge" style={{background:"rgba(232,113,74,.08)",color:"rgba(232,113,74,.8)",border:"1px solid rgba(232,113,74,.2)"}}>PAIN H1</span>}

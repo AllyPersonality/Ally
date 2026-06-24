@@ -421,7 +421,7 @@ async function finalize(history) {
 async function savePartial(id, data) {
   try {
     const now = new Date().toISOString();
-    const payload = { id, ts_start: tsStart.current, ts: now, lang:"es", status:"abandoned", ...data };
+    const payload = { id, ts_start: tsStart.current, ts: now, lang:"es", status:"in_progress", ...data };
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload),
@@ -502,6 +502,18 @@ export default function BotPage() {
   useEffect(()=>{/* bot starts when user clicks button */},[]);
   useEffect(()=>{bot.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
   useEffect(()=>{if(!typing&&!done&&view==="chat")setTimeout(()=>inp.current?.focus(),80);},[typing,done,view]);
+
+  // Mark as abandoned on unmount if not completed
+  useEffect(()=>{
+    return () => {
+      if (sessionId.current && !done && data && Object.keys(data).length > 0) {
+        fetch("/api/responses", {
+          method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ id: sessionId.current, ts: new Date().toISOString(), status:"abandoned", ...data }),
+        }).catch(()=>{});
+      }
+    };
+  },[done,data]);
 
   function push(m){setMsgs(p=>[...p,{id:Date.now()+Math.random(),...m}]);}
 
