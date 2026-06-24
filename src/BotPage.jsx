@@ -467,6 +467,7 @@ const CSS = `
   @keyframes pp{0%{opacity:0;transform:scale(.94)}100%{opacity:1;transform:scale(1)}}
   @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.85}}
   @keyframes roll{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes rollAcross{0%{left:-100px}100%{left:calc(100% + 100px)}}
   .mu{animation:up .28s cubic-bezier(.22,1,.36,1) both}
   .fi{animation:fi .4s ease both}
   .pp{animation:pp .4s cubic-bezier(.22,1,.36,1) both}
@@ -634,12 +635,22 @@ export default function BotPage() {
     <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:"#090705",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative",overflow:"hidden"}}>
       <style>{CSS}</style>
 
-      {/* Rolling football in background */}
-      {version==="football" && prog>5 && (
-        <div style={{position:"absolute",left:`${prog}%`,top:"50%",width:60,height:60,transition:"left .6s ease",transform:"translateY(-50%)",opacity:0.15,zIndex:0,pointerEvents:"none"}}>
-          <div style={{width:"100%",height:"100%",borderRadius:"50%",background:"radial-gradient(circle at 30% 30%, #fff 0%, #ddd 50%, #999 100%)",boxShadow:"inset -5px -5px 15px rgba(0,0,0,.3), 0 0 20px rgba(255,255,255,.1)",position:"relative",animation:`roll ${20-prog/10}s linear infinite`,transform:`rotate(${prog*36}deg)`,transition:"transform .6s ease"}}>
-            {/* Pentagon pattern for soccer ball */}
-            <div style={{position:"absolute",top:"30%",left:"30%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}/>
+      {/* Rolling football in background - continuously moving */}
+      {version==="football" && (
+        <div style={{position:"absolute",top:"50%",width:80,height:80,transform:"translateY(-50%)",opacity:0.12,zIndex:0,pointerEvents:"none",animation:"rollAcross 25s linear infinite"}}>
+          <div style={{width:"100%",height:"100%",borderRadius:"50%",background:"#fff",position:"relative",animation:"roll 3s linear infinite",boxShadow:"0 4px 12px rgba(0,0,0,.3)"}}>
+            {/* Classic soccer ball pentagon pattern */}
+            <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}>
+              <div style={{position:"absolute",width:12,height:12,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-6px,-6px)"}}/>
+            </div>
+            <div style={{position:"absolute",top:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,-5px)"}}/>
+            <div style={{position:"absolute",top:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,-5px)"}}/>
+            <div style={{position:"absolute",bottom:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,5px)"}}/>
+            <div style={{position:"absolute",bottom:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,5px)"}}/>
+            <div style={{position:"absolute",top:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
+            <div style={{position:"absolute",bottom:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
+            <div style={{position:"absolute",left:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
+            <div style={{position:"absolute",right:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
           </div>
         </div>
       )}
