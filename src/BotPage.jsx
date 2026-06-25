@@ -199,24 +199,21 @@ function systemPrompt(stage, collected) {
     "",
     "You are Ally, a warm, intelligent, deeply curious conversation partner genuinely getting to know another person. You are NOT an interviewer, survey, or questionnaire.",
     "",
-    "RESPONSE RULES (strict): max 3 sentences. ALWAYS end with exactly one question (except the final completion line). NEVER ask more than one question. Natural and conversational, never a checklist.",
+    "RESPONSE RULES (strict): max 2 sentences. ALWAYS end with exactly one question (except the final completion line). NEVER ask more than one question. Natural and conversational, never a checklist.",
     "",
     "Always respond directly to what the user just said before introducing anything new. Let curiosity guide transitions.",
     "",
-    "When they share their occupation, give a big specific genuine compliment first. Student = most exciting stage of life. Stay-at-home parent = the most important job in the world. Entrepreneur = betting on yourself takes real courage. Doctor/nurse = the backbone of any community. Teacher = literally shaping the future. Retired = a whole lifetime of wisdom.",
-    "",
-    "Handle all user types equally. If someone says they don't network, warmly accept it and get curious about how they function without it.",
+    "When they share their occupation, give a brief specific genuine compliment first. Student = most exciting stage of life. Entrepreneur = betting on yourself takes real courage. Teacher = literally shaping the future.",
     "",
     "ALREADY COLLECTED (do not re-ask these): "+(collected||"nothing yet")+".",
     "",
-    "EXPLORE naturally, only fields not yet collected: name; exact age; gender (open question, no options); date of birth (never explain why); city (a place name — if they answer with something that is clearly NOT a place name like a feeling or sentence, warmly acknowledge it and ask again: 'Got it — and which city or town are you based in?'); occupation (what they do for work or study — if they answer with 'yes', 'no', a feeling, or something clearly not a job, gently ask what they do for work); whether they like their work; growth ambitions; life changes or transitions; how often they need new contacts; how they find people when they need them; whether they ever realized too late a contact could have helped; whether people come to them for introductions; whether they would try a tool that finds the right person inside their own contacts.",
+    "EXPLORE naturally, only fields not yet collected: name; date of birth (never explain why); city (a place name only); occupation (what they do in life); life changes or transitions; when they need to find someone specific what they actually do; how they found them; how long it took; whether they ever realized too late a contact could have helped.",
     "",
-    "COMPLETION: after about 14 exchanges end with exactly: 'Perfect [name], calculating your profile now...' and stop.",
+    "COMPLETION: after about 8-10 exchanges end with exactly: 'Perfect [name], calculating your profile now...' and stop.",
     "",
     "NEVER say: survey, research, data, questionnaire, segmentation.",
   ];
   return common.join("\n") + "\n\nThe user chose Spanish. Respond ONLY in natural Argentine Spanish with voseo. Completion line: 'Perfecto [nombre], calculando tu perfil ahora...'";
-  return common.join("\n") + "\n\nThe user chose English.";
 }
 
 const isDone = t => /calculando tu perfil|calculating your profile/i.test(t||"");
@@ -257,34 +254,27 @@ function isValidForField(field, value) {
 // ── FIELD DETECTION — reads the bot reply to know what was just asked ────────
 function detectNextTopic(text) {
   const t = (text||"").toLowerCase();
-  if (/how old|your age|cuantos a|qu. edad/.test(t)) return "age";
-  if (/gender|g.nero/.test(t)) return "gender";
   if (/birth|born|fecha.*nacimiento|cumplea/.test(t)) return "dob";
   if (/where.*from|where.*live|city|ciudad|de donde|d.nde/.test(t)) return "city";
   if (/your name|c.mo te llam/.test(t)) return "name";
-  if (/what do you do|work|study|trabaj|estudi|hac.s en la vida/.test(t)) return "occ";
-  if (/like.*job|enjoy.*work|te gusta lo que hac|disfrutas/.test(t)) return "jobfeel";
-  if (/grow|growth|calling|crecer|algo.*diferente/.test(t)) return "grow";
-  if (/change|transition|new.*happening|pasando algo/.test(t)) return "chg";
-  if (/how often|cada cu.nto/.test(t)) return "freq";
-  if (/first.*step|what do you do first|que haces primero/.test(t)) return "steps";
-  if (/social media|redes sociales/.test(t)) return "social";
-  if (/professional|profesional/.test(t)) return "pro";
-  if (/realized.*late|contact.*could|diste cuenta/.test(t)) return "missed";
-  if (/people.*ask.*connect|te.*piden.*conect/.test(t)) return "conn";
-  if (/how many.*year|cu.ntas.*a.o/.test(t)) return "count";
-  if (/app.*exist|try.*tool|probarias|existiera/.test(t)) return "advance";
+  if (/what do you do|hac.s en la vida|que haces en la vida/.test(t)) return "occ";
+  if (/change|transition|new.*happening|pasando algo|algo nuevo/.test(t)) return "chg";
+  if (/cu.ntas veces|how often|how many times/.test(t)) return "freq";
+  if (/what do you|que haces|haces realmente/.test(t)) return "steps";
+  if (/c.mo lo encontraste|how.*find|how.*found/.test(t)) return "found";
+  if (/cu.nto tiempo|how long|took/.test(t)) return "srchtime";
+  if (/c.mo te sentiste|how.*feel|how.*felt/.test(t)) return "srchfeel";
+  if (/realized.*late|contact.*could|diste cuenta tarde/.test(t)) return "missed";
+  if (/people.*ask.*connect|te.*piden|gente viene a vos/.test(t)) return "conn";
   return null;
 }
 
 // ── LOCAL FALLBACK ENGINE ────────────────────────────────────────────────────
-const TOPICS = ["name","age","gender","dob","city","occ","jobfeel","grow","chg","freq","steps","social","pro","missed","conn","count","advance"];
+const TOPICS = ["name","dob","city","occ","chg","freq","steps","found","srchtime","srchfeel","missed","conn"];
 
 function localAck(lastTopic, answer) {
   const a = (answer||"").toLowerCase();
   if (lastTopic === "name") return "Un placer, "+answer+"!";
-  if (lastTopic === "age") return "Perfecto.";
-  if (lastTopic === "gender") return "Buenisimo.";
   if (lastTopic === "dob") return "Perfecto.";
   if (lastTopic === "city") return answer+"! Buenisimo.";
   if (lastTopic === "occ") {
@@ -298,47 +288,40 @@ function localAck(lastTopic, answer) {
     if (/jubil|retir/.test(a)) return "Una vida entera construida, eso vale mas que cualquier titulo.";
     return "Wow, "+answer+", que mundo interesante.";
   }
-  if (lastTopic === "jobfeel") return isNo(answer)?"Honesto, eso tiene merito admitirlo.":"Se nota que lo disfrutas.";
-  if (lastTopic === "grow") return isNo(answer)?"Saber donde queres estar ya es una habilidad.":"Me encanta esa ambicion.";
   if (lastTopic === "chg") {
     if (/mud|ciudad|mov|city/.test(a)) return "Mudarse resetea todo, la red incluida.";
     if (isNo(answer)||/nada|nothing|tranqui/.test(a)) return "La estabilidad dice mucho tambien.";
     return "Eso suena importante.";
   }
-  if (lastTopic === "freq") return isNo(answer)?"Tu red ya cubre bastante entonces.":"Entiendo.";
+  if (lastTopic === "freq") return "Entiendo.";
   if (lastTopic === "steps") {
     if (/google/.test(a)) return "Google, el recurso universal.";
     if (/whatsapp|grupo|group/.test(a)) return "El boca a boca digital, un clasico.";
     if (/amigo|friend|pregunt|ask/.test(a)) return "Preguntarle a alguien de confianza, siempre funciona.";
     return "Interesante proceso.";
   }
-  if (lastTopic === "social") return isNo(answer)?"Mucha gente no las usa para eso.":"Buenisimo.";
-  if (lastTopic === "pro") return isNo(answer)?"Tu red ya cubre esas situaciones entonces.":"Tiene sentido.";
+  if (lastTopic === "found") return "Buenisimo.";
+  if (lastTopic === "srchtime") return "Entiendo.";
+  if (lastTopic === "srchfeel") return "Tiene sentido.";
   if (lastTopic === "missed") return isYes(answer)||/paso|me paso|varias/.test(a)?"La respuesta estaba ahi, invisible.":"Dice algo bueno de como buscas.";
   if (lastTopic === "conn") return /siempre|always|often|seguido/.test(a)?"El conector de cabecera, eso es un superpoder.":"No todos tienen ese rol y esta perfecto.";
-  if (lastTopic === "count") return "Mas de lo que la mayoria se da cuenta.";
   return "Buenisimo.";
 }
 
 function localQuestion(topic, name) {
   const Q = {
-    name:    "Empecemos, como te llamas?",
-    age:     (name?name+", ":"")+"cuantos anos tenes?",
-    gender:  "Y cual es tu genero?",
-    dob:     (name?name+", ":"")+"cual es tu fecha de nacimiento? Dia, mes y anio.",
-    city:    "De donde sos?",
-    occ:     "Y que haces en la vida, trabajas, estudias, emprendes?",
-    jobfeel: "Te gusta lo que haces, o llegaste ahi de casualidad?",
-    grow:    "Tenes ganas de crecer en eso, o hay algo diferente que te llama?",
-    chg:     (name?name+", ":"")+"esta pasando algo nuevo en tu vida, o esta por pasar?",
-    freq:    "Cada cuanto necesitas encontrar a alguien nuevo, un profesional, un contacto?",
-    steps:   "Cuando necesitas encontrar a alguien especifico, que haces primero?",
-    social:  "Usas las redes sociales para conectar o encontrar gente?",
-    pro:     "En el ultimo anio necesitaste encontrar algun profesional que no tenias?",
-    missed:  (name?name+", ":"")+"alguna vez te diste cuenta tarde de que alguien en tus contactos podia haber ayudado?",
-    conn:    "La gente viene a vos a pedirte que los conectes con alguien?",
-    count:   "En el ultimo anio, cuantas personas conectaste con alguien que necesitaban?",
-    advance: "Ultima, si existiera una app que encuentra a la persona correcta dentro de tus propios contactos en segundos, la probarias?",
+    name:      "Como te llamas?",
+    dob:       (name?name+", ":"")+"cual es tu fecha de nacimiento? Dia, mes y anio.",
+    city:      "De donde sos?",
+    occ:       "Que haces en la vida?",
+    chg:       (name?name+", ":"")+"esta pasando algo nuevo en tu vida?",
+    freq:      "CHOICE", // Multiple choice question
+    steps:     "Cuando necesitas encontrar a alguien especifico, que haces realmente?",
+    found:     "Como lo encontraste?",
+    srchtime:  "Cuanto tiempo te llevo?",
+    srchfeel:  "CHOICE", // Multiple choice question
+    missed:    (name?name+", ":"")+"alguna vez te diste cuenta tarde de que alguien en tus contactos podia haber ayudado?",
+    conn:      "CHOICE", // Multiple choice question
   };
   return Q[topic] || "Contame un poco mas?";
 }
@@ -538,11 +521,11 @@ export default function BotPage() {
     sessionId.current = "r:" + Date.now();
     tsStart.current = new Date().toISOString();
     setActiveField("name");
-    const op = "Bienvenido/a a tu Test de Personalidad Social.\n\nVamos a charlar un rato sobre como te moves por el mundo. Al final te voy a dar un perfil completo sobre vos.\n\nSe dice que te saca la ficha bastante bien 😄";
+    const op = "Todos tienen un jugador adentro. El tuyo se esconde en como conectas con la gente. Hora de descubrirlo.";
     await sleep(300); setTyping(true); await sleep(900); setTyping(false);
     push({role:"bot", text:op});
     await sleep(450); setTyping(true); await sleep(600); setTyping(false);
-    const first = localQuestion("name", "");
+    const first = "Como te llamas?";
     push({role:"bot", text:first});
     setHist([{role:"assistant", content:first}]);
   }
@@ -583,6 +566,13 @@ export default function BotPage() {
     else if (!answerValid) setActiveField(activeField); // hold position if invalid answer
     else setActiveField(fallbackNext);
 
+    // Check if next question is a multiple choice
+    const nextField = detected || fallbackNext;
+    if (["freq","srchfeel","conn"].includes(nextField)) {
+      await sleep(150);
+      push({role:"choice", field:nextField});
+    }
+
     // Save partial after every turn
     await savePartial(sessionId.current, nd);
 
@@ -599,6 +589,54 @@ export default function BotPage() {
   }
 
   function onKey(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}
+
+  async function selectChoice(value){
+    if (typing||done||busy.current) return;
+    busy.current = true;
+    push({role:"user", text:value});
+
+    const nt = turns+1; setTurns(nt);
+    const nd = {...data, [activeField]:value};
+    setData(nd);
+    const collectedStr = Object.entries(nd).filter(([,v])=>v).map(([k,v])=>k+"="+v).join(", ") || "nothing yet";
+    const myName = nd.name || "";
+
+    const nh = [...hist, {role:"user", content:value}];
+    setTyping(true);
+
+    const fallbackNext = TOPICS[Math.min(topicI+1, TOPICS.length-1)];
+    const ack = localAck(activeField, value);
+    await sleep(150+Math.random()*300);
+    setTyping(false);
+    push({role:"bot", text:ack});
+    setHist([...nh, {role:"assistant", content:ack}]);
+    setTopicI(i => Math.min(i+1, TOPICS.length-1));
+
+    await sleep(450); setTyping(true); await sleep(600); setTyping(false);
+    const nextQ = localQuestion(fallbackNext, myName);
+    push({role:"bot", text:nextQ});
+    setHist([...nh, {role:"assistant", content:ack}, {role:"user", content:""}, {role:"assistant", content:nextQ}]);
+    setActiveField(fallbackNext);
+
+    // Check if next question is also multiple choice
+    if (["freq","srchfeel","conn"].includes(fallbackNext)) {
+      await sleep(150);
+      push({role:"choice", field:fallbackNext});
+    }
+
+    await savePartial(sessionId.current, nd);
+
+    if (topicI+1 >= TOPICS.length) {
+      await sleep(700); setTyping(true);
+      const res = await finalize([...nh, {role:"assistant", content:ack}, {role:"user", content:""}, {role:"assistant", content:nextQ}]);
+      const merged = {...nd, ...res.data};
+      setTyping(false);
+      push({role:"result", lp:res.lp, arcId:res.arcId, report:res.report, sign:res.sign, saturn:res.saturn});
+      setDone(true);
+      await saveResp(sessionId.current, merged, res.lp, res.arcId, res.report, res.sign, res.saturn);
+    }
+    busy.current = false;
+  }
 
   function shareText(arcId,lp){
     const A=ARC[arcId],AL=A.es,ln=LPes[lp]||"";
@@ -740,6 +778,36 @@ export default function BotPage() {
               <div style={{maxWidth:"78%",padding:"13px 17px",background:"rgba(242,237,230,.06)",border:"1px solid rgba(242,237,230,.09)",borderRadius:"18px 18px 18px 4px",fontSize:17,lineHeight:1.72,color:"rgba(242,237,230,.92)",whiteSpace:"pre-line"}}>{m.text}</div>
             </div>
           );
+          if (m.role==="choice") {
+            const choices = m.field==="freq" ? [
+              {label:"0-1", emoji:""},
+              {label:"2-5", emoji:""},
+              {label:"6-15", emoji:""},
+              {label:"15-30", emoji:""},
+              {label:"30+", emoji:""},
+            ] : m.field==="srchfeel" ? [
+              {label:"Frustrado/a", emoji:"😤"},
+              {label:"Tranquilo/a", emoji:"😌"},
+              {label:"Ansioso/a", emoji:"😰"},
+              {label:"Me llevo mas tiempo del esperado", emoji:"⏳"},
+              {label:"Lo resolvi rapido", emoji:"⚡"},
+            ] : m.field==="conn" ? [
+              {label:"Siempre, soy el/la que conecta a todos", emoji:"🕸️"},
+              {label:"A veces", emoji:"🤝"},
+              {label:"Rara vez", emoji:"🤷"},
+              {label:"Nunca", emoji:"🚫"},
+            ] : [];
+            return (
+              <div key={m.id} className="mu" style={{display:"flex",flexDirection:"column",gap:8,paddingLeft:38}}>
+                {choices.map((c,i)=>(
+                  <button key={i} onClick={()=>selectChoice(c.emoji?c.label+" "+c.emoji:c.label)} style={{padding:"14px 18px",background:"rgba(242,237,230,.04)",border:"1px solid rgba(191,160,98,.25)",borderRadius:14,color:"#F2EDE6",fontSize:16,fontFamily:"'Barlow',sans-serif",cursor:"pointer",transition:"all .2s",textAlign:"left",display:"flex",alignItems:"center",gap:8}} onMouseOver={e=>{e.target.style.background="rgba(191,160,98,.12)";e.target.style.borderColor="rgba(191,160,98,.5)";}} onMouseOut={e=>{e.target.style.background="rgba(242,237,230,.04)";e.target.style.borderColor="rgba(191,160,98,.25)";}}>
+                    {c.emoji&&<span style={{fontSize:20}}>{c.emoji}</span>}
+                    <span style={{flex:1}}>{c.label}</span>
+                  </button>
+                ))}
+              </div>
+            );
+          }
           if (m.role==="result") {
             const arc=ARC[m.arcId]||ARC.catalyst, AL=arc.es;
             const lpn = LPes[m.lp]||"";
