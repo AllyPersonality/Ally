@@ -454,6 +454,7 @@ const CSS = `
   @keyframes fi{from{opacity:0}to{opacity:1}}
   @keyframes bn{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
   @keyframes pp{0%{opacity:0;transform:scale(.94)}100{opacity:1;transform:scale(1)}}
+  @keyframes slideIn{0%{transform:translateX(200px);opacity:0}100%{transform:translateX(0);opacity:1}}
   @keyframes slideIn{from{transform:translateX(-120%);opacity:0}to{transform:translateX(0);opacity:1}}
   @keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
   @keyframes confetti{0%{transform:translateY(-100%) rotate(0deg)}100%{transform:translateY(100vh) rotate(720deg)}}
@@ -576,6 +577,16 @@ export default function BotPage() {
       push({role:"choice", field:nextField});
     }
 
+    // Show caricature every 3 messages
+    if (version === "football" && nt % 3 === 0 && !done) {
+      const caricatures = ["weaver","catalyst","tide","oracle","scout","mirror","anchor","spark","seed"];
+      const randomCaric = caricatures[Math.floor(Math.random() * caricatures.length)];
+      setTimeout(() => {
+        setCaricatureShow(randomCaric);
+        setTimeout(() => setCaricatureShow(null), 3000);
+      }, 1000);
+    }
+
     // Save partial after every turn
     await savePartial(sessionId.current, nd);
 
@@ -665,21 +676,28 @@ export default function BotPage() {
       <style>{CSS}</style>
       <div style={{position:"absolute",inset:0,background:"rgba(5,15,35,0.75)",zIndex:0}}/>
       <div style={{position:"absolute",top:0,left:0,right:0,height:8,background:"linear-gradient(to right, #8dc2f2 0%, #8dc2f2 33%, #fff 33%, #fff 66%, #8dc2f2 66%, #8dc2f2 100%)",zIndex:3}}/>
-      <div style={{position:"relative",zIndex:2,padding:"60px 20px 40px",textAlign:"center",maxWidth:480,margin:"0 auto"}}>
+      {/* Messi caricature in background */}
+      <div style={{position:"absolute",bottom:40,left:20,width:120,height:120,borderRadius:"50%",overflow:"hidden",border:"4px solid #8dc2f2",opacity:0.3,zIndex:1}}>
+        <img src="/caricatures-football/weaver.jpg" alt="Messi" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+      </div>
+
+      <div style={{position:"relative",zIndex:2,padding:"60px 20px 40px",textAlign:"center",maxWidth:500,margin:"0 auto"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:30}}>
           <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,letterSpacing:3,color:"#8dc2f2",fontWeight:700}}>✦ ALLY ✦</div>
           <div style={{fontSize:20}}>🇦🇷🏆🇦🇷</div>
         </div>
-        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(32px,8vw,48px)",fontWeight:700,color:"#8dc2f2",marginBottom:8,letterSpacing:2}}>¿CUÁL DE</h1>
-        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(48px,12vw,72px)",fontWeight:900,background:"linear-gradient(90deg, #8dc2f2 0%, #fff 50%, #8dc2f2 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",lineHeight:1,marginBottom:8,letterSpacing:4}}>LOS 9</h1>
-        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(36px,9vw,54px)",fontWeight:700,color:"#F6B40E",marginBottom:20,letterSpacing:2}}>SOS VOS?</h1>
-        <p style={{fontFamily:"'Barlow',sans-serif",fontSize:16,color:"rgba(255,255,255,0.9)",lineHeight:1.6,marginBottom:16}}>Todos tienen un jugador adentro. El tuyo se esconde en cómo conectás con la gente.</p>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:2,color:"#F6B40E",marginBottom:30,fontWeight:600}}>✦ CARTA NATAL + NÚMERO DE VIDA INCLUIDOS ✦</div>
-        <div style={{display:"flex",gap:16,marginBottom:20}}>
-          <button onClick={()=>{setVersion("football");start();}} style={{flex:1,padding:"18px 24px",background:"transparent",border:"3px solid #8dc2f2",borderRadius:16,color:"#8dc2f2",fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:700,letterSpacing:2,cursor:"pointer",transition:"all .3s"}} onMouseOver={e=>{e.target.style.background="#8dc2f2";e.target.style.color="#fff";}} onMouseOut={e=>{e.target.style.background="transparent";e.target.style.color="#8dc2f2";}}>⚽ FÚTBOL</button>
-          <button onClick={()=>{setVersion("cultural");start();}} style={{flex:1,padding:"18px 24px",background:"transparent",border:"3px solid #F6B40E",borderRadius:16,color:"#F6B40E",fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:700,letterSpacing:2,cursor:"pointer",transition:"all .3s"}} onMouseOver={e=>{e.target.style.background="#F6B40E";e.target.style.color="#0a1628";}} onMouseOut={e=>{e.target.style.background="transparent";e.target.style.color="#F6B40E";}}>🌟 CULTURA</button>
+        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(40px,10vw,56px)",fontWeight:700,color:"#8dc2f2",marginBottom:10,letterSpacing:2}}>¿CUÁL DE</h1>
+        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(64px,15vw,96px)",fontWeight:900,background:"linear-gradient(90deg, #8dc2f2 0%, #fff 50%, #8dc2f2 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",lineHeight:1,marginBottom:10,letterSpacing:6}}>LOS 9</h1>
+        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(44px,11vw,64px)",fontWeight:700,color:"#F6B40E",marginBottom:24,letterSpacing:3}}>SOS VOS?</h1>
+        <p style={{fontFamily:"'Barlow',sans-serif",fontSize:18,color:"rgba(255,255,255,0.95)",lineHeight:1.7,marginBottom:20,fontWeight:500}}>Todos tienen un jugador adentro. El tuyo se esconde en cómo conectás con la gente.</p>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,letterSpacing:2,color:"#F6B40E",marginBottom:35,fontWeight:700}}>✦ CARTA NATAL + NÚMERO DE VIDA INCLUIDOS ✦</div>
+
+        {/* Vertical buttons */}
+        <div style={{display:"flex",flexDirection:"column",gap:18,marginBottom:20}}>
+          <button onClick={()=>{setVersion("football");start();}} style={{width:"100%",padding:"20px 32px",background:"transparent",border:"3px solid #8dc2f2",borderRadius:16,color:"#8dc2f2",fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:700,letterSpacing:2,cursor:"pointer",transition:"all .3s"}} onMouseOver={e=>{e.target.style.background="#8dc2f2";e.target.style.color="#fff";}} onMouseOut={e=>{e.target.style.background="transparent";e.target.style.color="#8dc2f2";}}>⚽ FÚTBOL</button>
+          <button onClick={()=>{setVersion("cultural");start();}} style={{width:"100%",padding:"20px 32px",background:"transparent",border:"3px solid #F6B40E",borderRadius:16,color:"#F6B40E",fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:700,letterSpacing:2,cursor:"pointer",transition:"all .3s"}} onMouseOver={e=>{e.target.style.background="#F6B40E";e.target.style.color="#0a1628";}} onMouseOut={e=>{e.target.style.background="transparent";e.target.style.color="#F6B40E";}}>🌟 CULTURA</button>
         </div>
-        <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",fontFamily:"'Barlow',sans-serif"}}>gratis · 5 minutos · sin registro</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.7)",fontFamily:"'Barlow',sans-serif"}}>gratis · 5 minutos · sin registro</div>
       </div>
     </div>
   );
@@ -774,6 +792,30 @@ export default function BotPage() {
         </div>
       </div>
 
+      {/* Sliding caricature pop-up */}
+      {caricatureShow && (
+        <div style={{
+          position:"fixed",
+          right:20,
+          bottom:"20%",
+          width:140,
+          height:140,
+          borderRadius:"50%",
+          overflow:"hidden",
+          border:"4px solid #8dc2f2",
+          boxShadow:"0 8px 24px rgba(141,194,242,0.4)",
+          animation:"slideIn 0.5s ease-out",
+          zIndex:100,
+          background:"#fff"
+        }}>
+          <img
+            src={`/caricatures-football/${CARICATURES[caricatureShow]}`}
+            alt={caricatureShow}
+            style={{width:"100%",height:"100%",objectFit:"cover"}}
+          />
+        </div>
+      )}
+
       <div style={{flex:1,overflowY:"auto",padding:"18px 15px 6px",display:"flex",flexDirection:"column",gap:10}}>
         {msgs.map(m => {
           if (m.role==="user") return (
@@ -828,26 +870,25 @@ export default function BotPage() {
               <div key={m.id} className="pp" style={{margin:"4px 0"}}>
                 <div style={{borderRadius:20,overflow:"hidden",border:"2px solid "+arc.br,boxShadow:"0 0 60px "+arc.c+"22"}}>
 
+                  {/* ── Footballer GIF at top ── */}
+                  {arc.gifId && (
+                    <div style={{borderRadius:"20px 20px 0 0",overflow:"hidden",position:"relative",background:"#000"}}>
+                      <video autoPlay muted loop playsInline
+                        style={{width:"100%",maxHeight:280,objectFit:"cover",display:"block"}}
+                        onError={e=>{e.target.parentElement.style.display="none";}}>
+                        <source src={"https://media.giphy.com/media/"+arc.gifId+"/giphy.mp4"} type="video/mp4"/>
+                      </video>
+                    </div>
+                  )}
+
                   {/* ── Archetype header ── */}
                   <div style={{background:arc.bg,padding:"34px 22px 26px",textAlign:"center",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
-                    <img src={`/caricatures${version==="football"?"-football":""}/{CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
+                    <img src={`/caricatures-football/${CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>Tu tipo es</div>
-                    <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#0a1628",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
+                    <h2 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:700,letterSpacing:2,color:"#0a1628",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
-                    <div style={{background:arc.c+"15",border:"1px solid "+arc.c+"40",borderRadius:12,padding:"13px 18px",fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontStyle:"italic",color:"rgba(242,237,230,.9)",lineHeight:1.5}}>"{AL.t}"</div>
-
-                    {/* Animated GIF (served as MP4 for reliability) */}
-                    {arc.gifId && (
-                      <div style={{marginTop:16,borderRadius:14,overflow:"hidden",border:"1px solid "+arc.c+"30",position:"relative"}} ref={el=>{if(el&&!el.dataset.tried){el.dataset.tried="1";}}}>
-                        <video autoPlay muted loop playsInline
-                          style={{width:"100%",maxHeight:220,objectFit:"cover",display:"block"}}
-                          onError={e=>{e.target.parentElement.style.display="none";}}>
-                          <source src={"https://media.giphy.com/media/"+arc.gifId+"/giphy.mp4"} type="video/mp4"/>
-                        </video>
-                        <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"10px 14px",background:"linear-gradient(transparent,rgba(0,0,0,.82))",fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontStyle:"italic",color:"rgba(242,237,230,.92)",textAlign:"left"}}>{AL.gc}</div>
-                      </div>
-                    )}
+                    <div style={{background:arc.c+"15",border:"1px solid "+arc.c+"40",borderRadius:12,padding:"13px 18px",fontFamily:"'Barlow',sans-serif",fontSize:17,fontStyle:"italic",color:"#0a1628",lineHeight:1.6,fontWeight:500}}>"{AL.t}"</div>
 
                     {/* Life Path */}
                     <div style={{marginTop:14,display:"inline-flex",alignItems:"center",gap:8,background:"rgba(242,237,230,.06)",border:"1px solid rgba(242,237,230,.12)",borderRadius:20,padding:"5px 14px"}}>
