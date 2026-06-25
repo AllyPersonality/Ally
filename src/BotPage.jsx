@@ -514,11 +514,19 @@ export default function BotPage() {
   const [smsg,      setSmsg]     = useState("");
   const [caricatureShow, setCaricatureShow] = useState(null);
 
-  const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null), tsStart=useRef(null);
+  const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null), tsStart=useRef(null), crowdAudio=useRef(null);
 
   useEffect(()=>{/* bot starts when user clicks button */},[]);
   useEffect(()=>{bot.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
   useEffect(()=>{if(!typing&&!done&&view==="chat")setTimeout(()=>inp.current?.focus(),80);},[typing,done,view]);
+
+  // Play stadium crowd cheer on page load
+  useEffect(()=>{
+    if (crowdAudio.current && view === "choose") {
+      crowdAudio.current.volume = 0.35;
+      crowdAudio.current.play().catch(()=>{/* Autoplay blocked - user needs to interact first */});
+    }
+  },[view]);
 
   // Mark as abandoned on unmount if not completed
   useEffect(()=>{
@@ -720,6 +728,9 @@ export default function BotPage() {
   return (
     <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:"#F8FBFF",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#0a1628",position:"relative",overflow:"hidden"}}>
       <style>{CSS}</style>
+
+      {/* Stadium crowd cheering sound */}
+      <audio ref={crowdAudio} src="https://assets.mixkit.co/active_storage/sfx/2744/2744-preview.mp3" preload="auto" />
 
       {/* Realistic rolling football - moves diagonally from far to near */}
       {version==="football" && (
