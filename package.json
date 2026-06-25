@@ -26,6 +26,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
+    "puppeteer": "^25.2.1",
     "vite": "^5.1.6"
   }
 }

@@ -40,16 +40,28 @@ const ARC = {
     es:{n:"LA SEMILLA",  s:"El Jugador a Largo Plazo", t:"Lento para confiar. Vale la pena esperar.",                  gc:"Tu red es chica, intencional, y silenciosamente aterradora."} },
 };
 
-const CARICATURES = {
-  weaver:"weaver.jpg",
-  catalyst:"catalyst.jpg",
-  tide:"tide.jpg",
-  oracle:"oracle.jpg",
-  scout:"scout.png",
-  mirror:"susana.png",
-  anchor:"anchor.jpg",
-  spark:"spark.png",
-  seed:"seed.jpg",
+const CARICATURES_FOOTBALL = {
+  weaver:"weaver.jpg",    // Messi
+  catalyst:"catalyst.jpg", // Maradona
+  tide:"tide.png",        // Kun new
+  oracle:"oracle.png",    // Riquelme
+  scout:"scout.png",      // Di María
+  mirror:"mirror.png",    // Julián Álvarez
+  spark:"spark.png",      // Lautaro
+  anchor:"anchor.jpg",    // Mascherano
+  seed:"seed.jpg",        // Kun old
+};
+
+const CARICATURES_CULTURE = {
+  weaver:"weaver.jpg",    // Messi
+  catalyst:"catalyst.jpg", // Maradona
+  tide:"tide.jpg",        // Bizarrap
+  oracle:"oracle.jpg",    // Nicki Nicole
+  scout:"scout.png",      // Kun
+  mirror:"susana.png",    // Susana Giménez
+  spark:"spark.png",      // Tini
+  anchor:"anchor.jpg",    // Mirtha Legrand
+  seed:"seed.jpg",        // Luck Ra
 };
 
 const LPen={1:"The Leader",2:"The Mediator",3:"The Communicator",4:"The Builder",5:"The Explorer",6:"The Nurturer",7:"The Seeker",8:"The Achiever",9:"The Humanitarian",11:"The Visionary",22:"The Master Builder"};
@@ -406,10 +418,10 @@ async function finalize(history) {
 }
 
 // ── SAVE ──────────────────────────────────────────────────────────────────────
-async function savePartial(id, data) {
+async function savePartial(id, data, version) {
   try {
     const now = new Date().toISOString();
-    const payload = { id, ts_start: tsStart.current || now, ts: now, lang:"es", status:"in_progress", ...data };
+    const payload = { id, ts_start: tsStart.current || now, ts: now, lang:"es", status:"in_progress", version: version||null, ...data };
     const res = await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify(payload),
@@ -423,14 +435,14 @@ async function savePartial(id, data) {
   }
 }
 
-async function saveResp(id, data, lp, arcId, report, sign, saturn, emailCapture, fbProfile) {
+async function saveResp(id, data, lp, arcId, report, sign, saturn, emailCapture, fbProfile, version) {
   try {
     const now = new Date().toISOString();
     await fetch("/api/responses", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ id, ts_start: tsStart.current, ts: now, lang:"es", status:"completed",
         lp: String(lp), arc: arcId, report, sign: sign||null, saturn: saturn||null,
-        email_capture: emailCapture||null, facebook_profile: fbProfile||null, ...data }),
+        email_capture: emailCapture||null, facebook_profile: fbProfile||null, version: version||null, ...data }),
     });
   } catch {}
 }
@@ -590,7 +602,7 @@ export default function BotPage() {
     }
 
     // Save partial after every turn
-    await savePartial(sessionId.current, nd);
+    await savePartial(sessionId.current, nd, version);
 
     if (isDone(reply) || topicI+1 >= TOPICS.length) {
       await sleep(700); setTyping(true);
@@ -599,7 +611,7 @@ export default function BotPage() {
       setTyping(false);
       push({role:"result", lp:res.lp, arcId:res.arcId, report:res.report, sign:res.sign, saturn:res.saturn});
       setDone(true);
-      await saveResp(sessionId.current, merged, res.lp, res.arcId, res.report, res.sign, res.saturn);
+      await saveResp(sessionId.current, merged, res.lp, res.arcId, res.report, res.sign, res.saturn, null, null, version);
     }
     busy.current = false;
   }
@@ -640,7 +652,7 @@ export default function BotPage() {
       push({role:"choice", field:fallbackNext});
     }
 
-    await savePartial(sessionId.current, nd);
+    await savePartial(sessionId.current, nd, version);
 
     if (topicI+1 >= TOPICS.length) {
       await sleep(700); setTyping(true);
@@ -649,7 +661,7 @@ export default function BotPage() {
       setTyping(false);
       push({role:"result", lp:res.lp, arcId:res.arcId, report:res.report, sign:res.sign, saturn:res.saturn});
       setDone(true);
-      await saveResp(sessionId.current, merged, res.lp, res.arcId, res.report, res.sign, res.saturn);
+      await saveResp(sessionId.current, merged, res.lp, res.arcId, res.report, res.sign, res.saturn, null, null, version);
     }
     busy.current = false;
   }
@@ -792,7 +804,9 @@ export default function BotPage() {
           background:"#fff"
         }}>
           <img
-            src={`/caricatures/${CARICATURES[caricatureShow]}`}
+            src={version==="football"
+              ? `/caricatures-football/${CARICATURES_FOOTBALL[caricatureShow]}`
+              : `/caricatures/${CARICATURES_CULTURE[caricatureShow]}`}
             alt={caricatureShow}
             style={{width:"100%",height:"100%",objectFit:"cover"}}
           />
@@ -867,7 +881,10 @@ export default function BotPage() {
                   {/* ── Archetype header ── */}
                   <div style={{background:arc.bg,padding:"34px 22px 26px",textAlign:"center",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
-                    <img src={`/caricatures/${CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
+                    <img src={version==="football"
+                      ? `/caricatures-football/${CARICATURES_FOOTBALL[m.arcId]||m.arcId+".jpg"}`
+                      : `/caricatures/${CARICATURES_CULTURE[m.arcId]||m.arcId+".jpg"}`}
+                      alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>Tu tipo es</div>
                     <h2 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:700,letterSpacing:2,color:"#0a1628",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
