@@ -661,26 +661,32 @@ export default function BotPage() {
 
   // ── VERSION SELECTION SCREEN ──────────────────────────────────────────────────
   if (view === "choose") return (
-    <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"#090705",backgroundImage:"radial-gradient(rgba(242,237,230,.04) 1px,transparent 1px)",backgroundSize:"36px 36px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative",overflow:"auto"}}>
+    <div className="ally-root" style={{margin:"0 auto",minHeight:"100vh",background:"linear-gradient(to bottom, #8dc2f2 0%, #8dc2f2 33%, #F0F0F0 33%, #F0F0F0 66%, #8dc2f2 66%, #8dc2f2 100%)",position:"relative",overflow:"auto"}}>
       <style>{CSS}</style>
-      <div style={{position:"absolute",width:480,height:480,borderRadius:"50%",background:"radial-gradient(circle,rgba(191,160,98,.09) 0%,transparent 70%)",pointerEvents:"none"}}/>
-      <div style={{width:"100%",maxWidth:480,textAlign:"center"}} className="fi">
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:"rgba(191,160,98,.7)",textTransform:"uppercase",marginBottom:24}}>✦ &nbsp;Ally&nbsp; ✦</div>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,9vw,64px)",fontWeight:300,lineHeight:1.0,color:"#F2EDE6",marginBottom:8}}>¿Cuál</h1>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(42px,9vw,64px)",fontWeight:600,fontStyle:"italic",lineHeight:1.0,color:"#BFA062",marginBottom:24}}>de los 9 sos vos?</h1>
-        <div style={{width:40,height:1,background:"rgba(191,160,98,.4)",margin:"0 auto 24px"}}/>
-        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:16,fontWeight:300,fontStyle:"italic",color:"rgba(242,237,230,.55)",lineHeight:1.65,marginBottom:48}}>9 personalidades. Una es incómodamente la tuya.</p>
-        <div style={{display:"flex",flexDirection:"column",gap:16}}>
-          <button onClick={()=>{setVersion("football");start();}} style={{background:"rgba(191,160,98,.12)",border:"2px solid #BFA062",color:"#F2EDE6",padding:"18px 32px",borderRadius:14,fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:2,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}}>⚽ Fútbol</button>
-          <button onClick={()=>{setVersion("cultural");start();}} style={{background:"rgba(242,237,230,.05)",border:"2px solid rgba(242,237,230,.2)",color:"#F2EDE6",padding:"18px 32px",borderRadius:14,fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:2,cursor:"pointer",transition:"all .3s",textTransform:"uppercase"}} onMouseOver={e=>{e.target.style.background="rgba(242,237,230,.12)";e.target.style.borderColor="rgba(242,237,230,.4)"}} onMouseOut={e=>{e.target.style.background="rgba(242,237,230,.05)";e.target.style.borderColor="rgba(242,237,230,.2)"}}>🌟 Cultura</button>
+      <div style={{position:"absolute",inset:0,background:"rgba(5,15,35,0.75)",zIndex:0}}/>
+      <div style={{position:"absolute",top:0,left:0,right:0,height:8,background:"linear-gradient(to right, #8dc2f2 0%, #8dc2f2 33%, #fff 33%, #fff 66%, #8dc2f2 66%, #8dc2f2 100%)",zIndex:3}}/>
+      <div style={{position:"relative",zIndex:2,padding:"60px 20px 40px",textAlign:"center",maxWidth:480,margin:"0 auto"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:30}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,letterSpacing:3,color:"#8dc2f2",fontWeight:700}}>✦ ALLY ✦</div>
+          <div style={{fontSize:20}}>🇦🇷🏆🇦🇷</div>
         </div>
+        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(32px,8vw,48px)",fontWeight:700,color:"#8dc2f2",marginBottom:8,letterSpacing:2}}>¿CUÁL DE</h1>
+        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(48px,12vw,72px)",fontWeight:900,background:"linear-gradient(90deg, #8dc2f2 0%, #fff 50%, #8dc2f2 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",lineHeight:1,marginBottom:8,letterSpacing:4}}>LOS 9</h1>
+        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(36px,9vw,54px)",fontWeight:700,color:"#F6B40E",marginBottom:20,letterSpacing:2}}>SOS VOS?</h1>
+        <p style={{fontFamily:"'Barlow',sans-serif",fontSize:16,color:"rgba(255,255,255,0.9)",lineHeight:1.6,marginBottom:16}}>Todos tienen un jugador adentro. El tuyo se esconde en cómo conectás con la gente.</p>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:2,color:"#F6B40E",marginBottom:30,fontWeight:600}}>✦ CARTA NATAL + NÚMERO DE VIDA INCLUIDOS ✦</div>
+        <div style={{display:"flex",gap:16,marginBottom:20}}>
+          <button onClick={()=>{setVersion("football");start();}} style={{flex:1,padding:"18px 24px",background:"transparent",border:"3px solid #8dc2f2",borderRadius:16,color:"#8dc2f2",fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:700,letterSpacing:2,cursor:"pointer",transition:"all .3s"}} onMouseOver={e=>{e.target.style.background="#8dc2f2";e.target.style.color="#fff";}} onMouseOut={e=>{e.target.style.background="transparent";e.target.style.color="#8dc2f2";}}>⚽ FÚTBOL</button>
+          <button onClick={()=>{setVersion("cultural");start();}} style={{flex:1,padding:"18px 24px",background:"transparent",border:"3px solid #F6B40E",borderRadius:16,color:"#F6B40E",fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:700,letterSpacing:2,cursor:"pointer",transition:"all .3s"}} onMouseOver={e=>{e.target.style.background="#F6B40E";e.target.style.color="#0a1628";}} onMouseOut={e=>{e.target.style.background="transparent";e.target.style.color="#F6B40E";}}>🌟 CULTURA</button>
+        </div>
+        <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",fontFamily:"'Barlow',sans-serif"}}>gratis · 5 minutos · sin registro</div>
       </div>
     </div>
   );
 
   // ── CHAT ──────────────────────────────────────────────────────────────────
   return (
-    <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:"#090705",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#F2EDE6",position:"relative",overflow:"hidden"}}>
+    <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:"#F8FBFF",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#0a1628",position:"relative",overflow:"hidden"}}>
       <style>{CSS}</style>
 
       {/* Rolling football in background - continuously moving */}
@@ -703,10 +709,10 @@ export default function BotPage() {
             </div>
           </div>
           {/* Sparkles */}
-          <div style={{position:"absolute",top:"15%",left:"20%",width:4,height:4,background:"#BFA062",borderRadius:"50%",boxShadow:"0 0 8px #BFA062",opacity:0,animation:"sparkle 4s ease-in-out infinite",zIndex:0,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",top:"15%",left:"20%",width:4,height:4,background:"#8dc2f2",borderRadius:"50%",boxShadow:"0 0 8px #8dc2f2",opacity:0,animation:"sparkle 4s ease-in-out infinite",zIndex:0,pointerEvents:"none"}}/>
           <div style={{position:"absolute",top:"25%",right:"25%",width:3,height:3,background:"#E8714A",borderRadius:"50%",boxShadow:"0 0 6px #E8714A",opacity:0,animation:"sparkle 4s ease-in-out 1s infinite",zIndex:0,pointerEvents:"none"}}/>
           <div style={{position:"absolute",bottom:"30%",left:"30%",width:5,height:5,background:"#8DC47A",borderRadius:"50%",boxShadow:"0 0 10px #8DC47A",opacity:0,animation:"sparkle 4s ease-in-out 2s infinite",zIndex:0,pointerEvents:"none"}}/>
-          <div style={{position:"absolute",top:"60%",right:"15%",width:4,height:4,background:"#BFA062",borderRadius:"50%",boxShadow:"0 0 8px #BFA062",opacity:0,animation:"sparkle 4s ease-in-out 2.5s infinite",zIndex:0,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",top:"60%",right:"15%",width:4,height:4,background:"#8dc2f2",borderRadius:"50%",boxShadow:"0 0 8px #8dc2f2",opacity:0,animation:"sparkle 4s ease-in-out 2.5s infinite",zIndex:0,pointerEvents:"none"}}/>
           <div style={{position:"absolute",bottom:"20%",right:"40%",width:3,height:3,background:"#7BAFC4",borderRadius:"50%",boxShadow:"0 0 6px #7BAFC4",opacity:0,animation:"sparkle 4s ease-in-out 3s infinite",zIndex:0,pointerEvents:"none"}}/>
         </>
       )}
@@ -748,10 +754,10 @@ export default function BotPage() {
         </>
       )}
 
-      <div style={{padding:"13px 18px 10px",borderBottom:"1px solid rgba(242,237,230,.07)",background:"#090705",flexShrink:0,position:"relative",zIndex:1}}>
+      <div style={{padding:"13px 18px 10px",borderBottom:"1px solid rgba(242,237,230,.07)",background:"#F8FBFF",flexShrink:0,position:"relative",zIndex:1}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:36,height:36,borderRadius:"50%",flexShrink:0,background:"rgba(191,160,98,.12)",border:"1px solid rgba(191,160,98,.35)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"#BFA062"}}>✦</div>
+            <div style={{width:36,height:36,borderRadius:"50%",flexShrink:0,background:"rgba(191,160,98,.12)",border:"1px solid rgba(191,160,98,.35)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"#8dc2f2"}}>✦</div>
             <div>
               <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:500,letterSpacing:.6}}>Ally</div>
               <div style={{fontSize:11,color:"rgba(242,237,230,.35)"}}>{done?"Completo":typing?"Escribiendo...":"En linea"}</div>
@@ -760,7 +766,7 @@ export default function BotPage() {
           {done&&<div style={{fontSize:11,color:"rgba(141,196,122,.8)",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:1}}>✓ Saved</div>}
         </div>
         <div style={{height:4,background:"rgba(242,237,230,.12)",borderRadius:3,position:"relative",overflow:"visible"}}>
-          <div style={{width:prog+"%",height:"100%",background:"linear-gradient(90deg, #BFA062, #D4AF85)",borderRadius:3,transition:"width .6s ease",boxShadow:"0 0 8px rgba(191,160,98,.4)"}}/>
+          <div style={{width:prog+"%",height:"100%",background:"linear-gradient(90deg, #8dc2f2, #D4AF85)",borderRadius:3,transition:"width .6s ease",boxShadow:"0 0 8px rgba(191,160,98,.4)"}}/>
           {/* Walking silhouette - VIVID */}
           <div style={{position:"absolute",left:`calc(${prog}% - 16px)`,top:-14,width:32,height:32,transition:"left .6s ease,opacity .3s",opacity:prog>5?1:0}}>
             <div style={{width:"100%",height:"100%",borderRadius:"50%",background:`radial-gradient(circle, rgba(191,160,98,${Math.min(1, prog/80)}) 0%, rgba(191,160,98,${Math.min(0.6, prog/100)}) 100%)`,filter:`blur(${Math.max(0,6-prog/16)}px)`,boxShadow:`0 0 ${Math.min(20, prog/5)}px rgba(191,160,98,.9), 0 0 ${Math.min(30, prog/3)}px rgba(191,160,98,.5)`,transition:"filter 1.5s ease, box-shadow 1.5s ease",animation:"pulse 2s ease-in-out infinite"}}/>
@@ -772,13 +778,13 @@ export default function BotPage() {
         {msgs.map(m => {
           if (m.role==="user") return (
             <div key={m.id} className="mu" style={{display:"flex",justifyContent:"flex-end"}}>
-              <div style={{maxWidth:"76%",padding:"13px 17px",background:"rgba(191,160,98,.18)",border:"1px solid rgba(191,160,98,.28)",borderRadius:"18px 18px 4px 18px",fontSize:17,lineHeight:1.65,color:"#F2EDE6"}}>{m.text}</div>
+              <div style={{maxWidth:"76%",padding:"13px 17px",background:"#8dc2f2",border:"2px solid #8dc2f2",borderRadius:"18px 18px 4px 18px",fontSize:17,lineHeight:1.65,color:"#fff",boxShadow:"0 2px 8px rgba(141,194,242,0.2)"}}>{m.text}</div>
             </div>
           );
           if (m.role==="bot") return (
             <div key={m.id} className="mu" style={{display:"flex",gap:8,alignItems:"flex-end"}}>
-              <div style={{width:30,height:30,borderRadius:"50%",flexShrink:0,background:"rgba(191,160,98,.1)",border:"1px solid rgba(191,160,98,.22)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"rgba(191,160,98,.8)"}}>✦</div>
-              <div style={{maxWidth:"78%",padding:"13px 17px",background:"rgba(242,237,230,.06)",border:"1px solid rgba(242,237,230,.09)",borderRadius:"18px 18px 18px 4px",fontSize:17,lineHeight:1.72,color:"rgba(242,237,230,.92)",whiteSpace:"pre-line"}}>{m.text}</div>
+              <div style={{width:30,height:30,borderRadius:"50%",flexShrink:0,background:"#8dc2f2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:"#fff"}}>⚽</div>
+              <div style={{maxWidth:"78%",padding:"13px 17px",background:"#fff",border:"2px solid #8dc2f2",borderRadius:"18px 18px 18px 4px",fontSize:17,lineHeight:1.72,color:"#0a1628",whiteSpace:"pre-line",boxShadow:"0 2px 8px rgba(141,194,242,0.1)"}}>{m.text}</div>
             </div>
           );
           if (m.role==="choice") {
@@ -803,7 +809,7 @@ export default function BotPage() {
             return (
               <div key={m.id} className="mu" style={{display:"flex",flexDirection:"column",gap:8,paddingLeft:38}}>
                 {choices.map((c,i)=>(
-                  <button key={i} onClick={()=>selectChoice(c.emoji?c.label+" "+c.emoji:c.label)} style={{padding:"14px 18px",background:"rgba(242,237,230,.04)",border:"1px solid rgba(191,160,98,.25)",borderRadius:14,color:"#F2EDE6",fontSize:16,fontFamily:"'Barlow',sans-serif",cursor:"pointer",transition:"all .2s",textAlign:"left",display:"flex",alignItems:"center",gap:8}} onMouseOver={e=>{e.target.style.background="rgba(191,160,98,.12)";e.target.style.borderColor="rgba(191,160,98,.5)";}} onMouseOut={e=>{e.target.style.background="rgba(242,237,230,.04)";e.target.style.borderColor="rgba(191,160,98,.25)";}}>
+                  <button key={i} onClick={()=>selectChoice(c.emoji?c.label+" "+c.emoji:c.label)} style={{padding:"14px 18px",background:"#fff",border:"2px solid #8dc2f2",borderRadius:14,color:"#0a1628",fontSize:16,fontFamily:"'Barlow',sans-serif",cursor:"pointer",transition:"all .2s",textAlign:"left",display:"flex",alignItems:"center",gap:8,boxShadow:"0 2px 6px rgba(141,194,242,0.1)"}} onMouseOver={e=>{e.target.style.background="#8dc2f2";e.target.style.color="#fff";e.target.style.borderColor="#F6B40E";}} onMouseOut={e=>{e.target.style.background="#fff";e.target.style.color="#0a1628";e.target.style.borderColor="#8dc2f2";}}>
                     {c.emoji&&<span style={{fontSize:20}}>{c.emoji}</span>}
                     <span style={{flex:1}}>{c.label}</span>
                   </button>
@@ -827,7 +833,7 @@ export default function BotPage() {
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
                     <img src={`/caricatures${version==="football"?"-football":""}/{CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>Tu tipo es</div>
-                    <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#F2EDE6",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
+                    <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:600,letterSpacing:3,color:"#0a1628",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
                     <div style={{background:arc.c+"15",border:"1px solid "+arc.c+"40",borderRadius:12,padding:"13px 18px",fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontStyle:"italic",color:"rgba(242,237,230,.9)",lineHeight:1.5}}>"{AL.t}"</div>
 
@@ -882,7 +888,7 @@ export default function BotPage() {
                         <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,letterSpacing:2,color:arc.c+"CC",textTransform:"uppercase",marginBottom:8}}>Cuando lanza Ally?</div>
                         <div style={{display:"flex",gap:8}}>
                           <input type="email" placeholder="tu@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&email.includes("@"))setEmailOk(true);}}/>
-                          <button onClick={()=>email.includes("@")&&setEmailOk(true)} style={{background:arc.c,border:"none",borderRadius:8,padding:"0 15px",color:"#090705",fontFamily:"'Barlow Condensed',sans-serif",fontSize:17,fontWeight:600,cursor:"pointer",flexShrink:0}}>→</button>
+                          <button onClick={()=>email.includes("@")&&setEmailOk(true)} style={{background:arc.c,border:"none",borderRadius:8,padding:"0 15px",color:"#F8FBFF",fontFamily:"'Barlow Condensed',sans-serif",fontSize:17,fontWeight:600,cursor:"pointer",flexShrink:0}}>→</button>
                         </div>
                       </div>
                     ) : (
@@ -910,7 +916,7 @@ export default function BotPage() {
       </div>
 
       {!done && (
-        <div style={{padding:"10px 15px 20px",borderTop:"1px solid rgba(242,237,230,.07)",background:"#090705",flexShrink:0,position:"relative",zIndex:1}}>
+        <div style={{padding:"10px 15px 20px",borderTop:"1px solid rgba(242,237,230,.07)",background:"#F8FBFF",flexShrink:0,position:"relative",zIndex:1}}>
           <div style={{display:"flex",alignItems:"flex-end",gap:10,background:"rgba(242,237,230,.05)",border:"1px solid rgba(242,237,230,.1)",borderRadius:16,padding:"12px 12px 12px 16px"}}>
             <textarea ref={inp} rows={1} value={input}
               onChange={e=>{setInput(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,140)+"px";}}
@@ -919,11 +925,11 @@ export default function BotPage() {
               disabled={typing} style={{height:"26px"}}/>
             <button onClick={submit} disabled={!input.trim()||typing}
               style={{width:36,height:36,borderRadius:"50%",flexShrink:0,border:"none",
-                background:input.trim()&&!typing?"#BFA062":"rgba(242,237,230,.08)",
+                background:input.trim()&&!typing?"#8dc2f2":"rgba(242,237,230,.08)",
                 cursor:input.trim()&&!typing?"pointer":"default",
                 display:"flex",alignItems:"center",justifyContent:"center",
                 transition:"background .2s",fontSize:16,
-                color:input.trim()&&!typing?"#090705":"rgba(242,237,230,.2)"}}>↑</button>
+                color:input.trim()&&!typing?"#F8FBFF":"rgba(242,237,230,.2)"}}>↑</button>
           </div>
           <div style={{textAlign:"center",marginTop:6,fontSize:11,color:"rgba(242,237,230,.18)"}}>Enter para enviar</div>
         </div>
