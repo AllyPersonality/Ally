@@ -455,6 +455,8 @@ const CSS = `
   @keyframes bn{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
   @keyframes pp{0%{opacity:0;transform:scale(.94)}100{opacity:1;transform:scale(1)}}
   @keyframes slideIn{0%{transform:translateX(200px);opacity:0}100%{transform:translateX(0);opacity:1}}
+  @keyframes ballMove{0%{top:-10%;left:-10%;transform:scale(0.3)}50%{top:50%;left:50%;transform:scale(1)}100%{top:110%;left:110%;transform:scale(0.4)}}
+  @keyframes ballSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
   @keyframes slideIn{from{transform:translateX(-120%);opacity:0}to{transform:translateX(0);opacity:1}}
   @keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
   @keyframes confetti{0%{transform:translateY(-100%) rotate(0deg)}100%{transform:translateY(100vh) rotate(720deg)}}
@@ -678,7 +680,7 @@ export default function BotPage() {
       <div style={{position:"absolute",top:0,left:0,right:0,height:8,background:"linear-gradient(to right, #8dc2f2 0%, #8dc2f2 33%, #fff 33%, #fff 66%, #8dc2f2 66%, #8dc2f2 100%)",zIndex:3}}/>
       {/* Messi caricature in background */}
       <div style={{position:"absolute",bottom:40,left:20,width:120,height:120,borderRadius:"50%",overflow:"hidden",border:"4px solid #8dc2f2",opacity:0.3,zIndex:1}}>
-        <img src="/caricatures-football/weaver.jpg" alt="Messi" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+        <img src="/caricatures/weaver.jpg" alt="Messi" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
       </div>
 
       <div style={{position:"relative",zIndex:2,padding:"60px 20px 40px",textAlign:"center",maxWidth:500,margin:"0 auto"}}>
@@ -707,32 +709,13 @@ export default function BotPage() {
     <div className="ally-root ally-chat" style={{margin:"0 auto",height:"100vh",background:"#F8FBFF",display:"flex",flexDirection:"column",fontFamily:"'Barlow',sans-serif",color:"#0a1628",position:"relative",overflow:"hidden"}}>
       <style>{CSS}</style>
 
-      {/* Rolling football in background - continuously moving */}
+      {/* Realistic rolling football - moves diagonally from far to near */}
       {version==="football" && (
-        <>
-          <div style={{position:"absolute",top:"50%",width:80,height:80,transform:"translateY(-50%)",opacity:0.12,zIndex:0,pointerEvents:"none",animation:"rollAcross 25s linear infinite"}}>
-            <div style={{width:"100%",height:"100%",borderRadius:"50%",background:"#fff",position:"relative",animation:"roll 3s linear infinite",boxShadow:"0 4px 12px rgba(0,0,0,.3)"}}>
-              {/* Classic soccer ball pentagon pattern */}
-              <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}>
-                <div style={{position:"absolute",width:12,height:12,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-6px,-6px)"}}/>
-              </div>
-              <div style={{position:"absolute",top:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,-5px)"}}/>
-              <div style={{position:"absolute",top:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,-5px)"}}/>
-              <div style={{position:"absolute",bottom:"20%",left:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(-5px,5px)"}}/>
-              <div style={{position:"absolute",bottom:"20%",right:"20%",width:10,height:10,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translate(5px,5px)"}}/>
-              <div style={{position:"absolute",top:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
-              <div style={{position:"absolute",bottom:"10%",left:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateX(-4px)"}}/>
-              <div style={{position:"absolute",left:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
-              <div style={{position:"absolute",right:"10%",top:"50%",width:8,height:8,background:"#000",clipPath:"polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",transform:"translateY(-4px)"}}/>
-            </div>
+        <div style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",zIndex:0,pointerEvents:"none",overflow:"hidden"}}>
+          <div style={{position:"absolute",animation:"ballMove 8s ease-in-out infinite"}}>
+            <div style={{fontSize:"clamp(40px,10vw,60px)",animation:"ballSpin 1s linear infinite"}}>⚽</div>
           </div>
-          {/* Sparkles */}
-          <div style={{position:"absolute",top:"15%",left:"20%",width:4,height:4,background:"#8dc2f2",borderRadius:"50%",boxShadow:"0 0 8px #8dc2f2",opacity:0,animation:"sparkle 4s ease-in-out infinite",zIndex:0,pointerEvents:"none"}}/>
-          <div style={{position:"absolute",top:"25%",right:"25%",width:3,height:3,background:"#E8714A",borderRadius:"50%",boxShadow:"0 0 6px #E8714A",opacity:0,animation:"sparkle 4s ease-in-out 1s infinite",zIndex:0,pointerEvents:"none"}}/>
-          <div style={{position:"absolute",bottom:"30%",left:"30%",width:5,height:5,background:"#8DC47A",borderRadius:"50%",boxShadow:"0 0 10px #8DC47A",opacity:0,animation:"sparkle 4s ease-in-out 2s infinite",zIndex:0,pointerEvents:"none"}}/>
-          <div style={{position:"absolute",top:"60%",right:"15%",width:4,height:4,background:"#8dc2f2",borderRadius:"50%",boxShadow:"0 0 8px #8dc2f2",opacity:0,animation:"sparkle 4s ease-in-out 2.5s infinite",zIndex:0,pointerEvents:"none"}}/>
-          <div style={{position:"absolute",bottom:"20%",right:"40%",width:3,height:3,background:"#7BAFC4",borderRadius:"50%",boxShadow:"0 0 6px #7BAFC4",opacity:0,animation:"sparkle 4s ease-in-out 3s infinite",zIndex:0,pointerEvents:"none"}}/>
-        </>
+        </div>
       )}
 
       {/* Blooming flowers for cultural - pink and purple */}
@@ -809,7 +792,7 @@ export default function BotPage() {
           background:"#fff"
         }}>
           <img
-            src={`/caricatures-football/${CARICATURES[caricatureShow]}`}
+            src={`/caricatures/${CARICATURES[caricatureShow]}`}
             alt={caricatureShow}
             style={{width:"100%",height:"100%",objectFit:"cover"}}
           />
@@ -884,7 +867,7 @@ export default function BotPage() {
                   {/* ── Archetype header ── */}
                   <div style={{background:arc.bg,padding:"34px 22px 26px",textAlign:"center",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,"+arc.c+"20 0%,transparent 70%)",pointerEvents:"none"}}/>
-                    <img src={`/caricatures-football/${CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
+                    <img src={`/caricatures/${CARICATURES[m.arcId]||m.arcId+".jpg"}`} alt={AL.n} style={{width:140,height:140,marginBottom:16,filter:"drop-shadow(0 0 20px "+arc.c+"88)"}} onError={e=>{e.target.style.display="none"}} />
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,letterSpacing:4,color:arc.c+"99",textTransform:"uppercase",marginBottom:8}}>Tu tipo es</div>
                     <h2 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(30px,8vw,46px)",fontWeight:700,letterSpacing:2,color:"#0a1628",marginBottom:6,textShadow:"0 0 40px "+arc.c+"66"}}>{AL.n}</h2>
                     <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,letterSpacing:3,color:arc.c,textTransform:"uppercase",marginBottom:18}}>{AL.s}</div>
