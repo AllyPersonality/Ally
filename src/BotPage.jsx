@@ -15,11 +15,11 @@ const ARC = {
     en:{n:"THE ANCHOR",  s:"The Foundation",       t:"You don't rush. Things come to you.",                             gc:"They'll figure it out. You already have."},
     es:{n:"EL ANCLA",    s:"La Base",              t:"No te apurás. Las cosas llegan a vos.",                          gc:"Ellos lo van a entender. Vos ya lo sabés."} },
   spark:   { e:"⚡", c:"#8DC47A", bg:"linear-gradient(135deg,#091400,#122400,#091400)", br:"rgba(141,196,122,.5)",
-    gifId:"l0MYEqEzwMWFCg8rm",
+    gifId:"l0MYt5jPR6QX5pnqM",
     en:{n:"THE SPARK",   s:"The Builder",          t:"Earlier than most. More intentional than all of them.",           gc:"You saw this coming. Most people didn't."},
     es:{n:"LA CHISPA",   s:"La Constructora",      t:"Más temprano que la mayoría. Más intencional que todos.",         gc:"Vos lo veías venir. La mayoría no."} },
   tide:    { e:"🌊", c:"#4ECDC4", bg:"linear-gradient(135deg,#001a18,#002e2c,#001a18)", br:"rgba(78,205,196,.5)",
-    gifId:"26uf2YTgF5upXUTm0",
+    gifId:"l0MYt5jPR6QX5pnqM",
     en:{n:"THE TIDE",    s:"The Understated One",  t:"You know more people than you think. None of them know each other.", gc:"Your network is a secret weapon you forgot you had."},
     es:{n:"LA MAREA",    s:"El Subestimado",       t:"Conocés a más gente de lo que pensás. Ninguno se conoce entre sí.", gc:"Tu red es un arma secreta que te olvidaste de tener."} },
   scout:   { e:"🦅", c:"#C0392B", bg:"linear-gradient(135deg,#1a0400,#2d0800,#1a0400)", br:"rgba(192,57,43,.5)",
@@ -31,11 +31,11 @@ const ARC = {
     en:{n:"THE ORACLE",  s:"The Quiet Influence",  t:"People remember conversations with you for years. You forgot them the next day.", gc:"You give advice that changes lives and then wonder why they keep calling."},
     es:{n:"EL ORÁCULO",  s:"La Influencia Silenciosa", t:"La gente recuerda conversaciones con vos por años. Vos las olvidaste al día siguiente.", gc:"Dás consejos que cambian vidas y después te preguntás por qué siguen llamando."} },
   mirror:  { e:"🎭", c:"#95A5A6", bg:"linear-gradient(135deg,#0a0c0d,#141819,#0a0c0d)", br:"rgba(149,165,166,.5)",
-    gifId:"l0MYt5jPR6QX5pnqM",
+    gifId:"l0MYEqEzwMWFCg8rm",
     en:{n:"THE MIRROR",  s:"The Adapter",          t:"You become what the room needs. Exhausting but effective.",        gc:"Somehow always the most interesting person to whoever you're talking to."},
     es:{n:"EL ESPEJO",   s:"El Adaptador",         t:"Te convertís en lo que la sala necesita. Agotador pero efectivo.", gc:"De alguna manera siempre sos la persona más interesante para quien tengas enfrente."} },
   seed:    { e:"🌱", c:"#27AE60", bg:"linear-gradient(135deg,#020e06,#041a0b,#020e06)", br:"rgba(39,174,96,.5)",
-    gifId:"26uf2YTgF5upXUTm0",
+    gifId:"l0MYt5jPR6QX5pnqM",
     en:{n:"THE SEED",    s:"The Long Game Player", t:"Slow to trust. Worth the wait.",                                   gc:"Your network is small, intentional, and quietly terrifying."},
     es:{n:"LA SEMILLA",  s:"El Jugador a Largo Plazo", t:"Lento para confiar. Vale la pena esperar.",                  gc:"Tu red es chica, intencional, y silenciosamente aterradora."} },
 };
@@ -869,12 +869,19 @@ export default function BotPage() {
 
                   {/* ── Footballer GIF at top ── */}
                   {arc.gifId && (
-                    <div style={{borderRadius:"20px 20px 0 0",overflow:"hidden",position:"relative",background:"#000"}}>
-                      <video autoPlay muted loop playsInline
-                        style={{width:"100%",maxHeight:280,objectFit:"cover",display:"block"}}
-                        onError={e=>{e.target.parentElement.style.display="none";}}>
-                        <source src={"https://media.giphy.com/media/"+arc.gifId+"/giphy.mp4"} type="video/mp4"/>
-                      </video>
+                    <div style={{borderRadius:"20px 20px 0 0",overflow:"hidden",position:"relative",background:"#000",display:"flex",alignItems:"center",justifyContent:"center",minHeight:220}}>
+                      <img
+                        src={"https://media.giphy.com/media/"+arc.gifId+"/giphy.gif"}
+                        alt="Celebration GIF"
+                        style={{width:"100%",maxHeight:320,objectFit:"cover",display:"block"}}
+                        onError={e=>{
+                          e.target.style.display="none";
+                          const fallback = document.createElement("div");
+                          fallback.innerHTML = "⚽";
+                          fallback.style.cssText = "font-size:80px;padding:40px;";
+                          e.target.parentElement.appendChild(fallback);
+                        }}
+                      />
                     </div>
                   )}
 
