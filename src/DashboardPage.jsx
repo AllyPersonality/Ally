@@ -325,7 +325,7 @@ export default function DashboardPage() {
         <div style={{display:"flex",alignItems:"center",gap:14}}>
           <div style={{width:40,height:40,borderRadius:"50%",background:BLUE,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:18,fontWeight:700}}>A</div>
           <div>
-            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:.5,color:NAVY}}>Ally Research Dashboard</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:600,letterSpacing:.5,color:NAVY}}>Ally Research Dashboard v2</div>
             <div style={{fontSize:12,color:"rgba(10,22,40,.5)",marginTop:2}}>{total} response{total!==1?"s":""} · Argentina pre-launch study</div>
           </div>
         </div>
