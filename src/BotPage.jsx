@@ -282,41 +282,30 @@ function detectNextTopic(text) {
 }
 
 // ── LOCAL FALLBACK ENGINE ────────────────────────────────────────────────────
-const TOPICS = ["name","dob","city","occ","chg","freq","steps","found","srchtime","srchfeel","missed","conn"];
+// REORDERED: Most important research questions first, reduced to 8 total
+const TOPICS = ["name","dob","city","freq","conn","missed","steps","chg"];
 
-function localAck(lastTopic, answer) {
+function localAck(lastTopic, answer, questionNum) {
   const a = (answer||"").toLowerCase();
   if (lastTopic === "name") return "Un placer, "+answer+"!";
   if (lastTopic === "dob") return "Perfecto.";
   if (lastTopic === "city") return answer+"! Buenisimo.";
-  if (lastTopic === "occ") {
-    const both = (/work|job|trabajo/.test(a)&&/studi|estudia/.test(a))||/both|las dos/.test(a);
-    if (both) return "Wow, trabajas Y estudias, eso requiere una energia increible.";
-    if (/estudi|student/.test(a)) return "Wow, estudiante! El momento mas emocionante de la vida.";
-    if (/ama de casa|hogar|familia|mom|mother|home/.test(a)) return "El trabajo mas importante del mundo, enorme respeto.";
-    if (/emprend|founder|startup/.test(a)) return "Emprendedor/a! Eso requiere una valentia que pocos tienen.";
-    if (/medic|doctor|nurs|salud|health/.test(a)) return "Salud! Son la red mas importante de cualquier comunidad.";
-    if (/maest|profe|docen|teach/.test(a)) return "Docente! Estas moldeando el futuro literalmente.";
-    if (/jubil|retir/.test(a)) return "Una vida entera construida, eso vale mas que cualquier titulo.";
-    return "Wow, "+answer+", que mundo interesante.";
+  // After Q4 (freq) - show progress message
+  if (lastTopic === "freq") return "Ya respondiste lo mas importante 🏆 Solo un par mas...";
+  // After Q5 (conn) - show caricature teaser
+  if (lastTopic === "conn") return /siempre|always|often|seguido/.test(a)?"El conector de cabecera, eso es un superpoder.":"No todos tienen ese rol y esta perfecto.";
+  if (lastTopic === "missed") return isYes(answer)||/paso|me paso|varias/.test(a)?"La respuesta estaba ahi, invisible.":"Dice algo bueno de como buscas.";
+  if (lastTopic === "steps") {
+    if (/google/.test(a)) return "Google, el recurso universal. ¡Casi terminas! Tu jugador se esta revelando... ⚽";
+    if (/whatsapp|grupo|group/.test(a)) return "El boca a boca digital, un clasico. ¡Casi terminas! Tu jugador se esta revelando... ⚽";
+    if (/amigo|friend|pregunt|ask/.test(a)) return "Preguntarle a alguien de confianza, siempre funciona. ¡Casi terminas! Tu jugador se esta revelando... ⚽";
+    return "Interesante proceso. ¡Casi terminas! Tu jugador se esta revelando... ⚽";
   }
   if (lastTopic === "chg") {
     if (/mud|ciudad|mov|city/.test(a)) return "Mudarse resetea todo, la red incluida.";
     if (isNo(answer)||/nada|nothing|tranqui/.test(a)) return "La estabilidad dice mucho tambien.";
     return "Eso suena importante.";
   }
-  if (lastTopic === "freq") return "Entiendo.";
-  if (lastTopic === "steps") {
-    if (/google/.test(a)) return "Google, el recurso universal.";
-    if (/whatsapp|grupo|group/.test(a)) return "El boca a boca digital, un clasico.";
-    if (/amigo|friend|pregunt|ask/.test(a)) return "Preguntarle a alguien de confianza, siempre funciona.";
-    return "Interesante proceso.";
-  }
-  if (lastTopic === "found") return "Buenisimo.";
-  if (lastTopic === "srchtime") return "Entiendo.";
-  if (lastTopic === "srchfeel") return "Tiene sentido.";
-  if (lastTopic === "missed") return isYes(answer)||/paso|me paso|varias/.test(a)?"La respuesta estaba ahi, invisible.":"Dice algo bueno de como buscas.";
-  if (lastTopic === "conn") return /siempre|always|often|seguido/.test(a)?"El conector de cabecera, eso es un superpoder.":"No todos tienen ese rol y esta perfecto.";
   return "Buenisimo.";
 }
 
@@ -325,15 +314,11 @@ function localQuestion(topic, name) {
     name:      "Como te llamas?",
     dob:       (name?name+", ":"")+"cual es tu fecha de nacimiento? Dia, mes y anio.",
     city:      "De donde sos?",
-    occ:       "Que haces en la vida?",
-    chg:       (name?name+", ":"")+"esta pasando algo nuevo en tu vida?",
-    freq:      "CHOICE", // Multiple choice question
-    steps:     "Cuando necesitas encontrar a alguien especifico, que haces realmente?",
-    found:     "Como lo encontraste?",
-    srchtime:  "Cuanto tiempo te llevo?",
-    srchfeel:  "CHOICE", // Multiple choice question
+    freq:      "CHOICE", // Multiple choice question - Q4
+    conn:      "CHOICE", // Multiple choice question - Q5
     missed:    (name?name+", ":"")+"alguna vez te diste cuenta tarde de que alguien en tus contactos podia haber ayudado?",
-    conn:      "CHOICE", // Multiple choice question
+    steps:     "Cuando necesitas encontrar a alguien especifico, que haces realmente?",
+    chg:       (name?name+", ":"")+"esta pasando algo nuevo en tu vida?",
   };
   return Q[topic] || "Contame un poco mas?";
 }
@@ -513,6 +498,7 @@ export default function BotPage() {
   const [copied,    setCopied]   = useState(false);
   const [smsg,      setSmsg]     = useState("");
   const [caricatureShow, setCaricatureShow] = useState(null);
+  const [askedQuestions, setAskedQuestions] = useState(new Set());
 
   const bot=useRef(null), inp=useRef(null), busy=useRef(false), sessionId=useRef(null), tsStart=useRef(null), crowdAudio=useRef(null);
 
@@ -585,18 +571,42 @@ export default function BotPage() {
     setHist([...nh, {role:"assistant", content:reply}]);
     if (answerValid) setTopicI(i => Math.min(i+1, TOPICS.length-1));
 
+    // Mark current question as asked
+    setAskedQuestions(prev => new Set(prev).add(activeField));
+
     // Detect what field the bot just asked about → that field captures the NEXT user answer
     // If the answer was invalid, the AI will re-ask; try to keep tracking the same field
     const detected = detectNextTopic(reply);
+    let nextField = detected || fallbackNext;
+
+    // Skip questions that have already been asked and have answers
+    while (nextField && askedQuestions.has(nextField) && data[nextField]) {
+      const currentIndex = TOPICS.indexOf(nextField);
+      if (currentIndex < TOPICS.length - 1) {
+        nextField = TOPICS[currentIndex + 1];
+      } else {
+        break;
+      }
+    }
+
     if (detected) setActiveField(detected);
     else if (!answerValid) setActiveField(activeField); // hold position if invalid answer
-    else setActiveField(fallbackNext);
+    else setActiveField(nextField);
 
     // Check if next question is a multiple choice
-    const nextField = detected || fallbackNext;
-    if (["freq","srchfeel","conn"].includes(nextField)) {
+    if (["freq","conn"].includes(nextField)) {
       await sleep(150);
       push({role:"choice", field:nextField});
+    }
+
+    // Show caricature teaser after Q5 (conn question)
+    if (version === "football" && topicI === 4 && answerValid) {
+      await sleep(800);
+      push({role:"bot", text:"Tu jugador se esta revelando... 🎭"});
+      setTimeout(() => {
+        setCaricatureShow("blur");
+        setTimeout(() => setCaricatureShow(null), 4000);
+      }, 500);
     }
 
     // Show caricature every 3 messages
@@ -640,13 +650,36 @@ export default function BotPage() {
     const nh = [...hist, {role:"user", content:value}];
     setTyping(true);
 
-    const fallbackNext = TOPICS[Math.min(topicI+1, TOPICS.length-1)];
-    const ack = localAck(activeField, value);
+    // Mark current question as asked
+    setAskedQuestions(prev => new Set(prev).add(activeField));
+
+    let fallbackNext = TOPICS[Math.min(topicI+1, TOPICS.length-1)];
+
+    // Skip questions that have already been asked and have answers
+    while (fallbackNext && askedQuestions.has(fallbackNext) && nd[fallbackNext]) {
+      const currentIndex = TOPICS.indexOf(fallbackNext);
+      if (currentIndex < TOPICS.length - 1) {
+        fallbackNext = TOPICS[currentIndex + 1];
+      } else {
+        break;
+      }
+    }
+
+    const ack = localAck(activeField, value, topicI);
     await sleep(150+Math.random()*300);
     setTyping(false);
     push({role:"bot", text:ack});
     setHist([...nh, {role:"assistant", content:ack}]);
     setTopicI(i => Math.min(i+1, TOPICS.length-1));
+
+    // Show caricature teaser after Q5 (conn question)
+    if (version === "football" && activeField === "conn") {
+      await sleep(800);
+      setTimeout(() => {
+        setCaricatureShow("blur");
+        setTimeout(() => setCaricatureShow(null), 4000);
+      }, 500);
+    }
 
     await sleep(450); setTyping(true); await sleep(600); setTyping(false);
     const nextQ = localQuestion(fallbackNext, myName);
@@ -655,7 +688,7 @@ export default function BotPage() {
     setActiveField(fallbackNext);
 
     // Check if next question is also multiple choice
-    if (["freq","srchfeel","conn"].includes(fallbackNext)) {
+    if (["freq","conn"].includes(fallbackNext)) {
       await sleep(150);
       push({role:"choice", field:fallbackNext});
     }
@@ -814,13 +847,28 @@ export default function BotPage() {
           zIndex:100,
           background:"#fff"
         }}>
-          <img
-            src={version==="football"
-              ? `/caricatures-football/${CARICATURES_FOOTBALL[caricatureShow]}`
-              : `/caricatures/${CARICATURES_CULTURE[caricatureShow]}`}
-            alt={caricatureShow}
-            style={{width:"100%",height:"100%",objectFit:"cover"}}
-          />
+          {caricatureShow === "blur" ? (
+            <div style={{
+              width:"100%",
+              height:"100%",
+              background:"linear-gradient(135deg, #8dc2f2 0%, #5fa8db 100%)",
+              display:"flex",
+              alignItems:"center",
+              justifyContent:"center",
+              fontSize:60,
+              filter:"blur(8px)"
+            }}>
+              ⚽
+            </div>
+          ) : (
+            <img
+              src={version==="football"
+                ? `/caricatures-football/${CARICATURES_FOOTBALL[caricatureShow]}`
+                : `/caricatures/${CARICATURES_CULTURE[caricatureShow]}`}
+              alt={caricatureShow}
+              style={{width:"100%",height:"100%",objectFit:"cover"}}
+            />
+          )}
         </div>
       )}
 
