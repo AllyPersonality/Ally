@@ -144,7 +144,13 @@ if (isProd) {
   const distPath = join(__dirname, "dist");
   // Serve static assets (JS, CSS, images, preview.jpg)
   app.use(express.static(distPath));
-  // All page routes — explicitly send index.html
+
+  // Explicitly handle dashboard route (serves index.html, React Router handles client-side routing)
+  app.get("/dashboard", (_req, _res) => {
+    _res.sendFile(join(distPath, "index.html"));
+  });
+
+  // All other page routes — serve index.html for React Router
   app.get("*", (_req, _res) => {
     _res.sendFile(join(distPath, "index.html"));
   });
