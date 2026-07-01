@@ -1002,6 +1002,27 @@ export default function BotPage() {
                       <div style={{textAlign:"center",padding:12,background:arc.c+"10",borderRadius:10,fontSize:13,color:"rgba(242,237,230,.6)"}}>Estas en la lista! 🎉</div>
                     )}
                   </div>
+
+                  {/* ── APP DOWNLOAD SECTION ── */}
+                  <div style={{marginTop:28,background:"linear-gradient(135deg, #8dc2f2 0%, #5fa8db 100%)",borderRadius:20,padding:"32px 24px",textAlign:"center"}}>
+                    <img src="/ally-logo.jpg" alt="Ally Logo" style={{width:120,height:120,marginBottom:20,borderRadius:20,boxShadow:"0 8px 24px rgba(0,0,0,0.2)"}} />
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:700,color:"#fff",marginBottom:12,letterSpacing:1}}>
+                      Descubrí más sobre vos
+                    </div>
+                    <div style={{fontFamily:"'Barlow',sans-serif",fontSize:16,color:"rgba(255,255,255,0.9)",marginBottom:24,lineHeight:1.6}}>
+                      Bajá la app de Ally para conectar con las personas indicadas en el momento justo.
+                    </div>
+                    <div style={{background:"rgba(255,255,255,0.15)",borderRadius:12,padding:"12px 16px",marginBottom:20,display:"inline-block"}}>
+                      <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,color:"rgba(255,255,255,0.8)",letterSpacing:2,textTransform:"uppercase",marginBottom:4}}>Código de Referido</div>
+                      <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:32,fontWeight:700,color:"#F6B40E",letterSpacing:3}}>ABOFRC</div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.myapp.ally&hl=en" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",textDecoration:"none",width:"100%",maxWidth:320}}>
+                      <button style={{width:"100%",padding:"18px 28px",background:"#F6B40E",border:"none",borderRadius:14,color:"#0a1628",fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:700,letterSpacing:1.5,cursor:"pointer",boxShadow:"0 6px 20px rgba(246,180,14,0.4)",transition:"all 0.3s",textTransform:"uppercase"}} onMouseOver={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 8px 28px rgba(246,180,14,0.5)";}} onMouseOut={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 6px 20px rgba(246,180,14,0.4)";}}>
+                        📲 Descargar Ally App
+                      </button>
+                    </a>
+                  </div>
+
                 </div>
                 <div style={{textAlign:"center",marginTop:12}}>
                   <button onClick={reset} style={{background:"none",border:"none",color:"rgba(242,237,230,.22)",fontSize:12,fontFamily:"'Barlow',sans-serif",cursor:"pointer",textDecoration:"underline"}}>Empezar de nuevo</button>
